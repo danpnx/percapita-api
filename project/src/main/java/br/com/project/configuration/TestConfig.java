@@ -23,18 +23,20 @@ public class TestConfig implements CommandLineRunner {
     private final UserRepository userRepository;
     private final FinancialTransactionRepository transactionRepository;
     private final TagRepository tagRepository;
+    private final BCryptPasswordEncoder encoder;
 
     public TestConfig(UserRepository userRepository,
                       FinancialTransactionRepository transactionRepository,
-                      TagRepository tagRepository) {
+                      TagRepository tagRepository, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
         this.tagRepository = tagRepository;
+        this.encoder = encoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        // simulated users
 
         User u1 = new User(
                 UUID.randomUUID(), "Daniel Nunes",
@@ -44,6 +46,7 @@ public class TestConfig implements CommandLineRunner {
         User u3 = new User(UUID.randomUUID(), "Sávia Chistine",
                 "savia@email.com", encoder.encode("savia"));
 
+        // saving simulated users
         userRepository.saveAll(Arrays.asList(u1, u2, u3));
     }
 }
