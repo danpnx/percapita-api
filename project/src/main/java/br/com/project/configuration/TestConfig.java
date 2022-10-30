@@ -1,4 +1,4 @@
-package br.com.project.configuration;
+/*package br.com.project.configuration;
 
 import br.com.project.models.User;
 import br.com.project.repositories.FinancialTransactionRepository;
@@ -49,4 +49,4 @@ public class TestConfig implements CommandLineRunner {
         // saving simulated users
         userRepository.saveAll(Arrays.asList(u1, u2, u3));
     }
-}
+}*/
