@@ -1,122 +1,94 @@
 package br.com.project.models;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.UUID;
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "TB_USER")
-public class User implements UserDetails, Serializable {
+@Table(name = "tb_user")
+public class User implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "USER_ID", nullable = false , columnDefinition = "BINARY(16)")
-    private UUID userId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "USER_ID", nullable = false)
+	private Long userId;
+	@Column(name = "COMPLETE_NAME", nullable = false, length = 60)
+	private String name;
+	@Column(name = "USERNAME", nullable = false, unique = true, length = 100)
+	private String username;
+	@Column(name = "PASSWORD", nullable = false, length = 200)
+	private String password;
+	@Column(name = "TOKEN")
+	private String token;
+	@Column(name = "CREATION_DATE_TOKEN")
+	private LocalDateTime tokenCreationDate;
 
-    @Column(name = "COMPLETE_NAME", nullable = false, length = 70)
-    private String completeName;
+	public User() {
+	}
 
-    @Column(name = "USER_NAME", nullable = false, unique = true, updatable = false)
-    private String username;
+	public User(Long userId, String name, String username, String password) {
+		this.userId = userId;
+		this.name = name;
+		this.username = username;
+		this.password = password;
+	}
 
-    @Column(name = "PASSWORD", nullable = false, length = 60)
-    private String password;
+	public Long getUserId() {
+		return userId;
+	}
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
-    }
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
-    public User() {
-    }
+	public String getName() {
+		return name;
+	}
 
-    public User(UUID userId, String completeName, String username, String password) {
-        this.userId = userId;
-        this.completeName = completeName;
-        this.username = username;
-        this.password = password;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public UUID getId() {
-        return userId;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    public void setId(UUID id) {
-        this.userId = id;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public String getCompleteNameName() {
-        return completeName;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setCompleteNameName(String completeName) {
-        this.completeName = completeName;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    @Override
-    public String getUsername() {
-        return this.username;
-    }
+	public String getToken() {
+		return token;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setToken(String token) {
+		this.token = token;
+	}
 
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
+	public LocalDateTime getTokenCreationDate() {
+		return tokenCreationDate;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setTokenCreationDate(LocalDateTime tokenCreationDate) {
+		this.tokenCreationDate = tokenCreationDate;
+	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return userId.equals(user.userId) && username.equals(user.username);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId, username);
-    }
-
-    // Método utilizado para testes
-    // Deve ser removido na versão final
-    @Override
-    public String toString() {
-        return "ID: " + userId + "\n" +
-                "Name: " + completeName + "\n" +
-                "Username: " + username + "\n" +
-                "Password: " + password;
-    }
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 }
