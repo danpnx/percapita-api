@@ -90,7 +90,8 @@ public class PasswordRecoveryService {
 			mail.setFrom("anderson.c-10@hotmail.com");
 			mail.setTo(username);
 			mail.setSubject("Solicitação de recuperação de senha:");
-			mail.setText("Olá, aqui está seu link de reset: " + response);
+			mail.setText("Olá " + userOptional.get().getName() + ", aqui está seu link para a alteração de sua senha:\n\n " + response
+					+ " \n\n\nCaso o senhor(a) não tenha solicitado, por favor, ignore este e-mail.");
 
 			mailSender.send(mail);
 		}
