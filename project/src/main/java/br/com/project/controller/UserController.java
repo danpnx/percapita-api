@@ -14,11 +14,6 @@ import br.com.project.service.UserService;
 @CrossOrigin("*")
 @RequestMapping("/user")
 public class UserController {
-
-	// Username do usuário que está logado
-	private static final String usernameContext = SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal().toString();
-
 	@Autowired
 	private UserService userService;
 
@@ -31,6 +26,9 @@ public class UserController {
 	// Endpoint para alterar a senha do usuário
 	@PutMapping("/edit/password")
 	public ResponseEntity<?> updatePassword(@RequestParam String actualPassword, @RequestParam String newPassword) {
+		// Recebe o username do usuário autenticado
+		String usernameContext = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+
 		userService.updatePassword(actualPassword, newPassword, usernameContext);
 		return ResponseEntity.ok().build();
 	}
@@ -38,6 +36,9 @@ public class UserController {
 	// Endpoint para alterar o nome do usuário
 	@PutMapping("/edit/name")
 	public ResponseEntity<?> updateName(@RequestParam String newName) {
+		// Recebe o username do usuário autenticado
+		String usernameContext = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+
 		userService.updateName(newName, usernameContext);
 		return ResponseEntity.ok().build();
 	}
