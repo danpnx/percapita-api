@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/password")
+@RequestMapping
 public class PasswordRecoveryController {
 
     @Autowired
@@ -17,7 +17,7 @@ public class PasswordRecoveryController {
         String token = passwordRecoveryService.forgotPassword(email);
 
         if (!token.equals("Email inválido!")) {
-            String response = "http://localhost:8080/password/reset-password?token=" + token;
+            String response = "http://localhost:8080/reset-password?token=" + token;
             passwordRecoveryService.sendEmail(email, response);
             return "Email enviado com sucesso!";
         }
