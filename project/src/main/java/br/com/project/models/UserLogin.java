@@ -4,7 +4,7 @@ public class UserLogin {
 
 	private String username;
 
-	private String senha;
+	private String password;
 
 	private String token;
 	
@@ -17,12 +17,12 @@ public class UserLogin {
 		this.username = username;
 	}
 
-	public String getSenha() {
-		return senha;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setSenha(String senha) {
-		this.senha = senha;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getToken() {
