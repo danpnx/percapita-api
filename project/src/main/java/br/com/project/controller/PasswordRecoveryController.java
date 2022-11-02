@@ -14,7 +14,6 @@ public class PasswordRecoveryController {
 
     @PostMapping("/forgot-password")
     public String forgotPassword(@RequestParam String email) {
-        System.out.println("AT FORGOT PASSWORD - EMAIL: " + email);
         String token = passwordRecoveryService.forgotPassword(email);
 
         if (!token.equals("Email inválido!")) {
@@ -28,7 +27,6 @@ public class PasswordRecoveryController {
 
     @PutMapping("/reset-password")
     public String resetPassword(@RequestParam String token, @RequestParam String password) {
-        System.out.println("AT RESET PASSWORD - NEW PASSWORD: " + password);
         if (!Utilities.validatePassword(password)) {
             return "A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial.";
         }

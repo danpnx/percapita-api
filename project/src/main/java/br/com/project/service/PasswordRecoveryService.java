@@ -25,9 +25,6 @@ public class PasswordRecoveryService {
 	@Autowired
 	private UserService userService;
 
-	@Autowired
-	private PasswordEncoder encoder;
-
 	public String forgotPassword(String username) {
 		Optional<User> userOptional = userService.findByUsername(username);
 
@@ -67,7 +64,7 @@ public class PasswordRecoveryService {
 			mail.setFrom("anderson.c-10@hotmail.com");
 			mail.setTo(username);
 			mail.setSubject("Solicitação de recuperação de senha:");
-			mail.setText("Olá, " + userOptional.get().getName() +". Aqui está o link para resetar a senha: " + response);
+			mail.setText("Olá, " + userOptional.get().getName() +". Aqui está o link para resetar a senha: " + response + "\nCaso não tenha solicitado, por favor, ignore este email");
 
 			mailSender.send(mail);
 		} else {

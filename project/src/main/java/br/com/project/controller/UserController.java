@@ -23,7 +23,6 @@ public class UserController {
 	// Endpoint para teste
 	@GetMapping("/all")
 	public ResponseEntity<List<User>> getAll() {
-		System.out.println("AT /USER/ALL ENDPOINT");
 		return ResponseEntity.ok(userService.findAll());
 	}
 }
