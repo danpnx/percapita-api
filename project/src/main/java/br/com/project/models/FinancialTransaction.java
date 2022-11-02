@@ -2,6 +2,7 @@ package br.com.project.models;
 
 import br.com.project.enums.TransactionCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,7 +17,8 @@ public class FinancialTransaction implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TRANSACTION_ID", columnDefinition = "BINARY(16)")
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(name = "TRANSACTION_ID", columnDefinition = "CHAR(36)", unique = true)
     private UUID transactionId;
 
     @Column(name = "TRANSACTION_VALUE", nullable = false)
@@ -28,7 +30,7 @@ public class FinancialTransaction implements Serializable {
 
     @Temporal(value = TemporalType.DATE)
     @Column(name = "TRANSACTION_DATE", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date transactionDate;
 
     @Column(name = "TRANSACTION_DESCRIPTION", length = 75)
@@ -37,10 +39,10 @@ public class FinancialTransaction implements Serializable {
     public FinancialTransaction() {
     }
 
-    public FinancialTransaction(UUID transaction_id, BigDecimal transactionValue,
+    public FinancialTransaction(BigDecimal transactionValue,
                                 TransactionCategory transactionCategory, Date transactionDate,
                                 String transactionDescription) {
-        this.transactionId = transaction_id;
+        this.transactionId = UUID.randomUUID();
         this.transactionValue = transactionValue;
         this.transactionCategory = transactionCategory;
         this.transactionDate = transactionDate;
