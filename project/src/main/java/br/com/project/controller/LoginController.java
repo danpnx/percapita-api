@@ -17,7 +17,7 @@ import br.com.project.service.UserLoginService;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/login")
-public class UserLoginController {
+public class LoginController {
 
 	@Autowired
 	UserLoginService userLoginService;

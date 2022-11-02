@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.project.models.User;
@@ -13,22 +14,15 @@ import br.com.project.models.UserLogin;
 import br.com.project.repositories.UserRepository;
 
 @Service
-public class UserLoginService {
+public class LoginService {
 
 	@Autowired
-	UserRepository userRepository;
-	
+	private UserRepository userRepository;
 
-	public User register(User user) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		String senhaEncoder = encoder.encode(user.getPassword());
-		user.setPassword(senhaEncoder);
-		return userRepository.save(user);
-	}
+	@Autowired
+	private PasswordEncoder encoder;
 
 	public Optional<UserLogin> login(Optional<UserLogin> user) {
-
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		Optional<User> usuario = userRepository.findByUsername(user.get().getUsername());
 
 		if (usuario.isPresent()) {
