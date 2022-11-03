@@ -3,7 +3,6 @@ package br.com.project.controller;
 import br.com.project.enums.TransactionCategory;
 import br.com.project.models.FinancialTransaction;
 import br.com.project.service.FinancialTransactionService;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +37,18 @@ public class FinancialTransactionController {
     public ResponseEntity<?> deleteTransaction(@RequestParam String transactionId) {
         transactionService.deleteTransaction(UUID.fromString(transactionId));
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/last-transaction")
+    public ResponseEntity<FinancialTransaction> getLastTransaction() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        return ResponseEntity.ok(transactionService.getLastTransaction(username));
+    }
+
+    @GetMapping("/by-category")
+    public ResponseEntity<List<FinancialTransaction>> getAllByCategory(@RequestParam String category) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        return ResponseEntity.ok(transactionService.findAllByCategory(TransactionCategory.valueOf(category), username));
     }
 
     @GetMapping("/all")

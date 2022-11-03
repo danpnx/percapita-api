@@ -4,12 +4,11 @@ import br.com.project.enums.TransactionCategory;
 import br.com.project.models.FinancialTransaction;
 import br.com.project.models.User;
 import br.com.project.repositories.FinancialTransactionRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +34,26 @@ public class FinancialTransactionService {
     public void deleteTransaction(UUID transactionId) {
         // delete from the user's too
         transactionRepository.deleteById(transactionId);
+    }
+
+    public FinancialTransaction getLastTransaction(String username) {
+        User u = userService.findByUsername(username).get();
+
+        if(u.getTransactions().isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+
+        return u.getTransactions().get(u.getTransactions().size() - 1);
+    }
+
+    public List<FinancialTransaction> findAllByCategory(TransactionCategory category, String username) {
+        User u = userService.findByUsername(username).get();
+
+        if(u.getTransactions().isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+
+        return u.getTransactions().stream().filter(t -> t.getTransactionCategory().equals(category)).toList();
     }
 
     public List<FinancialTransaction> getAllTransactions(String username) {
