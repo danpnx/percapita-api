@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.project.models.User;
@@ -20,5 +21,11 @@ public class UserController {
 	@GetMapping("/all")
 	public ResponseEntity<List<User>> getAll() {
 		return ResponseEntity.ok(userService.findAll());
+	}
+
+	@GetMapping("/profile")
+	public ResponseEntity<User> getUser() {
+		String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+		return ResponseEntity.ok(userService.getUser(username));
 	}
 }

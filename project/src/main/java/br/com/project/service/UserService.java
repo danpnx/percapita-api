@@ -34,6 +34,10 @@ public class UserService implements UserDetailsService {
 	public List<User> findAll() {
 		return userRepository.findAll();
 	}
+
+	public User getUser(String username) {
+		return userRepository.findByUsername(username).get();
+	}
 	
 	public boolean existsByUsername(String username) {
 		return userRepository.existsByUsername(username);
@@ -79,7 +83,7 @@ public class UserService implements UserDetailsService {
 		);
 	}
 
-	// Method used in PasswordRecoveryService
+	// Method to return a user
 	public Optional<User> findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
