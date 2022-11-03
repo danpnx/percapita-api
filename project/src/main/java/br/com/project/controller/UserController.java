@@ -14,6 +14,7 @@ import br.com.project.service.UserService;
 @CrossOrigin("*")
 @RequestMapping("/user")
 public class UserController {
+
 	@Autowired
 	private UserService userService;
 
