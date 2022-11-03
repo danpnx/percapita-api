@@ -1,20 +1,14 @@
 package br.com.project.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "TB_USER")
@@ -30,6 +24,10 @@ public class User implements Serializable, UserDetails {
 	private String username;
 	@Column(name = "PASSWORD", nullable = false, length = 200)
 	private String password;
+
+	@OneToMany(mappedBy = "user")
+	@JsonIgnoreProperties("user")
+	private List<FinancialTransaction> transactions = new ArrayList<>();
 
 	// token e tokenCreationDate são usados para fins de recuperação de senha
 	@Column(name = "TOKEN")
@@ -133,5 +131,9 @@ public class User implements Serializable, UserDetails {
 	@Override
 	public int hashCode() {
 		return Objects.hash(userId);
+	}
+
+	public List<FinancialTransaction> getTransactions() {
+		return transactions;
 	}
 }

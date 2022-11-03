@@ -34,6 +34,10 @@ public class UserService implements UserDetailsService {
 	public List<User> findAll() {
 		return userRepository.findAll();
 	}
+
+	public User getUser(String username) {
+		return userRepository.findByUsername(username).get();
+	}
 	
 	public boolean existsByUsername(String username) {
 		return userRepository.existsByUsername(username);
@@ -59,29 +63,9 @@ public class UserService implements UserDetailsService {
 		return HttpStatus.CREATED;
 	}
 
-	// Method used to update password in user's profile
-	public void updatePassword(String actualPassword, String newPassword, String username) {
-		User user = userRepository.findByUsername(username).get();
-
-		if(!encoder.matches(actualPassword, user.getPassword())) {
-			throw new RuntimeException("Senha incorreta");
-		}
-
-		user.setPassword(encoder.encode(newPassword));
-		userRepository.save(user);
-	}
-
 	// Method used to update password in reset-password
 	public void updatePassword(String password, User user) {
 		user.setPassword(new BCryptPasswordEncoder().encode(password));
-		userRepository.save(user);
-	}
-
-	// Method used to update user's complete name
-	public void updateName(String newName, String username) {
-		User user = userRepository.findByUsername(username).get();
-
-		user.setName(newName);
 		userRepository.save(user);
 	}
 
@@ -99,7 +83,7 @@ public class UserService implements UserDetailsService {
 		);
 	}
 
-	// Method used in PasswordRecoveryService
+	// Method to return a user
 	public Optional<User> findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}

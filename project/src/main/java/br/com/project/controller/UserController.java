@@ -23,23 +23,9 @@ public class UserController {
 		return ResponseEntity.ok(userService.findAll());
 	}
 
-	// Endpoint para alterar a senha do usuário
-	@PutMapping("/edit/password")
-	public ResponseEntity<?> updatePassword(@RequestParam String actualPassword, @RequestParam String newPassword) {
-		// Recebe o username do usuário autenticado
-		String usernameContext = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-
-		userService.updatePassword(actualPassword, newPassword, usernameContext);
-		return ResponseEntity.ok().build();
-	}
-
-	// Endpoint para alterar o nome do usuário
-	@PutMapping("/edit/name")
-	public ResponseEntity<?> updateName(@RequestParam String newName) {
-		// Recebe o username do usuário autenticado
-		String usernameContext = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-
-		userService.updateName(newName, usernameContext);
-		return ResponseEntity.ok().build();
+	@GetMapping("/profile")
+	public ResponseEntity<User> getUser() {
+		String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+		return ResponseEntity.ok(userService.getUser(username));
 	}
 }
