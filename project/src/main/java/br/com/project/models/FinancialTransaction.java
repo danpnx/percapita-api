@@ -2,6 +2,7 @@ package br.com.project.models;
 
 import br.com.project.enums.TransactionCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -36,12 +37,17 @@ public class FinancialTransaction implements Serializable {
     @Column(name = "TRANSACTION_DESCRIPTION", length = 75)
     private String transactionDescription;
 
+    @ManyToOne
+    @JoinTable(name = "USER_ID")
+    @JsonIgnoreProperties("transactions")
+    private User user;
+
     public FinancialTransaction() {
     }
 
     public FinancialTransaction(BigDecimal transactionValue,
                                 TransactionCategory transactionCategory, Date transactionDate,
-                                String transactionDescription) {
+                                String transactionDescription, User user) {
         this.transactionId = UUID.randomUUID();
         this.transactionValue = transactionValue;
         this.transactionCategory = transactionCategory;
@@ -87,6 +93,14 @@ public class FinancialTransaction implements Serializable {
 
     public void setTransactionDescription(String transactionDescription) {
         this.transactionDescription = transactionDescription;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
