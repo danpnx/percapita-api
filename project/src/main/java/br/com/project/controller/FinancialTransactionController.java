@@ -21,14 +21,12 @@ public class FinancialTransactionController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerTransaction(@RequestBody @Valid FinancialTransaction transaction) {
-        System.out.println("RANDOM UUID: " + UUID.randomUUID());
         transactionService.registerTransaction(transaction);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteTransaction(@RequestParam String transactionId) {
-        System.out.println("STRING: " + transactionId);
         transactionService.deleteTransaction(UUID.fromString(transactionId));
         return ResponseEntity.noContent().build();
     }

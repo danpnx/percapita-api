@@ -1,5 +1,7 @@
 package br.com.project.models;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -11,7 +13,8 @@ public class Tag implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TAG_ID", columnDefinition = "BINARY(16)")
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(name = "TAG_ID", columnDefinition = "CHAR(36)", unique = true)
     private UUID tagId;
 
     @Column(name = "TAG_NAME", nullable = false, unique = true, length = 25)
@@ -20,8 +23,8 @@ public class Tag implements Serializable {
     public Tag() {
     }
 
-    public Tag(UUID tagId, String tagName) {
-        this.tagId = tagId;
+    public Tag(String tagName) {
+        this.tagId = UUID.randomUUID();
         this.tagName = tagName;
     }
 

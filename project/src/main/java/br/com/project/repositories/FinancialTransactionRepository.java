@@ -10,5 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface FinancialTransactionRepository extends JpaRepository<FinancialTransaction, UUID> {
-    List<FinancialTransaction> findFinancialTransactionByTransactionCategory(TransactionCategory category);
+    List<FinancialTransaction> findByTransactionCategory(TransactionCategory category);
 }
