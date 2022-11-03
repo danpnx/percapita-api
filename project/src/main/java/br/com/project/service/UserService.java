@@ -24,11 +24,10 @@ public class UserService implements UserDetailsService {
 
 	private final UserRepository userRepository;
 
-	private final PasswordEncoder encoder;
+//	private final PasswordEncoder encoder;
 
-	public UserService(UserRepository userRepository, PasswordEncoder encoder) {
+	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
-		this.encoder = encoder;
 	}
 
 	public List<User> findAll() {
@@ -52,37 +51,11 @@ public class UserService implements UserDetailsService {
 		}
 
 		// Conta criada com sucesso
-		String password = encoder.encode(user.getPassword());
+		String password = new BCryptPasswordEncoder().encode(user.getPassword());
 		user.setPassword(password);
 		userRepository.save(user);
 
 		return HttpStatus.CREATED;
-	}
-
-	// Method used to update password in user's profile
-	public void updatePassword(String actualPassword, String newPassword, String username) {
-		User user = userRepository.findByUsername(username).get();
-
-		if(!encoder.matches(actualPassword, user.getPassword())) {
-			throw new RuntimeException("Senha incorreta");
-		}
-
-		user.setPassword(encoder.encode(newPassword));
-		userRepository.save(user);
-	}
-
-	// Method used to update password in reset-password
-	public void updatePassword(String password, User user) {
-		user.setPassword(new BCryptPasswordEncoder().encode(password));
-		userRepository.save(user);
-	}
-
-	// Method used to update user's complete name
-	public void updateName(String newName, String username) {
-		User user = userRepository.findByUsername(username).get();
-
-		user.setName(newName);
-		userRepository.save(user);
 	}
 
 	@Override
@@ -99,17 +72,19 @@ public class UserService implements UserDetailsService {
 		);
 	}
 
-	// Method used in PasswordRecoveryService
 	public Optional<User> findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
 
-	// Method used in PasswordRecoveryService
 	public Optional<User> findByToken(String token) {
 		return userRepository.findByToken(token);
 	}
 
-	// Method used in PasswordRecoveryService
+	public void updatePassword(String password, User user) {
+		user.setPassword(new BCryptPasswordEncoder().encode(password));
+		userRepository.save(user);
+	}
+
 	public String setTokenAndUpdate(User user) {
 		user.setToken(Utilities.generateToken());
 		user.setTokenCreationDate(LocalDateTime.now());
@@ -117,7 +92,6 @@ public class UserService implements UserDetailsService {
 		return user.getToken();
 	}
 
-	// Method used in PasswordRecoveryService
 	public void setTokenAndUpdate(User user, String token, LocalDateTime time) {
 		user.setToken(token);
 		user.setTokenCreationDate(time);
