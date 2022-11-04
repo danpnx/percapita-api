@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -25,10 +25,10 @@ public class Tag implements Serializable {
 	@Column(name = "TAG_ID", columnDefinition = "CHAR(36)")
 	private UUID tagId;
 
-	@Column(name = "TAG_NAME", nullable = false, unique = true, length = 25)
+	@Column(name = "TAG_NAME", nullable = false, length = 25)
 	private String tagName;
 
-	@OneToOne
+	@ManyToOne
 	private User user;
 
 	public Tag() {
@@ -53,6 +53,14 @@ public class Tag implements Serializable {
 
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override
