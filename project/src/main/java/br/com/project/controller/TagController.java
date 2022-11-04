@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.project.enums.TagCategory;
 import br.com.project.service.TagService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
@@ -25,11 +26,11 @@ public class TagController {
 	private TagService tagService;
 
 	@PostMapping("/create")
-	public ResponseEntity<?> createTag(@RequestBody String tagName, Long userId) {
+	public ResponseEntity<?> createTag(@RequestBody String tagName, Long userId, TagCategory tagCategory) {
 		if (tagService.existsByTagNameAndUser(tagName, userId)) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe uma tag com este nome.");
 		}
-		tagService.registerTag(tagName, userId);
+		tagService.registerTag(tagName, userId, tagCategory);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Tag " + tagName + " criada!");
 	}
 
