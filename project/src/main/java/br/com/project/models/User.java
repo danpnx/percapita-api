@@ -6,9 +6,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.*;
 
-import javax.persistence.*;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 
 @Entity
 @Table(name = "TB_USER")
@@ -34,6 +43,9 @@ public class User implements Serializable, UserDetails {
 	private String token;
 	@Column(name = "CREATION_DATE_TOKEN")
 	private LocalDateTime tokenCreationDate;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "tagId")
+	private List<Tag> tag;
 
 	public User() {
 	}
