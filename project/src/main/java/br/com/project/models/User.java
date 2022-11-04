@@ -1,7 +1,12 @@
 package br.com.project.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,11 +18,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "tb_user")
-public class User implements Serializable {
-	private static final long serialVersionUID = 1L;
 
+@Entity
+@Table(name = "TB_USER")
+public class User implements Serializable, UserDetails {
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "USER_ID", nullable = false)
@@ -28,6 +33,12 @@ public class User implements Serializable {
 	private String username;
 	@Column(name = "PASSWORD", nullable = false, length = 200)
 	private String password;
+
+	@OneToMany(mappedBy = "user")
+	@JsonIgnoreProperties("user")
+	private List<FinancialTransaction> transactions = new ArrayList<>();
+
+	// token e tokenCreationDate são usados para fins de recuperação de senha
 	@Column(name = "TOKEN")
 	private String token;
 	@Column(name = "CREATION_DATE_TOKEN")
@@ -62,6 +73,7 @@ public class User implements Serializable {
 		this.name = name;
 	}
 
+	@Override
 	public String getUsername() {
 		return username;
 	}
@@ -70,6 +82,12 @@ public class User implements Serializable {
 		this.username = username;
 	}
 
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return Collections.emptyList();
+	}
+
+	@Override
 	public String getPassword() {
 		return password;
 	}
@@ -94,7 +112,40 @@ public class User implements Serializable {
 		this.tokenCreationDate = tokenCreationDate;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		User user = (User) o;
+		return userId.equals(user.userId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(userId);
+	}
+
+	public List<FinancialTransaction> getTransactions() {
+		return transactions;
 	}
 }

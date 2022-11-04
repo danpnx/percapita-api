@@ -2,6 +2,8 @@ package br.com.project.models;
 
 import br.com.project.enums.TransactionCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,7 +18,8 @@ public class FinancialTransaction implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TRANSACTION_ID", columnDefinition = "BINARY(16)")
+    @Type(type = "org.hibernate.type.UUIDCharType")
+    @Column(name = "TRANSACTION_ID", columnDefinition = "CHAR(36)", unique = true)
     private UUID transactionId;
 
     @Column(name = "TRANSACTION_VALUE", nullable = false)
@@ -28,19 +31,24 @@ public class FinancialTransaction implements Serializable {
 
     @Temporal(value = TemporalType.DATE)
     @Column(name = "TRANSACTION_DATE", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date transactionDate;
 
     @Column(name = "TRANSACTION_DESCRIPTION", length = 75)
     private String transactionDescription;
 
+    @ManyToOne
+    @JoinTable(name = "USER_ID")
+    @JsonIgnoreProperties("transactions")
+    private User user;
+
     public FinancialTransaction() {
     }
 
-    public FinancialTransaction(UUID transaction_id, BigDecimal transactionValue,
+    public FinancialTransaction(BigDecimal transactionValue,
                                 TransactionCategory transactionCategory, Date transactionDate,
-                                String transactionDescription) {
-        this.transactionId = transaction_id;
+                                String transactionDescription, User user) {
+        this.transactionId = UUID.randomUUID();
         this.transactionValue = transactionValue;
         this.transactionCategory = transactionCategory;
         this.transactionDate = transactionDate;
@@ -85,6 +93,14 @@ public class FinancialTransaction implements Serializable {
 
     public void setTransactionDescription(String transactionDescription) {
         this.transactionDescription = transactionDescription;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

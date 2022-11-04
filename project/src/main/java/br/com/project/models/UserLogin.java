@@ -6,8 +6,13 @@ public class UserLogin {
 
 	private String password;
 
-	private String token;
-	
+	public UserLogin() {
+	}
+
+	public UserLogin(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
 
 	public String getUsername() {
 		return username;
@@ -23,13 +28,5 @@ public class UserLogin {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
 	}
 }
