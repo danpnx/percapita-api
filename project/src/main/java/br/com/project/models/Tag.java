@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +15,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import br.com.project.enums.TagCategory;
 
 @Entity
 @Table(name = "TB_TAG")
@@ -27,8 +33,13 @@ public class Tag implements Serializable {
 
 	@Column(name = "TAG_NAME", nullable = false, length = 25)
 	private String tagName;
+	
+	@Enumerated(value = EnumType.STRING)
+    @Column(name = "TRANSACTION_CATEGORY", nullable = false)
+    private TagCategory tagCategory;
 
 	@ManyToOne
+	@JsonIgnoreProperties("tags")
 	private User user;
 
 	public Tag() {
@@ -53,6 +64,14 @@ public class Tag implements Serializable {
 
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
+	}
+	
+	public TagCategory getTagCategory() {
+		return tagCategory;
+	}
+
+	public void setTagCategory(TagCategory tagCategory) {
+		this.tagCategory = tagCategory;
 	}
 
 	public User getUser() {
