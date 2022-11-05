@@ -40,7 +40,7 @@ public class FinancialTransactionController {
     }
 
     @GetMapping("/last-transaction")
-    public ResponseEntity<FinancialTransaction> getLastTransaction() {
+    public ResponseEntity<FinancialTransaction> getLastTransaction() throws ParseException {
         String username = getUsername();
         return ResponseEntity.ok(transactionService.getLastTransaction(username));
     }
@@ -98,6 +98,13 @@ public class FinancialTransactionController {
     public ResponseEntity<List<FinancialTransaction>> findByTag(@RequestParam String tagName) {
         String username = getUsername();
         return ResponseEntity.ok(transactionService.findByTag(tagName, username));
+    }
+
+    @GetMapping("/by-year-month")
+    public ResponseEntity<List<FinancialTransaction>> findByYearAndMonth(@RequestParam String date) throws ParseException {
+        String username = getUsername();
+        Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
+        return ResponseEntity.ok(transactionService.findByYearAndMonth(d, username));
     }
 
     private String getUsername() {

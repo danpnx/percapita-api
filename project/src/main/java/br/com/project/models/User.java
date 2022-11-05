@@ -43,7 +43,7 @@ public class User implements Serializable, UserDetails {
 	@Column(name = "PASSWORD", nullable = false, length = 200)
 	private String password;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "tagId")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@JsonManagedReference(value = "user-tag-reference")
 	private List<Tag> tags = new ArrayList<>();
 
