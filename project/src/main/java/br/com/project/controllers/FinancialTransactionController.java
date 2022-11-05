@@ -100,6 +100,13 @@ public class FinancialTransactionController {
         return ResponseEntity.ok(transactionService.findByTag(tagName, username));
     }
 
+    @GetMapping("/by-year-month")
+    public ResponseEntity<List<FinancialTransaction>> findByYearAndMonth(@RequestParam String date) throws ParseException {
+        String username = getUsername();
+        Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
+        return ResponseEntity.ok(transactionService.findByYearAndMonth(d, username));
+    }
+
     private String getUsername() {
         return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     }
