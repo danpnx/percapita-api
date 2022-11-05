@@ -1,4 +1,4 @@
-package br.com.project.controller;
+package br.com.project.controllers;
 
 import br.com.project.enums.TransactionCategory;
 import br.com.project.models.FinancialTransaction;
@@ -28,7 +28,7 @@ public class FinancialTransactionController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerTransaction(@RequestBody @Valid FinancialTransaction transaction) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        String username = getUsername();
         transactionService.registerTransaction(transaction, username);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -41,19 +41,19 @@ public class FinancialTransactionController {
 
     @GetMapping("/last-transaction")
     public ResponseEntity<FinancialTransaction> getLastTransaction() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        String username = getUsername();
         return ResponseEntity.ok(transactionService.getLastTransaction(username));
     }
 
     @GetMapping("/by-category")
     public ResponseEntity<List<FinancialTransaction>> getAllByCategory(@RequestParam String category) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        String username = getUsername();
         return ResponseEntity.ok(transactionService.findAllByCategory(TransactionCategory.valueOf(category), username));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<FinancialTransaction>> getAllTransactions() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        String username = getUsername();
         return ResponseEntity.ok(transactionService.getAllTransactions(username));
     }
 
@@ -85,5 +85,22 @@ public class FinancialTransactionController {
         }
         transactionService.editDescription(description, UUID.fromString(id));
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/change-tag")
+    public ResponseEntity<?> changeTag(@RequestParam String transactionId, @RequestParam String tagName) {
+        String username = getUsername();
+        transactionService.changeTag(UUID.fromString(transactionId), tagName, username);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/by-tag")
+    public ResponseEntity<List<FinancialTransaction>> findByTag(@RequestParam String tagName) {
+        String username = getUsername();
+        return ResponseEntity.ok(transactionService.findByTag(tagName, username));
+    }
+
+    private String getUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     }
 }
