@@ -2,8 +2,11 @@ package br.com.project.service;
 
 import br.com.project.enums.TransactionCategory;
 import br.com.project.models.FinancialTransaction;
+import br.com.project.models.Tag;
 import br.com.project.models.User;
 import br.com.project.repositories.FinancialTransactionRepository;
+import br.com.project.repositories.TagRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -83,5 +86,20 @@ public class FinancialTransactionService {
         FinancialTransaction transaction = transactionRepository.findById(id).get();
         transaction.setTransactionDescription(description);
         transactionRepository.save(transaction);
+    }
+
+    public void changeTag(UUID transactionId, String tagName, String username) {
+        User u = userService.findByUsername(username).get();
+        FinancialTransaction transaction = transactionRepository.findById(transactionId).get();
+        transaction.setTag(
+                u.getTags().stream().filter(t -> t.getTagName().equals(tagName)).findFirst().get()
+        );
+
+        transactionRepository.save(transaction);
+    }
+
+    public List<FinancialTransaction> findByTag(String tagName, String username) {
+        User u = userService.getUser(username);
+        return u.getTransactions().stream().filter(t -> t.getTag().getTagName().equals(tagName)).toList();
     }
 }
