@@ -1,17 +1,15 @@
 package br.com.project.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
 
 @Entity
@@ -29,13 +27,20 @@ public class Tag implements Serializable {
 	private String tagName;
 
 	@ManyToOne
+	@JoinColumn(name = "USER_ID")
+	@JsonBackReference(value = "user-tag-reference")
 	private User user;
 
+	@OneToMany(mappedBy = "tag")
+	@JsonManagedReference(value = "transaction-tag-reference")
+	private List<FinancialTransaction> transactions = new ArrayList<>();
+
 	public Tag() {
+		this.tagId = UUID.randomUUID();
 	}
 
-	public Tag(UUID tagId, String tagName) {
-		this.tagId = tagId;
+	public Tag(String tagName) {
+		this.tagId = UUID.randomUUID();
 		this.tagName = tagName;
 	}
 
@@ -61,6 +66,10 @@ public class Tag implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public List<FinancialTransaction> getTransactions() {
+		return transactions;
 	}
 
 	@Override
