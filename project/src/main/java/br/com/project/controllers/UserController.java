@@ -26,6 +26,6 @@ public class UserController {
 	@GetMapping("/profile")
 	public ResponseEntity<User> getUser() {
 		String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-		return ResponseEntity.ok(userService.getUser(username));
+		return ResponseEntity.ok(userService.findByUsername(username));
 	}
 }
