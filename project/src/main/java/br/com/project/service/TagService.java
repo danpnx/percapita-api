@@ -1,9 +1,11 @@
 package br.com.project.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -57,5 +59,14 @@ public class TagService {
 			return HttpStatus.ACCEPTED;
 		}
 		return HttpStatus.CONFLICT;
+	}
+
+	public List<Tag> findAllByTagCategory(TagCategory category, Long id) {
+		Optional<User> userOptional = userRepository.findById(id);
+
+		if (userOptional.isEmpty()) {
+			throw new EmptyResultDataAccessException(1);
+		}
+		return tagRepository.findAllByTagCategory(category);
 	}
 }
