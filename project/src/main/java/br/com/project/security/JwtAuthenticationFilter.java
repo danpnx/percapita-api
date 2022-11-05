@@ -1,5 +1,6 @@
 package br.com.project.security;
 
+import br.com.project.exceptions.FailToLoginException;
 import br.com.project.models.UserLogin;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -43,12 +44,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authenticationManager.authenticate(authResult);
 
         } catch(IOException | AuthenticationException e) {
-            throw new RuntimeException("Fail to authenticate!");
+            throw new FailToLoginException("Email e/ou senha inválidos");
         }
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
         String username = ((UserDetails) authResult.getPrincipal()).getUsername();
 
         // criação do token
