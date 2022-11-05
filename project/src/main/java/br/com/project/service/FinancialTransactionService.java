@@ -1,21 +1,22 @@
 package br.com.project.service;
 
 import br.com.project.enums.TransactionCategory;
+import br.com.project.exceptions.BadCredentialsException;
+import br.com.project.exceptions.DatabaseException;
 import br.com.project.models.FinancialTransaction;
 import br.com.project.models.User;
 import br.com.project.repositories.FinancialTransactionRepository;
+import br.com.project.utils.Utilities;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.Month;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -29,94 +30,164 @@ public class FinancialTransactionService {
         this.userService = userService;
     }
 
+    // Retorna uma transação se ela existir e pertencer ao usuário autenticado
+    private FinancialTransaction getFinancialTransaction(UUID id, String username) {
+        try{
+            if(transactionRepository.findById(id).get().getUser().getUsername().equals(username)) {
+                return transactionRepository.findById(id).get();
+            }
+        } catch(EmptyResultDataAccessException | NoSuchElementException e) {
+            throw new DatabaseException("Não foi possível realizar a ação");
+        }
+
+        return null;
+    }
+
     public void registerTransaction(FinancialTransaction transaction, String username) {
-        User u = userService.findByUsername(username).get();
+        if(!Utilities.isGreaterThanZero(transaction.getTransactionValue())) {
+            throw new BadCredentialsException("Digite um valor maior que zero");
+        }
+
+        User u = userService.findByUsername(username);
         transaction.setUser(u);
         transactionRepository.save(transaction);
     }
 
-    public void deleteTransaction(UUID transactionId) {
-        // delete from the user's too
-        transactionRepository.deleteById(transactionId);
+    public HttpStatus deleteTransaction(UUID id, String username) {
+        FinancialTransaction t = getFinancialTransaction(id, username);
+
+        if(t == null) {
+            return HttpStatus.UNAUTHORIZED;
+        }
+        transactionRepository.deleteById(t.getTransaction_id());
+
+        return HttpStatus.OK;
     }
 
     public FinancialTransaction getLastTransaction(String username) throws ParseException {
         int year = LocalDate.now().getYear();
         int month = LocalDate.now().getMonthValue();
-        Date d = DateUtils.parseDate("01/" + month + "/" + year, "dd/MM/yyyy");
-        List<FinancialTransaction> list = findByYearAndMonth(d, username);
-        return list.get(list.size() - 1);
-//        User u = userService.findByUsername(username).get();
-//
-//        if(u.getTransactions().isEmpty()) {
-//            throw new EmptyResultDataAccessException(1);
-//        }
-//
-//        return u.getTransactions().get(u.getTransactions().size() - 1);
+
+        try{
+            Date d = DateUtils.parseDate("01/" + month + "/" + year, "dd/MM/yyyy");
+            List<FinancialTransaction> list = findByYearAndMonth(d, username);
+            return list.get(list.size() - 1);
+        } catch(ParseException e) {
+            throw new ParseException("Digite uma data válida", e.getErrorOffset());
+        }
     }
 
     public List<FinancialTransaction> findAllByCategory(TransactionCategory category, String username) {
-        User u = userService.findByUsername(username).get();
+        User u = userService.findByUsername(username);
 
-        if(u.getTransactions().isEmpty()) {
-            throw new EmptyResultDataAccessException(1);
+        List<FinancialTransaction> list = u.getTransactions().stream().filter(t -> t.getTransactionCategory().equals(category)).toList();
+
+        if(list.isEmpty()) {
+            throw new DatabaseException("Você não possui nenhuma transação com esta categoria");
         }
 
-        return u.getTransactions().stream().filter(t -> t.getTransactionCategory().equals(category)).toList();
+        return list;
     }
 
     public List<FinancialTransaction> getAllTransactions(String username) {
-        User u = userService.findByUsername(username).get();
-        return transactionRepository.findByUser(u);
+        User u = userService.findByUsername(username);
+        List<FinancialTransaction> list = transactionRepository.findByUser(u);
+
+        if(list.isEmpty()) {
+            throw new DatabaseException("Você não possui nenhuma transação registrada");
+        }
+
+        return list;
     }
 
-    public void editValue(BigDecimal value, UUID id) {
-        FinancialTransaction transaction = transactionRepository.findById(id).get();
+    public HttpStatus editValue(BigDecimal value, UUID id, String username) {
+        FinancialTransaction transaction = getFinancialTransaction(id, username);
+
+        if(transaction == null) {
+            return HttpStatus.UNAUTHORIZED;
+        }
+
         transaction.setTransactionValue(value);
         transactionRepository.save(transaction);
+        return HttpStatus.OK;
     }
 
-    public void editCategory(TransactionCategory category, UUID id) {
-        FinancialTransaction transaction = transactionRepository.findById(id).get();
+    public HttpStatus editCategory(TransactionCategory category, UUID id, String username) {
+        FinancialTransaction transaction = getFinancialTransaction(id, username);
+
+        if(transaction == null) {
+            return HttpStatus.FORBIDDEN;
+        }
+
         transaction.setTransactionCategory(category);
         transactionRepository.save(transaction);
+        return HttpStatus.OK;
     }
 
-    public void editDate(Date date, UUID id) {
-        FinancialTransaction transaction = transactionRepository.findById(id).get();
+    public HttpStatus editDate(Date date, UUID id, String username) {
+        FinancialTransaction transaction = getFinancialTransaction(id, username);
+
+        if(transaction == null) {
+            return HttpStatus.UNAUTHORIZED;
+        }
+
         transaction.setTransactionDate(date);
         transactionRepository.save(transaction);
+        return HttpStatus.OK;
     }
 
-    public void editDescription(String description, UUID id) {
-        FinancialTransaction transaction = transactionRepository.findById(id).get();
+    public HttpStatus editDescription(String description, UUID id, String username) {
+        FinancialTransaction transaction = getFinancialTransaction(id, username);
+
+        if(transaction == null) {
+            return HttpStatus.UNAUTHORIZED;
+        }
+
         transaction.setTransactionDescription(description);
         transactionRepository.save(transaction);
+        return HttpStatus.OK;
     }
 
-    public void changeTag(UUID transactionId, String tagName, String username) {
-        User u = userService.findByUsername(username).get();
-        FinancialTransaction transaction = transactionRepository.findById(transactionId).get();
-        transaction.setTag(
-                u.getTags().stream().filter(t -> t.getTagName().equals(tagName)).findFirst().get()
-        );
+    public HttpStatus changeTag(UUID id, String tagName, String username) {
+        User u = userService.findByUsername(username);
 
-        transactionRepository.save(transaction);
+        FinancialTransaction transaction = getFinancialTransaction(id, username);
+
+        if(transaction == null) {
+            return HttpStatus.UNAUTHORIZED;
+        }
+
+        try{
+            transaction.setTag(u.getTags().stream().filter(t -> t.getTagName().equals(tagName)).findFirst().get());
+            transactionRepository.save(transaction);
+            return HttpStatus.OK;
+        }catch(NoSuchElementException e) {
+            throw new DatabaseException("Insira uma tag existente");
+        }
     }
 
     public List<FinancialTransaction> findByTag(String tagName, String username) {
-        User u = userService.getUser(username);
-        return u.getTransactions().stream().filter(t -> t.getTag().getTagName().equals(tagName)).toList();
+        User u = userService.findByUsername(username);
+
+        List<FinancialTransaction> list = u.getTransactions().stream().filter(t -> t.getTag().getTagName().equals(tagName)).toList();
+
+        if(list.isEmpty()) {
+            throw new DatabaseException("Você não possui nenhuma transação registrada com esta tag");
+        }
+
+        return list;
     }
 
     public List<FinancialTransaction> findByYearAndMonth(Date date, String username) {
-        User u = userService.getUser(username);
-        List<FinancialTransaction> list = transactionRepository.findAllByTransactionDate(date);
-        List<FinancialTransaction> l = list.stream().filter(t -> t.getUser().getUsername().equals(username)).toList();
+        List<FinancialTransaction> list = transactionRepository.findAllByTransactionDate(date)
+                .stream()
+                .filter(t -> t.getUser().getUsername().equals(username))
+                .toList();
 
-        if(l.isEmpty()) {
-            throw new EmptyResultDataAccessException(1);
+        if(list.isEmpty()) {
+            throw new DatabaseException("Você não possui nenhuma transação registrada nesta data");
         }
-        return l;
+
+        return list;
     }
 }
