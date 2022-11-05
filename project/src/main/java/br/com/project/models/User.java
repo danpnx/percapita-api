@@ -1,7 +1,13 @@
 package br.com.project.models;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,40 +23,39 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 
 @Entity
 @Table(name = "TB_USER")
 public class User implements Serializable, UserDetails {
 	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "USER_ID", nullable = false)
 	private Long userId;
+
 	@Column(name = "COMPLETE_NAME", nullable = false, length = 60)
 	private String name;
+
 	@Column(name = "USERNAME", nullable = false, unique = true, length = 100)
 	private String username;
+
 	@Column(name = "PASSWORD", nullable = false, length = 200)
 	private String password;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "tagId")
+	@JsonManagedReference(value = "user-tag-reference")
+	private List<Tag> tags = new ArrayList<>();
+
 	@OneToMany(mappedBy = "user")
-	@JsonIgnoreProperties("user")
+	@JsonManagedReference(value = "user-transaction-reference")
 	private List<FinancialTransaction> transactions = new ArrayList<>();
 
-	// token e tokenCreationDate são usados para fins de recuperação de senha
 	@Column(name = "TOKEN")
 	private String token;
+
 	@Column(name = "CREATION_DATE_TOKEN")
 	private LocalDateTime tokenCreationDate;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "tagId")
-	@JsonIgnoreProperties("user")
-	private List<Tag> tag;
 
 	public User() {
 	}
@@ -117,6 +122,14 @@ public class User implements Serializable, UserDetails {
 		this.tokenCreationDate = tokenCreationDate;
 	}
 
+	public List<FinancialTransaction> getTransactions() {
+		return transactions;
+	}
+
+	public List<Tag> getTags() {
+		return tags;
+	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -148,9 +161,5 @@ public class User implements Serializable, UserDetails {
 	@Override
 	public int hashCode() {
 		return Objects.hash(userId);
-	}
-
-	public List<FinancialTransaction> getTransactions() {
-		return transactions;
 	}
 }

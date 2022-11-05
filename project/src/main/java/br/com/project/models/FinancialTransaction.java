@@ -1,8 +1,8 @@
 package br.com.project.models;
 
 import br.com.project.enums.TransactionCategory;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -15,6 +15,7 @@ import java.util.UUID;
 @Entity
 @TableGenerator(name = "TB_FINANCIAL_TRANSACTION")
 public class FinancialTransaction implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,16 +39,21 @@ public class FinancialTransaction implements Serializable {
     private String transactionDescription;
 
     @ManyToOne
-    @JoinTable(name = "USER_ID")
-    @JsonIgnoreProperties("transactions")
+    @JoinColumn(name = "USER_ID")
+    @JsonBackReference(value = "user-transaction-reference")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "TAG_ID")
+    @JsonBackReference(value = "transaction-tag-reference")
+    private Tag tag;
 
     public FinancialTransaction() {
     }
 
     public FinancialTransaction(BigDecimal transactionValue,
                                 TransactionCategory transactionCategory, Date transactionDate,
-                                String transactionDescription, User user) {
+                                String transactionDescription) {
         this.transactionId = UUID.randomUUID();
         this.transactionValue = transactionValue;
         this.transactionCategory = transactionCategory;
@@ -101,6 +107,14 @@ public class FinancialTransaction implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Tag getTag() {
+        return tag;
+    }
+
+    public void setTag(Tag tag) {
+        this.tag = tag;
     }
 
     @Override

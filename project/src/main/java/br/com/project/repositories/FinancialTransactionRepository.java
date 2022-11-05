@@ -1,6 +1,5 @@
 package br.com.project.repositories;
 
-import br.com.project.enums.TransactionCategory;
 import br.com.project.models.FinancialTransaction;
 import br.com.project.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface FinancialTransactionRepository extends JpaRepository<FinancialTransaction, UUID> {
-    List<FinancialTransaction> findByTransactionCategory(TransactionCategory category);
     List<FinancialTransaction> findByUser(User user);
 }

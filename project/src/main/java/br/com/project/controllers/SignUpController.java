@@ -1,4 +1,4 @@
-package br.com.project.controller;
+package br.com.project.controllers;
 
 import br.com.project.models.User;
 import br.com.project.service.UserService;
