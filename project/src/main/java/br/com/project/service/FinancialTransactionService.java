@@ -2,11 +2,8 @@ package br.com.project.service;
 
 import br.com.project.enums.TransactionCategory;
 import br.com.project.models.FinancialTransaction;
-import br.com.project.models.Tag;
 import br.com.project.models.User;
 import br.com.project.repositories.FinancialTransactionRepository;
-import br.com.project.repositories.TagRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -101,5 +98,16 @@ public class FinancialTransactionService {
     public List<FinancialTransaction> findByTag(String tagName, String username) {
         User u = userService.getUser(username);
         return u.getTransactions().stream().filter(t -> t.getTag().getTagName().equals(tagName)).toList();
+    }
+
+    public List<FinancialTransaction> findByYearAndMonth(Date date, String username) {
+        User u = userService.getUser(username);
+        List<FinancialTransaction> list = transactionRepository.findAllByTransactionDate(date);
+        List<FinancialTransaction> l = list.stream().filter(t -> t.getUser().getUsername().equals(username)).toList();
+
+        if(l.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return l;
     }
 }
