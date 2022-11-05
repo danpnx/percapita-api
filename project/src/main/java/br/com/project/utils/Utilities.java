@@ -1,5 +1,8 @@
 package br.com.project.utils;
 
+import br.com.project.enums.TransactionCategory;
+
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -31,4 +34,10 @@ public class Utilities {
 
         return diff.toMinutes() >= EXPIRE_TOKEN_AFTER_MINUTES;
     }
+
+    // Verificar se um valor é menor ou igual a zero
+    public static boolean isGreaterThanZero(BigDecimal value) {
+        return value.compareTo(BigDecimal.ZERO) > 0;
+    }
+
 }
