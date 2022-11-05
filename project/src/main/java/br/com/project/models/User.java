@@ -1,5 +1,6 @@
 package br.com.project.models;
 
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,7 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,7 +29,6 @@ import javax.persistence.Table;
 public class User implements Serializable, UserDetails {
 	private static final long serialVersionUID = 1L;
 
-	// ATRIBUTOS
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "USER_ID", nullable = false)
@@ -39,21 +43,19 @@ public class User implements Serializable, UserDetails {
 	@Column(name = "PASSWORD", nullable = false, length = 200)
 	private String password;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "tagId")
+	@JsonManagedReference(value = "user-tag-reference")
+	private List<Tag> tags = new ArrayList<>();
+
 	@OneToMany(mappedBy = "user")
 	@JsonManagedReference(value = "user-transaction-reference")
 	private List<FinancialTransaction> transactions = new ArrayList<>();
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-	@JsonManagedReference(value = "user-tag-reference")
-	private List<Tag> tags = new ArrayList<>();
 
 	@Column(name = "TOKEN")
 	private String token;
 
 	@Column(name = "CREATION_DATE_TOKEN")
 	private LocalDateTime tokenCreationDate;
-
-	// CONSTRUTORES
 
 	public User() {
 	}
@@ -64,8 +66,6 @@ public class User implements Serializable, UserDetails {
 		this.username = username;
 		this.password = password;
 	}
-
-	// GETTERS AND SETTERS
 
 	public Long getUserId() {
 		return userId;
@@ -149,8 +149,6 @@ public class User implements Serializable, UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-
-	// EQUALS E HASH CODE
 
 	@Override
 	public boolean equals(Object o) {
