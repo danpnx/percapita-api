@@ -4,11 +4,15 @@ import br.com.project.enums.TransactionCategory;
 import br.com.project.models.FinancialTransaction;
 import br.com.project.models.User;
 import br.com.project.repositories.FinancialTransactionRepository;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -36,14 +40,19 @@ public class FinancialTransactionService {
         transactionRepository.deleteById(transactionId);
     }
 
-    public FinancialTransaction getLastTransaction(String username) {
-        User u = userService.findByUsername(username).get();
-
-        if(u.getTransactions().isEmpty()) {
-            throw new EmptyResultDataAccessException(1);
-        }
-
-        return u.getTransactions().get(u.getTransactions().size() - 1);
+    public FinancialTransaction getLastTransaction(String username) throws ParseException {
+        int year = LocalDate.now().getYear();
+        int month = LocalDate.now().getMonthValue();
+        Date d = DateUtils.parseDate("01/" + month + "/" + year, "dd/MM/yyyy");
+        List<FinancialTransaction> list = findByYearAndMonth(d, username);
+        return list.get(list.size() - 1);
+//        User u = userService.findByUsername(username).get();
+//
+//        if(u.getTransactions().isEmpty()) {
+//            throw new EmptyResultDataAccessException(1);
+//        }
+//
+//        return u.getTransactions().get(u.getTransactions().size() - 1);
     }
 
     public List<FinancialTransaction> findAllByCategory(TransactionCategory category, String username) {

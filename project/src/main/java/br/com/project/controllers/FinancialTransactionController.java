@@ -40,7 +40,7 @@ public class FinancialTransactionController {
     }
 
     @GetMapping("/last-transaction")
-    public ResponseEntity<FinancialTransaction> getLastTransaction() {
+    public ResponseEntity<FinancialTransaction> getLastTransaction() throws ParseException {
         String username = getUsername();
         return ResponseEntity.ok(transactionService.getLastTransaction(username));
     }
