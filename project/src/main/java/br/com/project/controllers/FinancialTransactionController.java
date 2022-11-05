@@ -35,7 +35,8 @@ public class FinancialTransactionController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteTransaction(@RequestParam String transactionId) {
-        transactionService.deleteTransaction(UUID.fromString(transactionId));
+        String username = getUsername();
+        transactionService.deleteTransaction(UUID.fromString(transactionId), username);
         return ResponseEntity.noContent().build();
     }
 
@@ -59,39 +60,45 @@ public class FinancialTransactionController {
 
     @PutMapping("/edit/value")
     public ResponseEntity<?> editValue(@RequestParam BigDecimal value, @RequestParam String id) {
-        transactionService.editValue(value, UUID.fromString(id));
-        return ResponseEntity.ok().build();
+        String username = getUsername();
+        return ResponseEntity.status(transactionService.editValue(value, UUID.fromString(id), username)).build();
     }
 
     @PutMapping("/edit/category")
     public ResponseEntity<?> editCategory(@RequestParam String category, @RequestParam String id) {
-        transactionService.editCategory(TransactionCategory.valueOf(category), UUID.fromString(id));
-        return ResponseEntity.ok().build();
+        String username = getUsername();
+        return ResponseEntity.status(transactionService.editCategory(TransactionCategory.valueOf(category), UUID.fromString(id), username)).build();
     }
 
     @PutMapping("/edit/date")
     public ResponseEntity<?> editDate(@RequestParam String date, @RequestParam String id) throws ParseException {
-        // Parse the string to Date with help of Apache Commons DateUtils class
-        Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
+        String username = getUsername();
 
-        transactionService.editDate(d, UUID.fromString(id));
-        return ResponseEntity.ok().build();
+        // Parse the string to Date with help of Apache Commons DateUtils class
+        try{
+            Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
+            return ResponseEntity.status(transactionService.editDate(d, UUID.fromString(id), username)).build();
+        } catch(ParseException e) {
+            throw new ParseException("Digite uma data válida", e.getErrorOffset());
+        }
     }
 
     @PutMapping("/edit/description")
     public ResponseEntity<?> editDescription(@RequestParam String description, @RequestParam String id) {
+        String username = getUsername();
+
         if(description == null || description.equals("")){
-            transactionService.editDescription(null, UUID.fromString(id));
+            return ResponseEntity.status(transactionService.editDescription(null, UUID.fromString(id), username)).build();
         }
-        transactionService.editDescription(description, UUID.fromString(id));
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.status(transactionService.editDescription(description, UUID.fromString(id), username)).build();
     }
 
     @PutMapping("/change-tag")
     public ResponseEntity<?> changeTag(@RequestParam String transactionId, @RequestParam String tagName) {
         String username = getUsername();
-        transactionService.changeTag(UUID.fromString(transactionId), tagName, username);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.status(transactionService.changeTag(UUID.fromString(transactionId), tagName, username)).build();
     }
 
     @GetMapping("/by-tag")
