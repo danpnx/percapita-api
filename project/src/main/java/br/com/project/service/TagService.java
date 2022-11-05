@@ -24,6 +24,7 @@ public class TagService {
 		return tagRepository.existsByTagNameAndUser(tagName, userRepository.findById(userId));
 	}
 
+
 	public HttpStatus registerTag(String tagName, Long userId) {
 		Optional<User> userOptional = userRepository.findById(userId);
 		if (userOptional.isPresent()) {
@@ -56,5 +57,4 @@ public class TagService {
 		}
 		return HttpStatus.CONFLICT;
 	}
-
 }

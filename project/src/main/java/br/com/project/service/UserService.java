@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.project.models.Tag;
 import br.com.project.utils.Utilities;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;

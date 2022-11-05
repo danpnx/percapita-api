@@ -1,4 +1,4 @@
-package br.com.project.controller;
+package br.com.project.controllers;
 
 import java.util.UUID;
 

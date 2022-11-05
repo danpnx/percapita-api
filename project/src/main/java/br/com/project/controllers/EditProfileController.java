@@ -1,4 +1,4 @@
-package br.com.project.controller;
+package br.com.project.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
