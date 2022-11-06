@@ -4,6 +4,7 @@ import br.com.project.enums.TransactionCategory;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.Type;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @TableGenerator(name = "TB_FINANCIAL_TRANSACTION")
-public class FinancialTransaction implements Serializable {
+public class FinancialTransaction extends RepresentationModel<FinancialTransaction> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
