@@ -47,13 +47,19 @@ public class FinancialTransactionController {
     }
 
     @GetMapping("/by-category")
-    public ResponseEntity<List<FinancialTransaction>> getAllByCategory(@RequestParam String category) {
+    public ResponseEntity<List<FinancialTransaction>> getAllByCategory(@RequestParam String category) throws ParseException {
         String username = getUsername();
         return ResponseEntity.ok(transactionService.findAllByCategory(TransactionCategory.valueOf(category), username));
     }
 
+    @GetMapping("/by-id")
+    public ResponseEntity<FinancialTransaction> getTransactionById(@RequestParam String id) throws ParseException {
+        String username = getUsername();
+        return ResponseEntity.ok(transactionService.getTransactionById(UUID.fromString(id), username));
+    }
+
     @GetMapping("/all")
-    public ResponseEntity<List<FinancialTransaction>> getAllTransactions() {
+    public ResponseEntity<List<FinancialTransaction>> getAllTransactions() throws ParseException {
         String username = getUsername();
         return ResponseEntity.ok(transactionService.getAllTransactions(username));
     }
@@ -61,13 +67,15 @@ public class FinancialTransactionController {
     @PutMapping("/edit/value")
     public ResponseEntity<?> editValue(@RequestParam BigDecimal value, @RequestParam String id) {
         String username = getUsername();
-        return ResponseEntity.status(transactionService.editValue(value, UUID.fromString(id), username)).build();
+        transactionService.editValue(value, UUID.fromString(id), username);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/edit/category")
     public ResponseEntity<?> editCategory(@RequestParam String category, @RequestParam String id) {
         String username = getUsername();
-        return ResponseEntity.status(transactionService.editCategory(TransactionCategory.valueOf(category), UUID.fromString(id), username)).build();
+        transactionService.editCategory(TransactionCategory.valueOf(category), UUID.fromString(id), username);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/edit/date")
@@ -77,7 +85,8 @@ public class FinancialTransactionController {
         // Parse the string to Date with help of Apache Commons DateUtils class
         try{
             Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
-            return ResponseEntity.status(transactionService.editDate(d, UUID.fromString(id), username)).build();
+            transactionService.editDate(d, UUID.fromString(id), username);
+            return ResponseEntity.ok().build();
         } catch(ParseException e) {
             throw new ParseException("Digite uma data válida", e.getErrorOffset());
         }
@@ -88,21 +97,23 @@ public class FinancialTransactionController {
         String username = getUsername();
 
         if(description == null || description.equals("")){
-            return ResponseEntity.status(transactionService.editDescription(null, UUID.fromString(id), username)).build();
+            transactionService.editDescription(null, UUID.fromString(id), username);
+            return ResponseEntity.ok().build();
         }
 
-        return ResponseEntity.status(transactionService.editDescription(description, UUID.fromString(id), username)).build();
+        transactionService.editDescription(description, UUID.fromString(id), username);
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/change-tag")
-    public ResponseEntity<?> changeTag(@RequestParam String transactionId, @RequestParam String tagName) {
+    @PutMapping("/edit/tag")
+    public ResponseEntity<?> editTag(@RequestParam String transactionId, @RequestParam String tagName) {
         String username = getUsername();
-
-        return ResponseEntity.status(transactionService.changeTag(UUID.fromString(transactionId), tagName, username)).build();
+        transactionService.changeTag(UUID.fromString(transactionId), tagName, username);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/by-tag")
-    public ResponseEntity<List<FinancialTransaction>> findByTag(@RequestParam String tagName) {
+    public ResponseEntity<List<FinancialTransaction>> findByTag(@RequestParam String tagName) throws ParseException {
         String username = getUsername();
         return ResponseEntity.ok(transactionService.findByTag(tagName, username));
     }
