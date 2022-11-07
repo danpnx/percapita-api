@@ -37,10 +37,6 @@ public class Tag extends RepresentationModel<Tag> implements Serializable {
 
 	@Column(name = "TAG_NAME", nullable = false, length = 25)
 	private String tagName;
-	
-	@Enumerated(value = EnumType.STRING)
-    @Column(name = "TRANSACTION_CATEGORY", nullable = false)
-    private TagCategory tagCategory;
 
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
@@ -52,12 +48,13 @@ public class Tag extends RepresentationModel<Tag> implements Serializable {
 	private List<FinancialTransaction> transactions = new ArrayList<>();
 
 	public Tag() {
-		this.tagId = UUID.randomUUID();
 	}
 
-	public Tag(String tagName) {
-		this.tagId = UUID.randomUUID();
+	public Tag(UUID tagId, String tagName, User user, List<FinancialTransaction> transactions) {
+		this.tagId = tagId;
 		this.tagName = tagName;
+		this.user = user;
+		this.transactions = transactions;
 	}
 
 	public UUID getTagId() {
@@ -74,14 +71,6 @@ public class Tag extends RepresentationModel<Tag> implements Serializable {
 
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
-	}
-	
-	public TagCategory getTagCategory() {
-		return tagCategory;
-	}
-
-	public void setTagCategory(TagCategory tagCategory) {
-		this.tagCategory = tagCategory;
 	}
 
 	public User getUser() {
