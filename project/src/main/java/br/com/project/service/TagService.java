@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import br.com.project.controllers.TagController;
+import br.com.project.exceptions.DatabaseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,9 @@ import br.com.project.models.Tag;
 import br.com.project.models.User;
 import br.com.project.repositories.TagRepository;
 import br.com.project.repositories.UserRepository;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class TagService {
@@ -59,12 +63,13 @@ public class TagService {
 		return HttpStatus.CONFLICT;
 	}
 
-	public List<Tag> findAllTags (Long id) {
+	public List<Tag> findAllTags(Long id) {
 		Optional<User> userOptional = userRepository.findById(id);
 
 		if (userOptional.isEmpty()) {
-			throw new EmptyResultDataAccessException(1);
+			throw new DatabaseException("Este usuário não existe");
 		}
+
 		return tagRepository.findAll();
 	}
 }

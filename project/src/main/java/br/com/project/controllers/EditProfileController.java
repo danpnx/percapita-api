@@ -1,6 +1,7 @@
 package br.com.project.controllers;
 
 import br.com.project.exceptions.BadCredentialsException;
+import br.com.project.exceptions.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class EditProfileController {
 	@PutMapping("/edit-profilePassword")
 	public ResponseEntity<?> editPassword(@RequestParam Long username, String newPassword) {
 		if (!Utilities.validatePassword(newPassword)) {
-			throw new BadCredentialsException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
+			throw new InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
 		}
 		editProfileService.editPassword(username, newPassword);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Senha Alterada com sucesso!");

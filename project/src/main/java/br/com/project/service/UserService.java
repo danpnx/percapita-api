@@ -6,14 +6,12 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import br.com.project.exceptions.DatabaseException;
-import br.com.project.models.Tag;
+import br.com.project.exceptions.InvalidInputException;
 import br.com.project.utils.Utilities;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +64,7 @@ public class UserService implements UserDetailsService {
 	// Method used to update password in reset-password
 	public void updatePassword(String password, User user) {
 		if(!Utilities.validatePassword(password)) {
-			//throw new BadCredetialsException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
+			throw new InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
 		}
 		user.setPassword(encoder.encode(password));
 		userRepository.save(user);
@@ -77,10 +75,6 @@ public class UserService implements UserDetailsService {
 
 		Optional<User> u = userRepository.findByUsername(username);
 
-		if(u.isEmpty()) {
-			throw new UsernameNotFoundException("Falha a realizar o login");
-		}
-
 		return new org.springframework.security.core.userdetails.User(
 				u.get().getUsername(), u.get().getPassword(), u.get().getAuthorities()
 		);
@@ -88,11 +82,7 @@ public class UserService implements UserDetailsService {
 
 	// Method to return a user
 	public User findByUsername(String username) {
-		try{
-			return userRepository.findByUsername(username).get();
-		} catch(NoSuchElementException e) {
-			throw new DatabaseException("Usuário não encontrado");
-		}
+		return userRepository.findByUsername(username).orElseThrow(() -> new DatabaseException("Usuário não encontrado"));
 	}
 
 	// Method used in PasswordRecoveryService
