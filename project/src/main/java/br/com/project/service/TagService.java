@@ -1,6 +1,7 @@
 package br.com.project.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import br.com.project.exceptions.DatabaseException;
 import br.com.project.models.Tag;
 import br.com.project.models.User;
 import br.com.project.repositories.TagRepository;
@@ -22,12 +24,37 @@ public class TagService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public boolean existsByTagNameAndUser(String tagName, Long userId) {
-		return tagRepository.existsByTagNameAndUser(tagName, userRepository.findById(userId));
+	public TagService(TagRepository tagRepository, UserRepository userRepository) {
+		this.tagRepository = tagRepository;
+		this.userRepository = userRepository;
 	}
 
-	public HttpStatus registerTag(String tagName, Long userId) {
-		Optional<User> userOptional = userRepository.findById(userId);
+	public boolean existsByTagNameAndUser(String tagName, String username) {
+		return tagRepository.existsByTagNameAndUser(tagName, userRepository.findByUsername(username));
+	}
+
+	private Tag getTag(UUID tagId, String username) {
+		try {
+			Optional<Tag> optionalTag = tagRepository.findById(tagId);
+
+			if (optionalTag.isEmpty()) {
+				throw new NoSuchElementException();
+			}
+
+			Tag tag = optionalTag.get();
+
+			if (!tag.getUser().getUsername().equals(username)) {
+				throw new EmptyResultDataAccessException(1);
+			}
+
+			return tag;
+		} catch (EmptyResultDataAccessException | NoSuchElementException e) {
+			throw new DatabaseException("Não foi possível realizar a ação");
+		}
+	}
+
+	public HttpStatus registerTag(String tagName, String username) {
+		Optional<User> userOptional = userRepository.findByUsername(username);
 		if (userOptional.isPresent()) {
 			User user = userOptional.get();
 			Tag tag = new Tag();
@@ -40,8 +67,8 @@ public class TagService {
 	}
 
 	public HttpStatus deleteTag(UUID tagId) {
-		Optional<Tag> userOptional = tagRepository.findById(tagId);
-		if (tagId.equals(userOptional.get().getTagId())) {
+		Optional<Tag> tagOptional = tagRepository.findById(tagId);
+		if (tagId.equals(tagOptional.get().getTagId())) {
 			tagRepository.deleteById(tagId);
 			return HttpStatus.ACCEPTED;
 		}
@@ -49,9 +76,9 @@ public class TagService {
 	}
 
 	public HttpStatus editTag(UUID tagId, String newName) {
-		Optional<Tag> userOptional = tagRepository.findById(tagId);
-		if (!newName.equals(userOptional.get().getTagName())) {
-			Tag tag = userOptional.get();
+		Optional<Tag> tagOptional = tagRepository.findById(tagId);
+		if (!newName.equals(tagOptional.get().getTagName())) {
+			Tag tag = tagOptional.get();
 			tag.setTagName(newName);
 			tagRepository.save(tag);
 			return HttpStatus.ACCEPTED;
@@ -59,13 +86,19 @@ public class TagService {
 		return HttpStatus.CONFLICT;
 	}
 
-	public List<Tag> findAllTags (Long id) {
-		Optional<User> userOptional = userRepository.findById(id);
+	public List<Tag> getAllTags(String username) {
+		Optional<User> userOptional = userRepository.findByUsername(username);
 
 		if (userOptional.isEmpty()) {
 			throw new EmptyResultDataAccessException(1);
 		}
-		return tagRepository.findAll();
+		return tagRepository.findAllByUser(userOptional);
 	}
-}
 
+	public Tag getTagById(UUID tagId, String username) {
+		Tag tag = getTag(tagId, username);
+		tagRepository.save(tag);
+		return tag;
+	}
+
+}
