@@ -1,6 +1,5 @@
 package br.com.project.controllers;
 
-import br.com.project.exceptions.BadCredentialsException;
 import br.com.project.exceptions.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

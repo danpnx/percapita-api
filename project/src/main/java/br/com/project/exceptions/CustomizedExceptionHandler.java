@@ -51,19 +51,6 @@ public class CustomizedExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<StandardMessage> badCredentials(BadCredentialsException e, HttpServletRequest request) {
-        StandardMessage message = new StandardMessage(
-                Instant.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                "Erro ao processar o dado",
-                e.getMessage(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.badRequest().body(message);
-    }
-
     @ExceptionHandler(DataNotAvailableException.class)
     public ResponseEntity<StandardMessage> emailNotAvailable(DataNotAvailableException e, HttpServletRequest request) {
         StandardMessage message = new StandardMessage(

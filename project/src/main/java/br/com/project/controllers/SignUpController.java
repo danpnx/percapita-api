@@ -1,6 +1,5 @@
 package br.com.project.controllers;
 
-import br.com.project.exceptions.BadCredentialsException;
 import br.com.project.exceptions.DataNotAvailableException;
 import br.com.project.exceptions.InvalidInputException;
 import br.com.project.models.User;
