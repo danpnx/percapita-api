@@ -22,10 +22,11 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
 
 import br.com.project.enums.TagCategory;
+import org.springframework.hateoas.RepresentationModel;
 
 @Entity
 @Table(name = "TB_TAG")
-public class Tag implements Serializable {
+public class Tag extends RepresentationModel<Tag> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
