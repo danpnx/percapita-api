@@ -1,4 +1,4 @@
-package br.com.project.config;
+package br.com.project.exceptions;
 
 import br.com.project.exceptions.*;
 import br.com.project.models.StandardMessage;
