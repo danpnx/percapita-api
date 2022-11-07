@@ -1,6 +1,7 @@
 package br.com.project.controllers;
 
 import br.com.project.enums.TransactionCategory;
+import br.com.project.exceptions.InvalidInputException;
 import br.com.project.models.FinancialTransaction;
 import br.com.project.service.FinancialTransactionService;
 import org.apache.commons.lang3.time.DateUtils;
@@ -79,16 +80,15 @@ public class FinancialTransactionController {
     }
 
     @PutMapping("/edit/date")
-    public ResponseEntity<?> editDate(@RequestParam String date, @RequestParam String id) throws ParseException {
+    public ResponseEntity<?> editDate(@RequestParam String date, @RequestParam String id) {
         String username = getUsername();
 
-        // Parse the string to Date with help of Apache Commons DateUtils class
         try{
             Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
             transactionService.editDate(d, UUID.fromString(id), username);
             return ResponseEntity.ok().build();
         } catch(ParseException e) {
-            throw new ParseException("Digite uma data válida", e.getErrorOffset());
+            throw new InvalidInputException("Não foi possível converter a data");
         }
     }
 
@@ -119,10 +119,14 @@ public class FinancialTransactionController {
     }
 
     @GetMapping("/by-year-month")
-    public ResponseEntity<List<FinancialTransaction>> findByYearAndMonth(@RequestParam String date) throws ParseException {
+    public ResponseEntity<List<FinancialTransaction>> findByYearAndMonth(@RequestParam String date) {
         String username = getUsername();
-        Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
-        return ResponseEntity.ok(transactionService.findByYearAndMonth(d, username));
+        try{
+            Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
+            return ResponseEntity.ok(transactionService.findByYearAndMonth(d, username));
+        } catch(ParseException e) {
+            throw new InvalidInputException("Não foi possível converter a data");
+        }
     }
 
     private String getUsername() {
