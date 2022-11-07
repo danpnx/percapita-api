@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +29,12 @@ public class TagController {
 	private TagService tagService;
 
 	@PostMapping("/create")
-	public ResponseEntity<?> createTag(@RequestBody String tagName, Long userId) {
-		if (tagService.existsByTagNameAndUser(tagName, userId)) {
+	public ResponseEntity<?> createTag(@RequestBody String tagName) {
+		String username = getUsername();
+		if (tagService.existsByTagNameAndUser(tagName, username)) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe uma tag com este nome.");
 		}
-		tagService.registerTag(tagName, userId);
+		tagService.registerTag(tagName, username);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Tag " + tagName + " criada!");
 	}
 
@@ -49,7 +51,18 @@ public class TagController {
 	}
 	
 	@GetMapping("/all")
-	public ResponseEntity<List<Tag>> getAllByCategory(@RequestParam Long id) {
-		return ResponseEntity.ok(tagService.findAllTags(id));
+	public ResponseEntity<List<Tag>> getAll() {
+		String username = getUsername();
+		return ResponseEntity.ok(tagService.getAllTags(username));
 	}
+	
+	@GetMapping("/by-id")
+	public ResponseEntity<Tag> getTagById(@RequestParam String tagId) {
+        String username = getUsername();
+        return ResponseEntity.ok(tagService.getTagById(UUID.fromString(tagId), username));
+	}
+	
+	private String getUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+    }
 }
