@@ -9,7 +9,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import br.com.project.enums.TagCategory;
 import br.com.project.models.Tag;
 import br.com.project.models.User;
 import br.com.project.repositories.TagRepository;
@@ -27,14 +26,13 @@ public class TagService {
 		return tagRepository.existsByTagNameAndUser(tagName, userRepository.findById(userId));
 	}
 
-	public HttpStatus registerTag(String tagName, Long userId, TagCategory tagCategory) {
+	public HttpStatus registerTag(String tagName, Long userId) {
 		Optional<User> userOptional = userRepository.findById(userId);
 		if (userOptional.isPresent()) {
 			User user = userOptional.get();
 			Tag tag = new Tag();
 			tag.setTagName(tagName);
 			tag.setUser(user);
-			tag.setTagCategory(tagCategory);
 			tagRepository.save(tag);
 			return HttpStatus.ACCEPTED;
 		}
@@ -61,12 +59,13 @@ public class TagService {
 		return HttpStatus.CONFLICT;
 	}
 
-	public List<Tag> findAllByTagCategory(TagCategory category, Long id) {
+	public List<Tag> findAllTags (Long id) {
 		Optional<User> userOptional = userRepository.findById(id);
 
 		if (userOptional.isEmpty()) {
 			throw new EmptyResultDataAccessException(1);
 		}
-		return tagRepository.findAllByTagCategory(category);
+		return tagRepository.findAll();
 	}
 }
+
