@@ -16,8 +16,8 @@ public class EditProfileService {
 	@Autowired
 	UserRepository userRepository;
 	
-	public HttpStatus editName(Long username, String newName) {
-		Optional<User> userOptional = userRepository.findById(username);
+	public HttpStatus editName(String username, String newName) {
+		Optional<User> userOptional = userRepository.findByUsername(username);
 		if(username != null) {
 			User user = userOptional.get();
 			user.setName(newName);
@@ -27,8 +27,8 @@ public class EditProfileService {
 		return HttpStatus.BAD_REQUEST;
 	}
 	
-	public HttpStatus editPassword(Long username, String newPassword) {
-		Optional<User> userOptional = userRepository.findById(username);
+	public HttpStatus editPassword(String username, String newPassword) {
+		Optional<User> userOptional = userRepository.findByUsername(username);
 		if(username != null) {
 			User user = userOptional.get();
 			user.setPassword(newPassword);
