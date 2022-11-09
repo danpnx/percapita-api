@@ -196,26 +196,31 @@ Retorna todos os registros financeiros por categoria do registro.
 
 + Response 200 (application/json) - OK
 
-  
+```
+[
+    {
+        "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
+        "transactionValue": 65.00,
+        "transactionCategory": "PAYMENT",
+        "transactionDate": "25/10/2022",
+        "transactionDescription": "comida",
+        "links": [
+            {...}
+         ]
+    },
+    {
+        "transactionId": "7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a",
+        "transactionValue": 45.00,
+        "transactionCategory": "PAYMENT",
+        "transactionDate": "25/10/2022",
+        "transactionDescription": "lanche mcdonalds",
+        "links": [
+            {...}
+        ]
+    }
+]
+```
 
-	[
-		{
-	    "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
-	    "transactionValue": 65.00,
-	    "transactionCategory": "PAYMENT",
-	    "transactionDate": "25/10/2022",
-	    "transactionDescription": "comida",
-	    "links": [...]
-		},
-		{
-	    "transactionId": "7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a",
-	    "transactionValue": 45.00,
-	    "transactionCategory": "PAYMENT",
-	    "transactionDate": "25/10/2022",
-	    "transactionDescription": "lanche mcdonalds",
-	    "links": [...]
-		}
-	]
 
 
 + Response 404 (application/json) - Not Found
@@ -558,38 +563,88 @@ Retorna todas as tags criadas pelo usuário.
 
 + Response 200 (application/json) - OK
 
-	[
-		{
-	    	"tagId": "11cbc083-c0fb-4eb2-85a5-4474c399a0da",
-	    	"tagName": "salario",
-	    	"transactions": [],
-	    	"links": [...]
-		},
-		{
-	    	"tagId": "38b033b0-e9bc-49fe-8634-cd420f78fc6b",
-	    	"tagName": "internet",
-	    	"transactions": [],
-	    	"links": [...]
-		},
-		{
-	    	"tagId": "78ec79d2-cb27-4b6f-b81e-514dbc2862ce",
-	    	"tagName": "mercado",
-	    	"transactions": [...],
-	    	"links": [...]
-		},
-		{
-	    	"tagId": "f25b32f3-f271-4b40-9164-c83f0d11afef",
-	    	"tagName": "pix recebido",
-	    	"transactions": [],
-	    	"links": [...]
-		},
-		{
-	    	"tagId": "fae49773-7d57-482a-9dbb-ab521d1500ae",
-	    	"tagName": "aluguel",
-	    	"transactions": [...],
-	    	"links": [...]
-		}
-	]
+```
+[
+    {
+        "tagId": "11cbc083-c0fb-4eb2-85a5-4474c399a0da",
+        "tagName": "salario",
+        "transactions": [
+            {
+                "transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
+                "transactionValue": 1000.00,
+                "transactionCategory": "RECEIPT",
+                "transactionDate": "22/10/2022",
+                "transactionDescription": null,
+                "links": []
+            }
+        ],
+        "links": [
+            {...}
+        ]
+    },
+    {
+        "tagId": "247f3f82-5c10-4498-a9d9-1b34316b029f",
+        "tagName": "equatorial",
+        "transactions": [],
+        "links": [
+            {...}
+        ]
+    },
+    {
+        "tagId": "38b033b0-e9bc-49fe-8634-cd420f78fc6b",
+        "tagName": "internet",
+        "transactions": [],
+        "links": [
+            {...}
+        ]
+    },
+    {
+        "tagId": "78ec79d2-cb27-4b6f-b81e-514dbc2862ce",
+        "tagName": "mercado",
+        "transactions": [
+            {
+                "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
+                "transactionValue": 65.00,
+                "transactionCategory": "PAYMENT",
+                "transactionDate": "25/10/2022",
+                "transactionDescription": "comida",
+                "links": []
+            },
+            {
+                "transactionId": "7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a",
+                "transactionValue": 45.00,
+                "transactionCategory": "PAYMENT",
+                "transactionDate": "25/10/2022",
+                "transactionDescription": "lanche mcdonalds",
+                "links": []
+            }
+        ],
+        "links": [
+            {...}
+        ]
+    },
+    {
+        "tagId": "fae49773-7d57-482a-9dbb-ab521d1500ae",
+        "tagName": "aluguel",
+        "transactions": [
+            {
+                "transactionId": "5c2e9481-aa3f-4438-a26d-8e1ec50eb721",
+                "transactionValue": 400.00,
+                "transactionCategory": "PAYMENT",
+                "transactionDate": "05/11/2022",
+                "transactionDescription": "casa",
+                "links": []
+            }
+        ],
+        "links": [
+            {...}
+        ]
+    }
+]
+```
+
+
+
 ### GET [/tag/by-id]
 
 Retorna todas as tags criadas pelo usuário por id.
