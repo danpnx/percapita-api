@@ -112,20 +112,6 @@ public class FinancialTransactionService {
         return list;
     }
 
-    public List<FinancialTransaction> findByYearAndMonth(Date date, String username) throws ParseException {
-        User u = userService.findByUsername(username);
-
-        List<FinancialTransaction> list = transactionRepository.findAllByTransactionDateAndUser(date, u);
-
-        if(list.isEmpty()) {
-            throw new ResourceNotFoundException("Você não possui nenhuma transação registrada neste mês");
-        }
-
-        addLinksInList(list);
-
-        return list;
-    }
-
 //    public FinancialTransaction getLastTransaction(String username) {
 //        int year = LocalDate.now().getYear();
 //        int month = LocalDate.now().getMonthValue();
@@ -234,5 +220,10 @@ public class FinancialTransactionService {
 
             transactionRepository.save(t);
         }
+    }
+
+    // Método usado em ReportService
+    public List<FinancialTransaction> findByDateAndUser(Date date, User user) {
+        return transactionRepository.findAllByTransactionDateAndUser(date, user);
     }
 }
