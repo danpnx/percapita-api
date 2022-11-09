@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 import br.com.project.models.User;
 import br.com.project.repositories.UserRepository;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class EditProfileService {
 	
 	@Autowired

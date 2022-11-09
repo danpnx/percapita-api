@@ -8,11 +8,9 @@ import java.util.UUID;
 import br.com.project.controllers.TagController;
 import br.com.project.exceptions.DataNotAvailableException;
 import br.com.project.exceptions.DatabaseException;
-import br.com.project.exceptions.InvalidInputException;
 import br.com.project.exceptions.ResourceNotFoundException;
 import br.com.project.models.FinancialTransaction;
 import br.com.project.repositories.FinancialTransactionRepository;
-import br.com.project.utils.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -23,10 +21,13 @@ import br.com.project.models.User;
 import br.com.project.repositories.TagRepository;
 import br.com.project.repositories.UserRepository;
 
+import javax.transaction.Transactional;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
+@Transactional
 public class TagService {
 
 	@Autowired
