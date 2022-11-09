@@ -141,17 +141,6 @@ public class FinancialTransactionController {
         }
     }
 
-    @GetMapping("/by-year-month")
-    public ResponseEntity<List<FinancialTransaction>> findByYearAndMonth(@RequestParam String date) {
-        String username = getUsername();
-        try{
-            Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
-            return ResponseEntity.ok(transactionService.findByYearAndMonth(d, username));
-        } catch(ParseException e) {
-            throw new InvalidInputException("Não foi possível converter a data");
-        }
-    }
-
     private String getUsername() {
         return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     }
