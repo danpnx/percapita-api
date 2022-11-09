@@ -13,9 +13,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenApi() {
         return new OpenAPI().info(
                 new Info()
-                        .title("Nome-do-aplicativo API RESTful")
-                        .version("v1")
-                        .description("API Restful funcional do aplicativo Nome-do-aplicativo")
+                        .title("PerCapita API RESTful")
+                        .version("v1.0.0")
+                        .description("API Restful funcional do aplicativo PerCapita, seu ajudante de controle financeiro pessoal.")
                         .termsOfService("https://github.com/danpnx/projeto-integrador-dh")
                         .license(
                                 new License()
@@ -24,8 +24,9 @@ public class OpenApiConfig {
                         )
                         .contact(
                                 new Contact()
-                                        .name("Nome-do-aplicativo")
+                                        .name("PerCapita")
                                         .email("anderson.c-10@hotmail.com")
+                                        .email("saviachristine@gmail.com")
                                         .url("https://github.com/danpnx/projeto-integrador-dh")
                         )
                         .summary(

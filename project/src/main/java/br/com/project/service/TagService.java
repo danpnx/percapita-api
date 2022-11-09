@@ -10,7 +10,7 @@ import br.com.project.exceptions.DataNotAvailableException;
 import br.com.project.exceptions.DatabaseException;
 import br.com.project.exceptions.InvalidInputException;
 import br.com.project.exceptions.ResourceNotFoundException;
-import br.com.project.models.FinancialTransaction;
+import br.com.project.models.FinancialRecord;
 import br.com.project.repositories.FinancialTransactionRepository;
 import br.com.project.utils.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +113,7 @@ public class TagService {
 			tagRepository.save(tagTemp);
 		}
 
-		for(FinancialTransaction t: tag.getTransactions()) {
+		for(FinancialRecord t: tag.getTransactions()) {
 			t.setTag(tagRepository.findByTagNameAndUser("Unknown", u));
 			transactionRepository.save(t);
 		}

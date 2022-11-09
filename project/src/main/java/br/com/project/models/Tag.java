@@ -43,7 +43,7 @@ public class Tag extends RepresentationModel<Tag> implements Serializable {
 
 	@OneToMany(mappedBy = "tag")
 	@JsonManagedReference(value = "transaction-tag-reference")
-	private List<FinancialTransaction> transactions = new ArrayList<>();
+	private List<FinancialRecord> transactions = new ArrayList<>();
 
 	public Tag() {
 	}
@@ -78,7 +78,7 @@ public class Tag extends RepresentationModel<Tag> implements Serializable {
 		this.user = user;
 	}
 
-	public List<FinancialTransaction> getTransactions() {
+	public List<FinancialRecord> getTransactions() {
 		return transactions;
 	}
 

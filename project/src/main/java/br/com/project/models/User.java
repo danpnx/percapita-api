@@ -38,7 +38,7 @@ public class User implements Serializable, UserDetails {
 
 	@OneToMany(mappedBy = "user")
 	@JsonManagedReference(value = "user-transaction-reference")
-	private List<FinancialTransaction> transactions = new ArrayList<>();
+	private List<FinancialRecord> transactions = new ArrayList<>();
 
 	@Column(name = "TOKEN")
 	private String token;
@@ -111,7 +111,7 @@ public class User implements Serializable, UserDetails {
 		this.tokenCreationDate = tokenCreationDate;
 	}
 
-	public List<FinancialTransaction> getTransactions() {
+	public List<FinancialRecord> getTransactions() {
 		return transactions;
 	}
 

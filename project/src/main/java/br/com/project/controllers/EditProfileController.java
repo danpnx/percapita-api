@@ -19,7 +19,7 @@ public class EditProfileController {
 	@Autowired
 	EditProfileService editProfileService;
 
-	@PutMapping("/edit-profilePassword")
+	@PutMapping("/edit-Password")
 	public ResponseEntity<?> editPassword(String newPassword) {
 		String username = getUsername();
 		if (!Utilities.validatePassword(newPassword)) {

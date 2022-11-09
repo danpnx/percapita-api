@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @TableGenerator(name = "TB_FINANCIAL_TRANSACTION")
-public class FinancialTransaction extends RepresentationModel<FinancialTransaction> implements Serializable {
+public class FinancialRecord extends RepresentationModel<FinancialRecord> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -49,10 +49,10 @@ public class FinancialTransaction extends RepresentationModel<FinancialTransacti
     @JsonBackReference(value = "transaction-tag-reference")
     private Tag tag;
 
-    public FinancialTransaction() {
+    public FinancialRecord() {
     }
 
-    public FinancialTransaction(BigDecimal transactionValue,
+    public FinancialRecord(BigDecimal transactionValue,
                                 TransactionCategory transactionCategory, Date transactionDate,
                                 String transactionDescription) {
         this.transactionId = UUID.randomUUID();
@@ -122,7 +122,7 @@ public class FinancialTransaction extends RepresentationModel<FinancialTransacti
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FinancialTransaction that = (FinancialTransaction) o;
+        FinancialRecord that = (FinancialRecord) o;
         return transactionId.equals(that.transactionId) &&
                 transactionValue.equals(that.transactionValue) &&
                 transactionCategory == that.transactionCategory &&

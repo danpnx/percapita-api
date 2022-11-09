@@ -2,8 +2,8 @@ package br.com.project.controllers;
 
 import br.com.project.enums.TransactionCategory;
 import br.com.project.exceptions.InvalidInputException;
-import br.com.project.models.FinancialTransaction;
-import br.com.project.service.FinancialTransactionService;
+import br.com.project.models.FinancialRecord;
+import br.com.project.service.FinancialRecordService;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +18,17 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/transaction")
-public class FinancialTransactionController {
+@RequestMapping("/record")
+public class FinancialRecordController {
 
-    private final FinancialTransactionService transactionService;
+    private final FinancialRecordService transactionService;
 
-    public FinancialTransactionController(FinancialTransactionService transactionService) {
+    public FinancialRecordController(FinancialRecordService transactionService) {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerTransaction(@RequestBody @Valid FinancialTransaction transaction, @RequestParam String tagName) {
+    @PostMapping("/add")
+    public ResponseEntity<?> registerTransaction(@RequestBody @Valid FinancialRecord transaction, @RequestParam String tagName) {
         String username = getUsername();
         transactionService.registerTransaction(transaction, username, tagName);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -49,7 +49,7 @@ public class FinancialTransactionController {
 //    }
 
     @GetMapping("/by-category")
-    public ResponseEntity<List<FinancialTransaction>> getAllByCategory(@RequestParam String category, @RequestParam String date) {
+    public ResponseEntity<List<FinancialRecord>> getAllByCategory(@RequestParam String category, @RequestParam String date) {
         String username = getUsername();
 
         try{
@@ -61,14 +61,14 @@ public class FinancialTransactionController {
     }
 
     @GetMapping("/by-id")
-    public ResponseEntity<FinancialTransaction> getTransactionById(@RequestParam String id) {
+    public ResponseEntity<FinancialRecord> getTransactionById(@RequestParam String id) {
         String username = getUsername();
 
         return ResponseEntity.ok(transactionService.getTransactionById(UUID.fromString(id), username));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<FinancialTransaction>> getAllTransactions(@RequestParam String date) {
+    public ResponseEntity<List<FinancialRecord>> getAllTransactions(@RequestParam String date) {
         String username = getUsername();
 
         try{
@@ -130,7 +130,7 @@ public class FinancialTransactionController {
     }
 
     @GetMapping("/by-tag")
-    public ResponseEntity<List<FinancialTransaction>> findByTag(@RequestParam String tagName, @RequestParam String date) {
+    public ResponseEntity<List<FinancialRecord>> findByTag(@RequestParam String tagName, @RequestParam String date) {
         String username = getUsername();
 
         try{
@@ -142,7 +142,7 @@ public class FinancialTransactionController {
     }
 
     @GetMapping("/by-year-month")
-    public ResponseEntity<List<FinancialTransaction>> findByYearAndMonth(@RequestParam String date) {
+    public ResponseEntity<List<FinancialRecord>> findByYearAndMonth(@RequestParam String date) {
         String username = getUsername();
         try{
             Date d = DateUtils.parseDate(date, "dd/MM/yyyy");

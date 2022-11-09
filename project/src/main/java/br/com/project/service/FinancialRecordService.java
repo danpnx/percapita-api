@@ -1,9 +1,9 @@
 package br.com.project.service;
 
-import br.com.project.controllers.FinancialTransactionController;
+import br.com.project.controllers.FinancialRecordController;
 import br.com.project.enums.TransactionCategory;
 import br.com.project.exceptions.*;
-import br.com.project.models.FinancialTransaction;
+import br.com.project.models.FinancialRecord;
 import br.com.project.models.Tag;
 import br.com.project.models.User;
 import br.com.project.repositories.FinancialTransactionRepository;
@@ -21,19 +21,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 @Transactional
-public class FinancialTransactionService {
+public class FinancialRecordService {
 
     private final FinancialTransactionRepository transactionRepository;
     private final UserService userService;
     private final TagService tagService;
 
-    public FinancialTransactionService(FinancialTransactionRepository transactionRepository, UserService userService, TagService tagService) {
+    public FinancialRecordService(FinancialTransactionRepository transactionRepository, UserService userService, TagService tagService) {
         this.transactionRepository = transactionRepository;
         this.userService = userService;
         this.tagService = tagService;
     }
 
-    public void registerTransaction(FinancialTransaction transaction, String username, String tagName) {
+    public void registerTransaction(FinancialRecord transaction, String username, String tagName) {
         if(!Utilities.isGreaterThanZero(transaction.getTransactionValue())) {
             throw new InvalidInputException("Digite um valor maior que zero");
         }
@@ -52,25 +52,25 @@ public class FinancialTransactionService {
     }
 
     public void deleteTransaction(UUID id, String username) {
-        FinancialTransaction transaction = getTransaction(id, username);
+        FinancialRecord transaction = getTransaction(id, username);
         transactionRepository.deleteById(transaction.getTransactionId());
     }
 
-    public FinancialTransaction getTransactionById(UUID id, String username) {
-        FinancialTransaction transaction = getTransaction(id, username);
+    public FinancialRecord getTransactionById(UUID id, String username) {
+        FinancialRecord transaction = getTransaction(id, username);
 
         String date = new SimpleDateFormat("dd/MM/yyyy").format(transaction.getTransactionDate());
 
-        transaction.add(linkTo(methodOn(FinancialTransactionController.class).getAllTransactions(date)).withRel("Transações financeiras"));
+        transaction.add(linkTo(methodOn(FinancialRecordController.class).getAllTransactions(date)).withRel("Transações financeiras"));
 
         transactionRepository.save(transaction);
         return transaction;
     }
 
-    public List<FinancialTransaction> findAllByCategory(TransactionCategory category, Date date, String username) throws ParseException {
+    public List<FinancialRecord> findAllByCategory(TransactionCategory category, Date date, String username) throws ParseException {
         User u = userService.findByUsername(username);
 
-        List<FinancialTransaction> list = transactionRepository.findAllByTransactionCategoryAndTransactionDateAndUser(category, date, u);
+        List<FinancialRecord> list = transactionRepository.findAllByTransactionCategoryAndTransactionDateAndUser(category, date, u);
 
         if(list.isEmpty()) {
             throw new ResourceNotFoundException("Você não possui nenhuma transação registrada com esta categoria");
@@ -80,9 +80,9 @@ public class FinancialTransactionService {
         return list;
     }
 
-    public List<FinancialTransaction> getAllTransactions(String username, Date date) throws ParseException {
+    public List<FinancialRecord> getAllTransactions(String username, Date date) throws ParseException {
         User u = userService.findByUsername(username);
-        List<FinancialTransaction> list = transactionRepository.findAllByTransactionDateAndUser(date, u);
+        List<FinancialRecord> list = transactionRepository.findAllByTransactionDateAndUser(date, u);
 
         if(list.isEmpty()) {
             throw new ResourceNotFoundException("Você não possui nenhuma transação registrada neste mês");
@@ -93,7 +93,7 @@ public class FinancialTransactionService {
         return list;
     }
 
-    public List<FinancialTransaction> findByTag(String tagName, String username, Date date) throws ParseException {
+    public List<FinancialRecord> findByTag(String tagName, String username, Date date) throws ParseException {
         if(!tagService.existsByTagNameAndUser(tagName, username)) {
             throw new DatabaseException("Essa tag não existe");
         }
@@ -101,7 +101,7 @@ public class FinancialTransactionService {
         User u = userService.findByUsername(username);
 
         Tag t = tagService.getTagByTagNameAndUser(tagName, u);
-        List<FinancialTransaction> list = transactionRepository.findAllByTagAndTransactionDateAndUser(t, date, u);
+        List<FinancialRecord> list = transactionRepository.findAllByTagAndTransactionDateAndUser(t, date, u);
 
         if(list.isEmpty()) {
             throw new ResourceNotFoundException("Você não possui nenhuma transação registrada com esta tag");
@@ -112,10 +112,10 @@ public class FinancialTransactionService {
         return list;
     }
 
-    public List<FinancialTransaction> findByYearAndMonth(Date date, String username) throws ParseException {
+    public List<FinancialRecord> findByYearAndMonth(Date date, String username) throws ParseException {
         User u = userService.findByUsername(username);
 
-        List<FinancialTransaction> list = transactionRepository.findAllByTransactionDateAndUser(date, u);
+        List<FinancialRecord> list = transactionRepository.findAllByTransactionDateAndUser(date, u);
 
         if(list.isEmpty()) {
             throw new ResourceNotFoundException("Você não possui nenhuma transação registrada neste mês");
@@ -156,26 +156,26 @@ public class FinancialTransactionService {
             throw new InvalidInputException("Digite um valor maior que zero");
         }
 
-        FinancialTransaction transaction = getTransaction(id, username);
+        FinancialRecord transaction = getTransaction(id, username);
 
         transaction.setTransactionValue(value);
         transactionRepository.save(transaction);
     }
 
     public void editCategory(TransactionCategory category, UUID id, String username) {
-        FinancialTransaction transaction = getTransaction(id, username);
+        FinancialRecord transaction = getTransaction(id, username);
         transaction.setTransactionCategory(category);
         transactionRepository.save(transaction);
     }
 
     public void editDate(Date date, UUID id, String username) {
-        FinancialTransaction transaction = getTransaction(id, username);
+        FinancialRecord transaction = getTransaction(id, username);
         transaction.setTransactionDate(date);
         transactionRepository.save(transaction);
     }
 
     public void editDescription(String description, UUID id, String username) {
-        FinancialTransaction transaction = getTransaction(id, username);
+        FinancialRecord transaction = getTransaction(id, username);
         transaction.setTransactionDescription(description);
         transactionRepository.save(transaction);
     }
@@ -185,7 +185,7 @@ public class FinancialTransactionService {
             throw new InvalidInputException("O nome da tag não deve exceder 25 caracteres");
         }
 
-        FinancialTransaction transaction = getTransaction(id, username);
+        FinancialRecord transaction = getTransaction(id, username);
         User u = userService.findByUsername(username);
 
         transaction.setTag(
@@ -198,8 +198,8 @@ public class FinancialTransactionService {
     }
 
     // Método privado para retornar uma transação financeira do usuario autenticado
-    private FinancialTransaction getTransaction(UUID id, String username) {
-        FinancialTransaction transaction = transactionRepository.findById(id)
+    private FinancialRecord getTransaction(UUID id, String username) {
+        FinancialRecord transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("O recurso buscado não existe"));
 
         if(!transaction.getUser().getUsername().equals(username)) {
@@ -209,27 +209,27 @@ public class FinancialTransactionService {
         return transaction;
     }
 
-    private void addLinksInList(List<FinancialTransaction> list) {
-        for(FinancialTransaction t: list) {
-            t.add(linkTo(methodOn(FinancialTransactionController.class)
+    private void addLinksInList(List<FinancialRecord> list) {
+        for(FinancialRecord t: list) {
+            t.add(linkTo(methodOn(FinancialRecordController.class)
                     .getTransactionById(t.getTransactionId().toString())).withSelfRel());
 
-            t.add(linkTo(methodOn(FinancialTransactionController.class)
+            t.add(linkTo(methodOn(FinancialRecordController.class)
                     .deleteTransaction(t.getTransactionId().toString())).withSelfRel());
 
-            t.add(linkTo(methodOn(FinancialTransactionController.class)
+            t.add(linkTo(methodOn(FinancialRecordController.class)
                     .editValue(null, t.getTransactionId().toString())).withSelfRel());
 
-            t.add(linkTo(methodOn(FinancialTransactionController.class)
+            t.add(linkTo(methodOn(FinancialRecordController.class)
                     .editCategory(null, t.getTransactionId().toString())).withSelfRel());
 
-            t.add(linkTo(methodOn(FinancialTransactionController.class)
+            t.add(linkTo(methodOn(FinancialRecordController.class)
                     .editDate(null, t.getTransactionId().toString())).withSelfRel());
 
-            t.add(linkTo(methodOn(FinancialTransactionController.class)
+            t.add(linkTo(methodOn(FinancialRecordController.class)
                     .editDescription(null, t.getTransactionId().toString())).withSelfRel());
 
-            t.add(linkTo(methodOn(FinancialTransactionController.class)
+            t.add(linkTo(methodOn(FinancialRecordController.class)
                     .editTag(t.getTransactionId().toString(), null)).withSelfRel());
 
             transactionRepository.save(t);
