@@ -48,11 +48,10 @@ public class Tag extends RepresentationModel<Tag> implements Serializable {
 	public Tag() {
 	}
 
-	public Tag(UUID tagId, String tagName, User user, List<FinancialTransaction> transactions) {
-		this.tagId = tagId;
+	public Tag(String tagName, User user) {
+		this.tagId = UUID.randomUUID();
 		this.tagName = tagName;
 		this.user = user;
-		this.transactions = transactions;
 	}
 
 	public UUID getTagId() {
