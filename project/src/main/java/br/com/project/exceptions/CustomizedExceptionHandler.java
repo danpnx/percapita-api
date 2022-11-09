@@ -1,6 +1,5 @@
-package br.com.project.config;
+package br.com.project.exceptions;
 
-import br.com.project.exceptions.*;
 import br.com.project.models.StandardMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,25 +12,51 @@ import java.time.Instant;
 @ControllerAdvice
 public class CustomizedExceptionHandler {
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<StandardMessage> badCredentials(BadCredentialsException e, HttpServletRequest request) {
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<StandardMessage> authorizationException(AuthorizationException e, HttpServletRequest request) {
         StandardMessage message = new StandardMessage(
                 Instant.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                "Erro ao processar o dado",
+                HttpStatus.FORBIDDEN.value(),
+                "Usuário não autorizado a acessar endpoint",
                 e.getMessage(),
                 request.getRequestURI()
         );
 
-        return ResponseEntity.badRequest().body(message);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<StandardMessage> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
+        StandardMessage message = new StandardMessage(
+                Instant.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Recurso não encontrado no banco de dados",
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<StandardMessage> invalidInput(InvalidInputException e, HttpServletRequest request) {
+        StandardMessage message = new StandardMessage(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Campo inválido",
+                e.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 
     @ExceptionHandler(DataNotAvailableException.class)
-    public ResponseEntity<StandardMessage> emailNotAvailable(DataNotAvailableException e, HttpServletRequest request) {
+    public ResponseEntity<StandardMessage> dataNotAvailable(DataNotAvailableException e, HttpServletRequest request) {
         StandardMessage message = new StandardMessage(
                 Instant.now(),
                 HttpStatus.CONFLICT.value(),
-                "Não foi possível realizar o cadastro",
+                "Não foi possível finalizar a ação",
                 e.getMessage(),
                 request.getRequestURI()
         );

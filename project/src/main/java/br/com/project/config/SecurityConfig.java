@@ -1,5 +1,7 @@
-package br.com.project.security;
+package br.com.project.config;
 
+import br.com.project.security.JwtAuthenticationFilter;
+import br.com.project.security.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

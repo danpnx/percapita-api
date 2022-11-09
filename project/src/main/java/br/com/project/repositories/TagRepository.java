@@ -12,8 +12,7 @@ import br.com.project.models.User;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, UUID> {
-
-	public Optional<Tag> findByTagName(String name);
-	public boolean existsByTagNameAndUser(String tagName, Optional<User> findById);
-	public List<Tag> findAllByUser(Optional<User> findById);
+	boolean existsByTagNameContainingIgnoreCaseAndUser(String tagName, User user);
+	List<Tag> findAllByUser(Optional<User> findById);
+	Tag findByTagNameAndUser(String tagName, User user);
 }

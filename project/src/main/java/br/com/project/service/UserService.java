@@ -2,18 +2,15 @@ package br.com.project.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import br.com.project.exceptions.DatabaseException;
-import br.com.project.models.Tag;
+import br.com.project.exceptions.InvalidInputException;
 import br.com.project.utils.Utilities;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,14 +42,39 @@ public class UserService implements UserDetailsService {
 	
 	public HttpStatus register(User user) {
 
-		// Senha inválida
-		if(!Utilities.validatePassword(user.getPassword())) {
+		// Validando email
+		if(existsByUsername(user.getUsername())) {
+			return HttpStatus.CONFLICT;
+		}
+
+		if(user.getUsername() == null || user.getUsername().equals("")) {
+			throw new InvalidInputException("Digite um email válido");
+		}
+
+		if(Utilities.isExceedingUsernameSize(user.getUsername())) {
+			throw new InvalidInputException("O email não deve possuir mais que 100 caracteres");
+		}
+
+		// Validando nome do usuário
+		if(user.getName() == null || user.getName().equals("")) {
+			throw new InvalidInputException("Digite o seu nome");
+		}
+
+		if(Utilities.isExceedingCompleteNameSize(user.getName())) {
+			throw new InvalidInputException("O nome não deve exceder 60 caracteres");
+		}
+
+		// Validando senha do usuário
+		if(user.getPassword() == null || user.getPassword().equals("")) {
+			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
+		}
+
+		if(!Utilities.validatePassword(user.getPassword()) || user.getPassword().length() < 8) {
 			return HttpStatus.BAD_REQUEST;
 		}
 
-		// Email já está em uso
-		if(existsByUsername(user.getUsername())) {
-			return HttpStatus.CONFLICT;
+		if(Utilities.isExceedingPasswordSize(user.getPassword())) {
+			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
 		}
 
 		// Conta criada com sucesso
@@ -65,34 +87,21 @@ public class UserService implements UserDetailsService {
 
 	// Method used to update password in reset-password
 	public void updatePassword(String password, User user) {
-		if(!Utilities.validatePassword(password)) {
-			//throw new BadCredetialsException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
+		if(!Utilities.validatePassword(password) || password.length() < 8) {
+			throw new InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
 		}
+
+		if(Utilities.isExceedingPasswordSize(password)) {
+			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
+		}
+
 		user.setPassword(encoder.encode(password));
 		userRepository.save(user);
 	}
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-		Optional<User> u = userRepository.findByUsername(username);
-
-		if(u.isEmpty()) {
-			throw new UsernameNotFoundException("Falha a realizar o login");
-		}
-
-		return new org.springframework.security.core.userdetails.User(
-				u.get().getUsername(), u.get().getPassword(), u.get().getAuthorities()
-		);
-	}
-
 	// Method to return a user
 	public User findByUsername(String username) {
-		try{
-			return userRepository.findByUsername(username).get();
-		} catch(NoSuchElementException e) {
-			throw new DatabaseException("Usuário não encontrado");
-		}
+		return userRepository.findByUsername(username).orElseThrow(() -> new DatabaseException("Usuário não encontrado"));
 	}
 
 	// Method used in PasswordRecoveryService
@@ -113,5 +122,15 @@ public class UserService implements UserDetailsService {
 		user.setToken(token);
 		user.setTokenCreationDate(time);
 		userRepository.save(user);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		Optional<User> u = userRepository.findByUsername(username);
+
+		return new org.springframework.security.core.userdetails.User(
+				u.get().getUsername(), u.get().getPassword(), u.get().getAuthorities()
+		);
 	}
 }

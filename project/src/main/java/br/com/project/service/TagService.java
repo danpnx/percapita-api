@@ -5,16 +5,26 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+import br.com.project.controllers.TagController;
+import br.com.project.exceptions.DataNotAvailableException;
+import br.com.project.exceptions.DatabaseException;
+import br.com.project.exceptions.InvalidInputException;
+import br.com.project.exceptions.ResourceNotFoundException;
+import br.com.project.models.FinancialTransaction;
+import br.com.project.repositories.FinancialTransactionRepository;
+import br.com.project.utils.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import br.com.project.exceptions.DatabaseException;
 import br.com.project.models.Tag;
 import br.com.project.models.User;
 import br.com.project.repositories.TagRepository;
 import br.com.project.repositories.UserRepository;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class TagService {
@@ -23,6 +33,8 @@ public class TagService {
 	private TagRepository tagRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private FinancialTransactionRepository transactionRepository;
 
 	public TagService(TagRepository tagRepository, UserRepository userRepository) {
 		this.tagRepository = tagRepository;
@@ -30,7 +42,11 @@ public class TagService {
 	}
 
 	public boolean existsByTagNameAndUser(String tagName, String username) {
-		return tagRepository.existsByTagNameAndUser(tagName, userRepository.findByUsername(username));
+		return tagRepository.existsByTagNameContainingIgnoreCaseAndUser(tagName, userRepository.findByUsername(username).get());
+	}
+
+	public Tag getTagByTagNameAndUser(String tagName, User user) {
+		return tagRepository.findByTagNameAndUser(tagName, user);
 	}
 
 	private Tag getTag(UUID tagId, String username) {
@@ -54,6 +70,7 @@ public class TagService {
 	}
 
 	public HttpStatus registerTag(String tagName, String username) {
+
 		Optional<User> userOptional = userRepository.findByUsername(username);
 		if (userOptional.isPresent()) {
 			User user = userOptional.get();
@@ -66,37 +83,102 @@ public class TagService {
 		return HttpStatus.CONFLICT;
 	}
 
-	public HttpStatus deleteTag(UUID tagId) {
-		Optional<Tag> tagOptional = tagRepository.findById(tagId);
-		if (tagId.equals(tagOptional.get().getTagId())) {
-			tagRepository.deleteById(tagId);
-			return HttpStatus.ACCEPTED;
-		}
-		return HttpStatus.NOT_FOUND;
+	public Tag registerTagInFinancialTransaction(String tagName, User user) {
+		Tag tag = new Tag();
+		tag.setTagName(tagName);
+		tag.setUser(user);
+		tagRepository.save(tag);
+		return tag;
 	}
 
-	public HttpStatus editTag(UUID tagId, String newName) {
-		Optional<Tag> tagOptional = tagRepository.findById(tagId);
-		if (!newName.equals(tagOptional.get().getTagName())) {
-			Tag tag = tagOptional.get();
-			tag.setTagName(newName);
-			tagRepository.save(tag);
-			return HttpStatus.ACCEPTED;
+	public HttpStatus deleteTag(UUID tagId, String username) {
+		if(!tagRepository.existsById(tagId)) {
+			throw new ResourceNotFoundException("Essa tag não existe");
 		}
-		return HttpStatus.CONFLICT;
+
+		Optional<Tag> tagOptional = tagRepository.findById(tagId);
+
+		if(tagOptional.get().getTagName().equals("Unknown")) {
+			throw new DatabaseException("Impossível deletar esta tag");
+		}
+
+		User u = userRepository.findByUsername(username).get();
+		Tag tag = tagRepository.findByTagNameAndUser(tagOptional.get().getTagName(), u);
+
+		if(!tagRepository.existsByTagNameContainingIgnoreCaseAndUser("Unknown", u)) {
+			Tag tagTemp = new Tag();
+			tagTemp.setTagName("Unknown");
+			tagTemp.setUser(u);
+
+			tagRepository.save(tagTemp);
+		}
+
+		for(FinancialTransaction t: tag.getTransactions()) {
+			t.setTag(tagRepository.findByTagNameAndUser("Unknown", u));
+			transactionRepository.save(t);
+		}
+		tagRepository.deleteById(tagId);
+
+		return HttpStatus.ACCEPTED;
+	}
+
+	public HttpStatus editTag(UUID tagId, String newName, String username) {
+		Optional<Tag> tagOptional = tagRepository.findById(tagId);
+
+		if(tagOptional.isEmpty()) {
+			throw new ResourceNotFoundException("Essa tag não existe");
+		}
+
+		if(existsByTagNameAndUser(newName, username)) {
+			throw new DataNotAvailableException("Você já possui uma tag com esse nome");
+		}
+
+		Tag tag = tagOptional.get();
+		tag.setTagName(newName);
+		tagRepository.save(tag);
+		return HttpStatus.ACCEPTED;
 	}
 
 	public List<Tag> getAllTags(String username) {
 		Optional<User> userOptional = userRepository.findByUsername(username);
 
 		if (userOptional.isEmpty()) {
-			throw new EmptyResultDataAccessException(1);
+			throw new DatabaseException("Este usuário não existe");
 		}
-		return tagRepository.findAllByUser(userOptional);
+
+		List<Tag> list = tagRepository.findAllByUser(userOptional);
+
+		if(list.isEmpty()) {
+			throw new ResourceNotFoundException("Você não possui nenhuma tag cadastrada");
+		}
+
+		for(Tag t: list) {
+			if(t.getTagName().equals("Unknown")) {
+				t.add(linkTo(methodOn(TagController.class).getTagById(t.getTagId().toString())).withSelfRel());
+				t.add(linkTo(methodOn(TagController.class).createTag(null)).withSelfRel());
+				continue;
+			}
+			t.add(linkTo(methodOn(TagController.class).getTagById(t.getTagId().toString())).withSelfRel());
+			t.add(linkTo(methodOn(TagController.class).editTag(t.getTagId().toString(), null)).withSelfRel());
+			t.add(linkTo(methodOn(TagController.class).deleteTag(t.getTagId().toString())).withSelfRel());
+			t.add(linkTo(methodOn(TagController.class).createTag(null)).withSelfRel());
+		}
+
+		return list;
 	}
 
 	public Tag getTagById(UUID tagId, String username) {
 		Tag tag = getTag(tagId, username);
+
+		if(tag.getTagName().equals("Unknown")) {
+			tag.add(linkTo(methodOn(TagController.class).getAll()).withRel("Tags do usuário"));
+			return tag;
+		}
+
+		tag.add(linkTo(methodOn(TagController.class).getAll()).withRel("Tags do usuário"));
+		tag.add(linkTo(methodOn(TagController.class).deleteTag(tag.getTagId().toString())).withSelfRel());
+		tag.add(linkTo(methodOn(TagController.class).editTag(tag.getTagId().toString(), null)).withSelfRel());
+
 		tagRepository.save(tag);
 		return tag;
 	}

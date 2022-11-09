@@ -39,14 +39,16 @@ public class TagController {
 	}
 
 	@PutMapping("/edit")
-	public ResponseEntity<?> editTag(@RequestParam UUID tagId, String newName) {
-		tagService.editTag(tagId, newName);
+	public ResponseEntity<?> editTag(@RequestParam String tagId, String newName) {
+		String username = getUsername();
+		tagService.editTag(UUID.fromString(tagId), newName, username);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Nome da tag atualizada.");
 	}
 
 	@DeleteMapping("/delete")
 	public ResponseEntity<?> deleteTag(@RequestParam String tagId) {
-		tagService.deleteTag(UUID.fromString(tagId));
+		String username = getUsername();
+		tagService.deleteTag(UUID.fromString(tagId), username);
 		return ResponseEntity.noContent().build();
 	}
 	

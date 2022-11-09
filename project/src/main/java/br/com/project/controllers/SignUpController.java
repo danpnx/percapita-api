@@ -1,7 +1,7 @@
 package br.com.project.controllers;
 
-import br.com.project.exceptions.BadCredentialsException;
 import br.com.project.exceptions.DataNotAvailableException;
+import br.com.project.exceptions.InvalidInputException;
 import br.com.project.models.User;
 import br.com.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class SignUpController {
         HttpStatus status =  userService.register(user);
 
         if(status.equals(HttpStatus.BAD_REQUEST)) {
-            throw new BadCredentialsException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
+            throw new InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
         }
 
         if(status.equals(HttpStatus.CONFLICT)) {

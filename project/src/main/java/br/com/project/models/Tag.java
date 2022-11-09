@@ -20,10 +20,11 @@ import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.hateoas.RepresentationModel;
 
 @Entity
 @Table(name = "TB_TAG")
-public class Tag implements Serializable {
+public class Tag extends RepresentationModel<Tag> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -47,11 +48,10 @@ public class Tag implements Serializable {
 	public Tag() {
 	}
 
-	public Tag(UUID tagId, String tagName, User user, List<FinancialTransaction> transactions) {
-		this.tagId = tagId;
+	public Tag(String tagName, User user) {
+		this.tagId = UUID.randomUUID();
 		this.tagName = tagName;
 		this.user = user;
-		this.transactions = transactions;
 	}
 
 	public UUID getTagId() {

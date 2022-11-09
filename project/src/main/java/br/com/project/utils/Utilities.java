@@ -1,7 +1,5 @@
 package br.com.project.utils;
 
-import br.com.project.enums.TransactionCategory;
-
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -40,4 +38,19 @@ public class Utilities {
         return value.compareTo(BigDecimal.ZERO) > 0;
     }
 
+    public static boolean isExceedingCompleteNameSize(String completeName) {
+        return completeName.length() > 60;
+    }
+
+    public static boolean isExceedingUsernameSize(String username) {
+        return username.length() > 100;
+    }
+
+    public static boolean isExceedingPasswordSize(String password) {
+        return password.length() > 20;
+    }
+
+    public static boolean isExceedingTagNameSize(String tagName) {
+        return tagName.length() > 25;
+    }
 }

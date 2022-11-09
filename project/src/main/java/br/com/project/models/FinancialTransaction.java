@@ -62,11 +62,11 @@ public class FinancialTransaction extends RepresentationModel<FinancialTransacti
         this.transactionDescription = transactionDescription;
     }
 
-    public UUID getTransaction_id() {
+    public UUID getTransactionId() {
         return transactionId;
     }
 
-    public void setTransaction_id(UUID transaction_id) {
+    public void setTransactionId(UUID transaction_id) {
         this.transactionId = transaction_id;
     }
 
