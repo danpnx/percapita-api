@@ -8,7 +8,7 @@ API Restful da aplicação web PerCapita, seu assistente de controle financeiro 
 
 [PerCapita - Website](https://github.com/danpnx/projeto-integrador-dh)
 
-[Send email to PerCapita](mailto: saviachristine@gmail.com)
+[Send email to PerCapita](mailto:saviachristine@gmail.com)
 
 [Apache Licence 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -56,20 +56,33 @@ Retorna o perfil do usuário.
 
 + Response 200 (application/json) - OK
 
-  `{
-      "userId": 4,
-      "name": "lord voldemort",
-      "username": "voldemort@hotmail.com",
-      "password": "$2a$10$kqFyQ3mhNUmctLMKs9Oul.uqx1LgW3K4isDvL4b5pmLmN18VX6pCa",
-      "tags": [],
-      "transactions": [],
-      "token": null,
-      "tokenCreationDate": null,
-      "enabled": true,
-      "authorities": [],
-      "accountNonExpired": true,
-      "credentialsNonExpired": true,
-      "accountNonLocked": true
+  `{`
+
+  `"userId": 4,`
+
+  `"name": "lord voldemort",`
+
+  `"username": "voldemort@hotmail.com",`
+
+  `"password": "$2a$10$kqFyQ3mhNUmctLMKs9Oul.uqx1LgW3K4isDvL4b5pmLmN18VX6pCa",`
+
+  `"tags": [],`
+
+  `"transactions": [],`
+
+  `"token": null,`
+
+  `"tokenCreationDate": null,`
+
+  `"enabled": true,`
+
+  `"authorities": [],`
+
+  `"accountNonExpired": true,`
+
+  `"credentialsNonExpired": true,`
+
+  `"accountNonLocked": true
   }`
 
 ### PUT [/user/edit-profileName]
