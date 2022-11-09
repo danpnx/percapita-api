@@ -52,11 +52,11 @@ public class CustomizedExceptionHandler {
     }
 
     @ExceptionHandler(DataNotAvailableException.class)
-    public ResponseEntity<StandardMessage> emailNotAvailable(DataNotAvailableException e, HttpServletRequest request) {
+    public ResponseEntity<StandardMessage> dataNotAvailable(DataNotAvailableException e, HttpServletRequest request) {
         StandardMessage message = new StandardMessage(
                 Instant.now(),
                 HttpStatus.CONFLICT.value(),
-                "Não foi possível realizar o cadastro",
+                "Não foi possível finalizar a ação",
                 e.getMessage(),
                 request.getRequestURI()
         );
