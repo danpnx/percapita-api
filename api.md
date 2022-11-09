@@ -56,34 +56,25 @@ Retorna o perfil do usuário.
 
 + Response 200 (application/json) - OK
 
-  `{`
+  ```
+  {
+  	"userId": 4,
+  	"name": "lord voldemort",
+  	"username": "voldemort@hotmail.com",
+  	"password": "$2a$10$kqFyQ3mhNUmctLMKs9Oul.uqx1LgW3K4isDvL4b5pmLmN18VX6pCa",
+  	"tags": [],
+  	"transactions": [],
+  	"token": null,
+  	"tokenCreationDate": null,
+  	"enabled": true,
+  	"authorities": [],
+  	"accountNonExpired": true,
+  	"credentialsNonExpired": true,
+  	"accountNonLocked": true
+  }
+  ```
 
-  `"userId": 4,`
 
-  `"name": "lord voldemort",`
-
-  `"username": "voldemort@hotmail.com",`
-
-  `"password": "$2a$10$kqFyQ3mhNUmctLMKs9Oul.uqx1LgW3K4isDvL4b5pmLmN18VX6pCa",`
-
-  `"tags": [],`
-
-  `"transactions": [],`
-
-  `"token": null,`
-
-  `"tokenCreationDate": null,`
-
-  `"enabled": true,`
-
-  `"authorities": [],`
-
-  `"accountNonExpired": true,`
-
-  `"credentialsNonExpired": true,`
-
-  `"accountNonLocked": true
-  }`
 
 ### PUT [/user/edit-profileName]
 
@@ -101,7 +92,11 @@ Atualiza o nome do usuário.
 
 + Response 201 (application/json)
 
+  ```
   Nome alterado com sucesso!
+  ```
+
+  
 
 ### PUT [/user/edit-Password]
 
@@ -119,17 +114,25 @@ Atualiza a senha do usuário.
 
 + Response 201 (application/json) 
 
+  ```
   Senha alterada com sucesso!
+  ```
+
+  
 
 + Response 400 (application/json) - Bad Request
 
-  `{
-      "timestamp": "07/11/2022 11:58:46",
-      "status": 400,
-      "error": "Campo inválido",
-      "message": "A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial",
-      "path": "/user/edit-Password"
-  }`
+```
+{
+    "timestamp": "07/11/2022 11:58:46",
+    "status": 400,
+    "error": "Campo inválido",
+    "message": "A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial",
+    "path": "/user/edit-Password"
+}
+```
+
+
 
 ## FinancialRecord [/record]
 
@@ -159,15 +162,21 @@ Retorna todos os registros financeiros por data.
 	    "links": [...]
 		}
 	]
+
+
 + Response 404 (application/json) - Not Found.
 
-  `{
-      "timestamp": "09/11/2022 12:04:58",
-      "status": 404,
-      "error": "Recurso não encontrado no banco de dados",
-      "message": "Você não possui nenhuma transação registrada neste mês",
-      "path": "/record/all"
-  }`
+```
+{
+    "timestamp": "09/11/2022 12:04:58",
+    "status": 404,
+    "error": "Recurso não encontrado no banco de dados",
+    "message": "Você não possui nenhuma transação registrada neste mês",
+    "path": "/record/all"
+}
+```
+
+
 
 ### GET [/record/by-category]
 
@@ -187,6 +196,8 @@ Retorna todos os registros financeiros por categoria do registro.
 
 + Response 200 (application/json) - OK
 
+  
+
 	[
 		{
 	    "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
@@ -205,15 +216,21 @@ Retorna todos os registros financeiros por categoria do registro.
 	    "links": [...]
 		}
 	]
+
+
 + Response 404 (application/json) - Not Found
 
-`{
+```
+{
     "timestamp": "09/11/2022 12:06:16",
     "status": 404,
     "error": "Recurso não encontrado no banco de dados",
     "message": "Você não possui nenhuma transação registrada com esta categoria",
     "path": "/record/by-category"
-}`
+}
+```
+
+
 
 ### GET [/record/by-id]
 
@@ -231,25 +248,32 @@ Retorna todos os registros financeiros por id.
 
 + Response 200 (application/json) - OK
 
-​	`	{
-​		    "transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
-​		    "transactionValue": 1000.00,
-​		    "transactionCategory": "RECEIPT",
-​		    "transactionDate": "22/10/2022",
-​		    "transactionDescription": null,
-​		    "_links": {...}
-​		    }
-​	}`
+```
+{
+	"transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
+	"transactionValue": 1000.00,
+    "transactionCategory": "RECEIPT",
+    "transactionDate": "22/10/2022",
+    "transactionDescription": null,
+    "_links": {...}
+}
+```
+
+
 
 + Response 403 (application/json) - Forbidden
 
-  `{
-      "timestamp": "09/11/2022 12:10:19",
-      "status": 403,
-      "error": "Usuário não autorizado a acessar endpoint",
-      "message": "Essa transação não pertence ao usuário autenticado",
-      "path": "/record/by-id"
-  }`
+```
+{
+    "timestamp": "09/11/2022 12:10:19",
+    "status": 403,
+    "error": "Usuário não autorizado a acessar endpoint",
+    "message": "Essa transação não pertence ao usuário autenticado",
+    "path": "/record/by-id"
+}
+```
+
+
 
 ### GET [/record/by-tag]
 
@@ -269,26 +293,34 @@ Retorna todos os registros financeiros por tag.
 
 + Response 200 (application/json) - OK
 
-​	`[
-​	    {
-​	        "transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
-​	        "transactionValue": 1000.00,
-​	        "transactionCategory": "RECEIPT",
-​	        "transactionDate": "22/10/2022",
-​	        "transactionDescription": null,
-​	        "links": [...]
-​	    }
-​	]`
+```
+[
+	    {
+	        "transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
+	        "transactionValue": 1000.00,
+	        "transactionCategory": "RECEIPT",
+	        "transactionDate": "22/10/2022",
+	        "transactionDescription": null,
+	        "links": [...]
+        }
+]
+```
+
+
 
 + Response 400 (application/json) - Bad Request
 
-  `{
-      "timestamp": "09/11/2022 12:11:27",
-      "status": 400,
-      "error": "Nenhum dado encontrado no banco",
-      "message": "Essa tag não existe",
-      "path": "/record/by-tag"
-  }`
+```
+{
+    "timestamp": "09/11/2022 12:11:27",
+    "status": 400,
+    "error": "Nenhum dado encontrado no banco",
+    "message": "Essa tag não existe",
+    "path": "/record/by-tag"
+}
+```
+
+
 
 ### GET [/record/by-year-month]
 
@@ -306,33 +338,41 @@ Retorna todos os registros financeiros do mes.
 
 + Response 200 (application/json)
 
-  `[
-      {
-          "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
-          "transactionValue": 65.00,
-          "transactionCategory": "PAYMENT",
-          "transactionDate": "25/10/2022",
-          "transactionDescription": "comida",
-          "links": [...]
-      },
-      {
-          "transactionId": "7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a",
-          "transactionValue": 45.00,
-          "transactionCategory": "PAYMENT",
-          "transactionDate": "25/10/2022",
-          "transactionDescription": "lanche mcdonalds",
-          "links": [...]
-      }
-  ]`
+```
+[
+    {
+        "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
+        "transactionValue": 65.00,
+        "transactionCategory": "PAYMENT",
+        "transactionDate": "25/10/2022",
+        "transactionDescription": "comida",
+        "links": [...]
+    },
+    {
+        "transactionId": "7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a",
+        "transactionValue": 45.00,
+        "transactionCategory": "PAYMENT",
+        "transactionDate": "25/10/2022",
+        "transactionDescription": "lanche mcdonalds",
+        "links": [...]
+    }
+]
+```
+
+
 
 + Response 404 (application/json) - Not Found
 
-  `{
-      "timestamp": "2022-11-09T15:17:11.423+00:00",
-      "status": 404,
-      "error": "Not Found",
-      "path": "/record/by-yea-month"
-  }`
+```
+{
+    "timestamp": "2022-11-09T15:17:11.423+00:00",
+    "status": 404,
+    "error": "Not Found",
+    "path": "/record/by-yea-month"
+}
+```
+
+
 
 ### POST [/record/add]
 
@@ -346,19 +386,23 @@ Cria um novo registro financeiro.
 
   + Body
 
-    `{
-        "transactionValue": 50.00,
-        "transactionCategory": "RECEIPT",
-        "transactionDate": "22/10/2022",
-        "transactionDescription": "pix"`
-
-    `}`
+  ```
+  {
+      "transactionValue": 50.00,
+      "transactionCategory": "RECEIPT",
+      "transactionDate": "22/10/2022",
+      "transactionDescription": "pix"
+  
+  }
+  ```
 
   + Parâmetro
 
     `tagName: pix Recebido (required, String)`
 
 + Response 201 (application/json) - Created
+
+
 
 ### PUT [/record/edit/category]
 
@@ -378,6 +422,8 @@ Atualiza a categoria de um registro financeiro existente.
 
 + Response 200 (application/json) - OK
 
+
+
 ### PUT [/record/edit/value]
 
 Atualiza o valor de um registro financeiro existente.
@@ -396,6 +442,8 @@ Atualiza o valor de um registro financeiro existente.
 
 + Response 200 (application/json) - OK
 
+  
+
 ### PUT [/record/edit/date]
 
 Atualiza a data de um registro financeiro existente.
@@ -413,16 +461,19 @@ Atualiza a data de um registro financeiro existente.
     `id: 7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a (required, String)`
 
 + Response 200 (application/json) - OK
-
 + Response 400 (application/jason) - Bad Request
 
-  `{
-      "timestamp": "09/11/2022 12:33:18",
-      "status": 400,
-      "error": "Campo inválido",
-      "message": "Não foi possível converter a data",
-      "path": "/record/edit/date"
-  }`
+```
+{
+    "timestamp": "09/11/2022 12:33:18",
+    "status": 400,
+    "error": "Campo inválido",
+    "message": "Não foi possível converter a data",
+    "path": "/record/edit/date"
+}
+```
+
+
 
 ### PUT [/record/edit/description]
 
@@ -442,6 +493,8 @@ Atualiza a descrição de um registro financeiro existente.
 
 + Response 200 (application/json) - OK
 
+
+
 ### PUT [/record/edit/tag]
 
 Atualiza a tag de um registro financeiro existente.
@@ -459,16 +512,19 @@ Atualiza a tag de um registro financeiro existente.
     `tagName: mercado (required, String)`
 
 + Response 200 (application/json) - OK
-
 + Response 400 (application/json) - Bad Request
 
-  `{
-      "timestamp": "09/11/2022 12:29:51",
-      "status": 400,
-      "error": "Campo inválido",
-      "message": "Insira uma tag existente",
-      "path": "/record/edit/tag"
-  }`
+```
+{
+    "timestamp": "09/11/2022 12:29:51",
+    "status": 400,
+    "error": "Campo inválido",
+    "message": "Insira uma tag existente",
+    "path": "/record/edit/tag"
+}
+```
+
+
 
 ### DELETE [/record/delete]
 
@@ -550,12 +606,14 @@ Retorna todas as tags criadas pelo usuário por id.
 
 + Response 200 (application/json) - OK
 
-​	`{
-​    	"tagId": "11cbc083-c0fb-4eb2-85a5-4474c399a0da",
-​    	"tagName": "salario",
-​    	"transactions": [...],
-​    	"_links": {...}
-​	}`
+```
+{
+    	"tagId": "11cbc083-c0fb-4eb2-85a5-4474c399a0da",
+    	"tagName": "salario",
+    	"transactions": [...],
+    	"_links": {...}
+}
+```
 
 ### POST [/tag/create]
 
@@ -573,11 +631,17 @@ Cria um nova tag.
 
 + Response 201 (application/json) - Created
 
+  ```
   Tag conta de luz criada!
+  ```
 
 + Response 409 (application/json) - Conflict
 
+  ```
   Já existe uma tag com este nome.
+  ```
+
+  
 
 ### PUT [/tag/edit]
 
@@ -597,7 +661,11 @@ Atualiza o nome de uma tag existente.
 
 + Response 200 (application/json) - OK
 
+  ```
   Nome da tag atualizada.
+  ```
+
+  
 
 ### DELETE [/tag/delete]
 
@@ -613,7 +681,9 @@ Exclui uma tag.
 
     `tagId: f25b32f3-f271-4b40-9164-c83f0d11afef (required, String)`
 
-+ Response 204 (application/json) - Tag excluida.
++ Response 204 (application/json) - No Content
+
+  
 
 ## Signup [POST /signup]
 
@@ -632,7 +702,11 @@ Cria um novo cadastro de usuário.
 
 + Response 200 (application/json) - OK 
 
+  ```
   Conta criada com sucesso!
+  ```
+
+  
 
 + Response 409 (application/json) - Conflict
 
@@ -662,6 +736,8 @@ Autentica um usuário e autoriza o acesso aos endpoints.
 
 + Response 403 (application/json) - Forbidden
 
+  
+
 ## ForgotPassword [POST /forgot-password]
 
 Recupera a senha de um usuário existente.
@@ -674,17 +750,25 @@ Recupera a senha de um usuário existente.
 
 + Response 200 (application/json) - OK 
 
+  ```
   Email enviado com sucesso!
+  ```
+
+  
 
 + Response 400 (application/json) - Bad Request
 
-  `{
-      "timestamp": "09/11/2022 13:05:23",
-      "status": 400,
-      "error": "Nenhum dado encontrado no banco",
-      "message": "Usuário não encontrado",
-      "path": "/forgot-password"
-  }`
+```
+{
+    "timestamp": "09/11/2022 13:05:23",
+    "status": 400,
+    "error": "Nenhum dado encontrado no banco",
+    "message": "Usuário não encontrado",
+    "path": "/forgot-password"
+}
+```
+
+
 
 ## ResetPassword [PUT /reset-password]
 
@@ -700,17 +784,25 @@ Recupera a senha de um usuário existente.
 
 + Response 200 (application/json) - OK 
 
+  ```
   Senha alterada com sucesso!
+  ```
+
+  
 
 + Response 401 (application/json) - Unauthorized
 
-  `{
+  ```
+  {
       "timestamp": "09/11/2022 13:12:29",
       "status": 401,
       "error": "Erro de validação de token de expiração",
       "message": "Token inválido",
       "path": "/reset-password"
-  }`
+  }
+  ```
+
+  
 
 ## Schemas
 
