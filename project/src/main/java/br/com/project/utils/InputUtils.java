@@ -1,13 +1,8 @@
 package br.com.project.utils;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
-public class Utilities {
-
-    private static final long EXPIRE_TOKEN_AFTER_MINUTES = 30;
+public class InputUtils {
 
     // Validar se a senha digitada pelo usuário é compatível com o padrão esperado
     public static boolean validatePassword(String password) {
@@ -17,39 +12,27 @@ public class Utilities {
         return password.matches(regex);
     }
 
-    // Gerar um token
-    public static String generateToken() {
-        StringBuilder token = new StringBuilder();
-
-        return token.append(UUID.randomUUID()).append(UUID.randomUUID()).toString();
-    }
-
-    // Verificar se um token está expirado
-    public static boolean isTokenExpired(final LocalDateTime tokenCreationDate) {
-
-        LocalDateTime now = LocalDateTime.now();
-        Duration diff = Duration.between(tokenCreationDate, now);
-
-        return diff.toMinutes() >= EXPIRE_TOKEN_AFTER_MINUTES;
-    }
-
     // Verificar se um valor é menor ou igual a zero
     public static boolean isGreaterThanZero(BigDecimal value) {
         return value.compareTo(BigDecimal.ZERO) > 0;
     }
 
+    // Verificar se o tamanho do nome excede 60 caracteres
     public static boolean isExceedingCompleteNameSize(String completeName) {
         return completeName.length() > 60;
     }
 
+    // Verificar se o tamanho do email excede 100 caracteres
     public static boolean isExceedingUsernameSize(String username) {
         return username.length() > 100;
     }
 
+    // Verificar se o tamanho da senha excede 20 caracteres
     public static boolean isExceedingPasswordSize(String password) {
         return password.length() > 20;
     }
 
+    // Verificar se o tamanho da tag excede 25 caracteres
     public static boolean isExceedingTagNameSize(String tagName) {
         return tagName.length() > 25;
     }
