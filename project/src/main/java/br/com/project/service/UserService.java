@@ -6,7 +6,8 @@ import java.util.Optional;
 
 import br.com.project.exceptions.DatabaseException;
 import br.com.project.exceptions.InvalidInputException;
-import br.com.project.utils.Utilities;
+import br.com.project.utils.TokenUtils;
+import br.com.project.utils.InputUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -51,7 +52,7 @@ public class UserService implements UserDetailsService {
 			throw new InvalidInputException("Digite um email válido");
 		}
 
-		if(Utilities.isExceedingUsernameSize(user.getUsername())) {
+		if(InputUtils.isExceedingUsernameSize(user.getUsername())) {
 			throw new InvalidInputException("O email não deve possuir mais que 100 caracteres");
 		}
 
@@ -60,7 +61,7 @@ public class UserService implements UserDetailsService {
 			throw new InvalidInputException("Digite o seu nome");
 		}
 
-		if(Utilities.isExceedingCompleteNameSize(user.getName())) {
+		if(InputUtils.isExceedingCompleteNameSize(user.getName())) {
 			throw new InvalidInputException("O nome não deve exceder 60 caracteres");
 		}
 
@@ -69,11 +70,11 @@ public class UserService implements UserDetailsService {
 			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
 		}
 
-		if(!Utilities.validatePassword(user.getPassword()) || user.getPassword().length() < 8) {
+		if(!InputUtils.validatePassword(user.getPassword()) || user.getPassword().length() < 8) {
 			return HttpStatus.BAD_REQUEST;
 		}
 
-		if(Utilities.isExceedingPasswordSize(user.getPassword())) {
+		if(InputUtils.isExceedingPasswordSize(user.getPassword())) {
 			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
 		}
 
@@ -87,11 +88,11 @@ public class UserService implements UserDetailsService {
 
 	// Method used to update password in reset-password
 	public void updatePassword(String password, User user) {
-		if(!Utilities.validatePassword(password) || password.length() < 8) {
+		if(!InputUtils.validatePassword(password) || password.length() < 8) {
 			throw new InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
 		}
 
-		if(Utilities.isExceedingPasswordSize(password)) {
+		if(InputUtils.isExceedingPasswordSize(password)) {
 			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
 		}
 
@@ -111,7 +112,7 @@ public class UserService implements UserDetailsService {
 
 	// Method used in PasswordRecoveryService
 	public String setTokenAndUpdate(User user) {
-		user.setToken(Utilities.generateToken());
+		user.setToken(TokenUtils.generateToken());
 		user.setTokenCreationDate(LocalDateTime.now());
 		userRepository.save(user);
 		return user.getToken();
