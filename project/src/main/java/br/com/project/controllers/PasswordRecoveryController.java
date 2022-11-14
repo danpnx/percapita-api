@@ -2,7 +2,7 @@ package br.com.project.controllers;
 
 import br.com.project.exceptions.InvalidInputException;
 import br.com.project.service.PasswordRecoveryService;
-import br.com.project.utils.Utilities;
+import br.com.project.utils.InputUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +27,7 @@ public class PasswordRecoveryController {
 
     @PutMapping("/reset-password")
     public String resetPassword(@RequestParam String token, @RequestParam String password) {
-        if (!Utilities.validatePassword(password)) {
+        if (!InputUtils.validatePassword(password)) {
             throw new InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
         }
         return passwordRecoveryService.resetPassword(token, password);

@@ -2,9 +2,9 @@ package br.com.project.controllers;
 
 import br.com.project.exceptions.InvalidInputException;
 import br.com.project.service.ReportService;
+import br.com.project.utils.ContextUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +25,7 @@ public class ReportController {
 
     @GetMapping("/payment")
     public ResponseEntity<?> totalPayment(@RequestParam String date) {
-        String username = getUsername();
+        String username = ContextUtils.getUsername();
 
         try{
             Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
@@ -37,7 +37,7 @@ public class ReportController {
 
     @GetMapping("/receipt")
     public ResponseEntity<?> totalReceipt(@RequestParam String date) {
-        String username = getUsername();
+        String username = ContextUtils.getUsername();
 
         try{
             Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
@@ -47,13 +47,9 @@ public class ReportController {
         }
     }
 
-    private String getUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-    }
-
     @GetMapping("/balance")
     public ResponseEntity<?> accountBalance(@RequestParam String date) {
-        String username = getUsername();
+        String username = ContextUtils.getUsername();
 
         try{
             Date d = DateUtils.parseDate(date, "dd/MM/yyyy");
@@ -65,7 +61,7 @@ public class ReportController {
 
     @GetMapping("/chart")
     public ResponseEntity<?> reportChart(@RequestParam String date) {
-        String username = getUsername();
+        String username = ContextUtils.getUsername();
 
         try{
             Date d = DateUtils.parseDate(date, "dd/MM/yyyy");

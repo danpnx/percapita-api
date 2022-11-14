@@ -3,6 +3,7 @@ package br.com.project.controllers;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.project.utils.ContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class TagController {
 
 	@PostMapping("/create")
 	public ResponseEntity<?> createTag(@RequestBody String tagName) {
-		String username = getUsername();
+		String username = ContextUtils.getUsername();
 		if (tagService.existsByTagNameAndUser(tagName, username)) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe uma tag com este nome.");
 		}
@@ -40,31 +41,27 @@ public class TagController {
 
 	@PutMapping("/edit")
 	public ResponseEntity<?> editTag(@RequestParam String tagId, String newName) {
-		String username = getUsername();
+		String username = ContextUtils.getUsername();
 		tagService.editTag(UUID.fromString(tagId), newName, username);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Nome da tag atualizada.");
 	}
 
 	@DeleteMapping("/delete")
 	public ResponseEntity<?> deleteTag(@RequestParam String tagId) {
-		String username = getUsername();
+		String username = ContextUtils.getUsername();
 		tagService.deleteTag(UUID.fromString(tagId), username);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/all")
 	public ResponseEntity<List<Tag>> getAll() {
-		String username = getUsername();
+		String username = ContextUtils.getUsername();
 		return ResponseEntity.ok(tagService.getAllTags(username));
 	}
 	
 	@GetMapping("/by-id")
 	public ResponseEntity<Tag> getTagById(@RequestParam String tagId) {
-        String username = getUsername();
+        String username = ContextUtils.getUsername();
         return ResponseEntity.ok(tagService.getTagById(UUID.fromString(tagId), username));
 	}
-	
-	private String getUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-    }
 }
