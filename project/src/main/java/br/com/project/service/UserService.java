@@ -4,20 +4,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import br.com.project.exceptions.DatabaseException;
-import br.com.project.exceptions.InvalidInputException;
-import br.com.project.utils.Utilities;
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.project.exceptions.DatabaseException;
+import br.com.project.exceptions.InvalidInputException;
 import br.com.project.models.User;
 import br.com.project.repositories.UserRepository;
-
-import javax.transaction.Transactional;
+import br.com.project.utils.Utilities;
 
 @Service
 @Transactional
@@ -26,6 +29,9 @@ public class UserService implements UserDetailsService {
 	private final UserRepository userRepository;
 
 	private final PasswordEncoder encoder;
+	
+	@Autowired
+	private JavaMailSender mailSender;
 
 	public UserService(UserRepository userRepository, PasswordEncoder encoder) {
 		this.userRepository = userRepository;
@@ -81,7 +87,7 @@ public class UserService implements UserDetailsService {
 		String password = encoder.encode(user.getPassword());
 		user.setPassword(password);
 		userRepository.save(user);
-
+		sendEmail(user.getUsername());
 		return HttpStatus.CREATED;
 	}
 
@@ -130,7 +136,18 @@ public class UserService implements UserDetailsService {
 		Optional<User> u = userRepository.findByUsername(username);
 
 		return new org.springframework.security.core.userdetails.User(
-				u.get().getUsername(), u.get().getPassword(), u.get().getAuthorities()
-		);
+				u.get().getUsername(), u.get().getPassword(), u.get().getAuthorities());
+	}
+	
+	public void sendEmail(String username) {
+
+		SimpleMailMessage mail = new SimpleMailMessage();
+		mail.setFrom("suportepercapita@outlook.com");
+		mail.setTo(username);
+		mail.setSubject("Criação de conta percapita");
+		mail.setText(" Ficamos felizes em receber seu cadastro em nosso aplicativo de gestão financeira, Percapita! \n\n"
+				+ " Para realizar o seu login, basta acessar nossa página de login: http://localhost:8080/login \n\n"
+				+ " Obrigado por  nos deixar organizar suas transações ;D" );
+		mailSender.send(mail);
 	}
 }
