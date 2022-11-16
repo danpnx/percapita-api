@@ -7,7 +7,7 @@ import javax.transaction.Transactional;
 
 import br.com.project.exceptions.InvalidTokenException;
 import br.com.project.exceptions.RecoverPasswordTokenExpiredException;
-import br.com.project.utils.Utilities;
+import br.com.project.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -41,7 +41,7 @@ public class PasswordRecoveryService {
 
 		LocalDateTime tokenCreationDate = userOptional.get().getTokenCreationDate();
 
-		if (Utilities.isTokenExpired(tokenCreationDate)) {
+		if (TokenUtils.isTokenExpired(tokenCreationDate)) {
 			throw new RecoverPasswordTokenExpiredException("O Token para a recuperação de senha foi expirado");
 		}
 

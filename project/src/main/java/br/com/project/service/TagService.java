@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import br.com.project.controllers.TagController;
+import br.com.project.exceptions.AuthorizationException;
 import br.com.project.exceptions.DataNotAvailableException;
 import br.com.project.exceptions.DatabaseException;
 import br.com.project.exceptions.ResourceNotFoundException;
@@ -170,6 +171,10 @@ public class TagService {
 
 	public Tag getTagById(UUID tagId, String username) {
 		Tag tag = getTag(tagId, username);
+
+		if(!tag.getUser().getUsername().equals(username)) {
+			throw new AuthorizationException("Essa tag não pertence ao usuário autenticado");
+		}
 
 		if(tag.getTagName().equals("Unknown")) {
 			tag.add(linkTo(methodOn(TagController.class).getAll()).withRel("Tags do usuário"));

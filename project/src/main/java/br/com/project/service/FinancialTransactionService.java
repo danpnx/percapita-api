@@ -7,7 +7,7 @@ import br.com.project.models.FinancialTransaction;
 import br.com.project.models.Tag;
 import br.com.project.models.User;
 import br.com.project.repositories.FinancialTransactionRepository;
-import br.com.project.utils.Utilities;
+import br.com.project.utils.InputUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -34,7 +34,7 @@ public class FinancialTransactionService {
     }
 
     public void registerTransaction(FinancialTransaction transaction, String username, String tagName) {
-        if(!Utilities.isGreaterThanZero(transaction.getTransactionValue())) {
+        if(!InputUtils.isGreaterThanZero(transaction.getTransactionValue())) {
             throw new InvalidInputException("Digite um valor maior que zero");
         }
 
@@ -138,7 +138,7 @@ public class FinancialTransactionService {
 //    }
 
     public void editValue(BigDecimal value, UUID id, String username) {
-        if(!Utilities.isGreaterThanZero(value)) {
+        if(!InputUtils.isGreaterThanZero(value)) {
             throw new InvalidInputException("Digite um valor maior que zero");
         }
 
@@ -167,10 +167,6 @@ public class FinancialTransactionService {
     }
 
     public void changeTag(UUID id, String tagName, String username) {
-        if(Utilities.isExceedingTagNameSize(tagName)) {
-            throw new InvalidInputException("O nome da tag não deve exceder 25 caracteres");
-        }
-
         FinancialTransaction transaction = getTransaction(id, username);
         User u = userService.findByUsername(username);
 

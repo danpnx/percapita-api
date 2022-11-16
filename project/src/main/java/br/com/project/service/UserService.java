@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.project.exceptions.DatabaseException;
+import br.com.project.exceptions.InvalidInputException;
+import br.com.project.utils.TokenUtils;
+import br.com.project.utils.InputUtils;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +20,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.project.exceptions.DatabaseException;
-import br.com.project.exceptions.InvalidInputException;
 import br.com.project.models.User;
 import br.com.project.repositories.UserRepository;
-import br.com.project.utils.Utilities;
 
 @Service
 @Transactional
@@ -36,10 +37,6 @@ public class UserService implements UserDetailsService {
 	public UserService(UserRepository userRepository, PasswordEncoder encoder) {
 		this.userRepository = userRepository;
 		this.encoder = encoder;
-	}
-
-	public List<User> findAll() {
-		return userRepository.findAll();
 	}
 	
 	public boolean existsByUsername(String username) {
@@ -57,7 +54,7 @@ public class UserService implements UserDetailsService {
 			throw new InvalidInputException("Digite um email válido");
 		}
 
-		if(Utilities.isExceedingUsernameSize(user.getUsername())) {
+		if(InputUtils.isExceedingUsernameSize(user.getUsername())) {
 			throw new InvalidInputException("O email não deve possuir mais que 100 caracteres");
 		}
 
@@ -66,7 +63,7 @@ public class UserService implements UserDetailsService {
 			throw new InvalidInputException("Digite o seu nome");
 		}
 
-		if(Utilities.isExceedingCompleteNameSize(user.getName())) {
+		if(InputUtils.isExceedingCompleteNameSize(user.getName())) {
 			throw new InvalidInputException("O nome não deve exceder 60 caracteres");
 		}
 
@@ -75,11 +72,11 @@ public class UserService implements UserDetailsService {
 			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
 		}
 
-		if(!Utilities.validatePassword(user.getPassword()) || user.getPassword().length() < 8) {
+		if(!InputUtils.validatePassword(user.getPassword()) || user.getPassword().length() < 8) {
 			return HttpStatus.BAD_REQUEST;
 		}
 
-		if(Utilities.isExceedingPasswordSize(user.getPassword())) {
+		if(InputUtils.isExceedingPasswordSize(user.getPassword())) {
 			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
 		}
 
@@ -93,11 +90,11 @@ public class UserService implements UserDetailsService {
 
 	// Method used to update password in reset-password
 	public void updatePassword(String password, User user) {
-		if(!Utilities.validatePassword(password) || password.length() < 8) {
+		if(!InputUtils.validatePassword(password) || password.length() < 8) {
 			throw new InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
 		}
 
-		if(Utilities.isExceedingPasswordSize(password)) {
+		if(InputUtils.isExceedingPasswordSize(password)) {
 			throw new InvalidInputException("A sua senha não deve exceder 20 caracteres");
 		}
 
@@ -117,7 +114,7 @@ public class UserService implements UserDetailsService {
 
 	// Method used in PasswordRecoveryService
 	public String setTokenAndUpdate(User user) {
-		user.setToken(Utilities.generateToken());
+		user.setToken(TokenUtils.generateToken());
 		user.setTokenCreationDate(LocalDateTime.now());
 		userRepository.save(user);
 		return user.getToken();
@@ -147,7 +144,7 @@ public class UserService implements UserDetailsService {
 		mail.setSubject("Criação de conta percapita");
 		mail.setText(" Ficamos felizes em receber seu cadastro em nosso aplicativo de gestão financeira, Percapita! \n\n"
 				+ " Para realizar o seu login, basta acessar nossa página de login: http://localhost:8080/login \n\n"
-				+ " Obrigado por  nos deixar organizar suas transações ;D" );
+				+ " Obrigado por nos deixar organizar suas transações ;D" );
 		mailSender.send(mail);
 	}
 }
