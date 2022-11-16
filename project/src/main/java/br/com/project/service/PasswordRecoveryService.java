@@ -56,10 +56,11 @@ public class PasswordRecoveryService {
 		User user = userService.findByUsername(username);
 
 		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setFrom("anderson.c-10@hotmail.com");
+		mail.setFrom("suportepercapita@outlook.com");
 		mail.setTo(username);
 		mail.setSubject("Solicitação de recuperação de senha:");
-		mail.setText("Olá, " + user.getName() +". Aqui está o link para resetar a senha: " + response + "\nCaso não tenha solicitado, por favor, ignore este email");
+		mail.setText("Olá, " + user.getName() +". Aqui está o link para resetar a senha: " + response + "\n"
+				     + "Caso não tenha solicitado, por favor, ignore este email");
 		mailSender.send(mail);
 	}
 }
