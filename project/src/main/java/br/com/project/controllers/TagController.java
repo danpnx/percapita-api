@@ -3,7 +3,7 @@ package br.com.project.controllers;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.project.models.StandardMessage;
+import br.com.project.payload.StandardMessage;
 import br.com.project.utils.ContextUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
