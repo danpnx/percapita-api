@@ -1,6 +1,6 @@
 package br.com.project.controllers;
 
-import br.com.project.models.ReportResponse;
+import br.com.project.payload.ReportResponse;
 import br.com.project.utils.ContextUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -1,0 +1,117 @@
+# Azure , JPA e mail
+spring:
+  datasource:
+    url: jdbc:sqlserver://percapita-server.database.windows.net:1433;database=percapita-DB;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    username: percapita-adm
+    password: c@pit@p3rCLOUD
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+  mail:
+    properties:
+      mail:
+        smtp:
+          connecttimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+          starttls:
+            enable: true
+          auth: true
+    host: smtp.office365.com
+    password: teste123@
+    port: 587
+    username: suportepercapita@outlook.com
+
+# open api
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    disable-swagger-default-url: true
+    use-root-path: true
+  packages-to-scan: br.com.project.controllers
+  cache:
+    disabled: true
+  paths-to-match: /**
+
+# anderson mysql
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost/projetotestefinal?createDatabaseIfNotExist=true
+#    username: root
+#    password: andy123
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#    open-in-view: true
+#  mail:
+#    properties:
+#      mail:
+#        smtp:
+#          connecttimeout: 5000
+#          timeout: 3000
+#          writetimeout: 5000
+#          starttls:
+#            enable: true
+#          auth: true
+#    host: smtp.office365.com
+#    password: teste123@
+#    port: 587
+#    username: suportepercapita@outlook.com
+
+# daniel mysql
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost/projeto?createDatabaseIfNotExist=true
+#    username: root
+#    password: daniel123
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#    open-in-view: true
+#  mail:
+#    properties:
+#      mail:
+#        smtp:
+#          connecttimeout: 5000
+#          timeout: 3000
+#          writetimeout: 5000
+#          starttls:
+#            enable: true
+#          auth: true
+#    host: smtp.office365.com
+#    password: teste123@
+#    port: 587
+#    username: suportepercapita@outlook.com
+
+# sávia mysql
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost/projeto?createDatabaseIfNotExist=true
+#    username: root
+#    password: asuka03
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#    open-in-view: true
+#  mail:
+#    properties:
+#      mail:
+#        smtp:
+#          connecttimeout: 5000
+#          timeout: 3000
+#          writetimeout: 5000
+#          starttls:
+#            enable: true
+#          auth: true
+#    host: smtp.office365.com
+#    password: teste123@
+#    port: 587
+#    username: suportepercapita@outlook.com

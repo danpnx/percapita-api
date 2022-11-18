@@ -3,7 +3,7 @@ package br.com.project.service;
 import br.com.project.enums.TransactionCategory;
 import br.com.project.exceptions.ResourceNotFoundException;
 import br.com.project.models.FinancialTransaction;
-import br.com.project.models.ReportResponse;
+import br.com.project.payload.ReportResponse;
 import br.com.project.models.Tag;
 import br.com.project.models.User;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package br.com.project.controllers;
 import br.com.project.enums.TransactionCategory;
 import br.com.project.exceptions.InvalidInputException;
 import br.com.project.models.FinancialTransaction;
-import br.com.project.models.StandardMessage;
+import br.com.project.payload.StandardMessage;
 import br.com.project.service.FinancialTransactionService;
 import br.com.project.utils.ContextUtils;
 import io.swagger.v3.oas.annotations.Operation;

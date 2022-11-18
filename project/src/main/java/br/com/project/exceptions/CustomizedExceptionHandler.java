@@ -1,6 +1,6 @@
 package br.com.project.exceptions;
 
-import br.com.project.models.StandardMessage;
+import br.com.project.payload.StandardMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

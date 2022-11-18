@@ -1,15 +1,16 @@
 package br.com.project.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import br.com.project.exceptions.DatabaseException;
 import br.com.project.exceptions.InvalidInputException;
+import br.com.project.utils.EmailValidation;
 import br.com.project.utils.TokenUtils;
 import br.com.project.utils.InputUtils;
 import javax.transaction.Transactional;
 
+import com.mailgun.model.verification.AddressValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
@@ -46,6 +47,12 @@ public class UserService implements UserDetailsService {
 	public HttpStatus register(User user) {
 
 		// Validando email
+		//		AddressValidationResponse mailResponse = EmailValidation.validEmail(user.getUsername());
+//
+//		if(!mailResponse.getReason().contains("deliverable")) {
+//			throw new InvalidInputException("Digite um email válido");
+//		}
+
 		if(existsByUsername(user.getUsername())) {
 			return HttpStatus.CONFLICT;
 		}

@@ -2,11 +2,10 @@ package br.com.project.controllers;
 
 import br.com.project.exceptions.DataNotAvailableException;
 import br.com.project.exceptions.InvalidInputException;
-import br.com.project.models.StandardMessage;
+import br.com.project.payload.StandardMessage;
 import br.com.project.models.User;
 import br.com.project.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
