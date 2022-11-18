@@ -141,7 +141,7 @@ public class UserService implements UserDetailsService {
 		mail.setTo(username);
 		mail.setSubject("Criação de conta percapita");
 		mail.setText(" Ficamos felizes em receber seu cadastro em nosso aplicativo de gestão financeira, Percapita! \n\n"
-				+ " Para realizar o seu login, basta acessar nossa página de login: http://localhost:8080/login \n");
+				+ " Para realizar o seu login, basta acessar nossa página de login: https://percapita.azurewebsites.net/login \n");
 		mailSender.send(mail);
 	}
 }
