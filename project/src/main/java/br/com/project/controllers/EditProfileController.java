@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.project.service.EditProfileService;
@@ -41,8 +42,8 @@ public class EditProfileController {
 					))
 			}
 	)
-	@PutMapping("/edit-profilePassword")
-	public ResponseEntity<?> editPassword(String newPassword) {
+	@PutMapping("/edit-password")
+	public ResponseEntity<?> editPassword(@RequestParam String newPassword) {
 		String username = ContextUtils.getUsername();
 		if (!InputUtils.validatePassword(newPassword)) {
 			throw new InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial");
@@ -61,8 +62,8 @@ public class EditProfileController {
 					))
 			}
 	)
-	@PutMapping("/edit-profileName")
-	public ResponseEntity<?> editName(String newName) {
+	@PutMapping("/edit-name")
+	public ResponseEntity<?> editName(@RequestParam String newName) {
 		String username = ContextUtils.getUsername();
 		editProfileService.editName(username, newName);
 		return ResponseEntity.status(HttpStatus.CREATED).body("Nome Alterado com sucesso!");
