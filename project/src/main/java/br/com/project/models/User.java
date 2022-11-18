@@ -2,6 +2,7 @@ package br.com.project.models;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -21,6 +22,7 @@ public class User implements Serializable, UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "USER_ID", nullable = false)
+	@Schema(hidden = true)
 	private Long userId;
 
 	@Column(name = "COMPLETE_NAME", nullable = false, length = 60)
@@ -34,16 +36,20 @@ public class User implements Serializable, UserDetails {
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	@JsonManagedReference(value = "user-tag-reference")
+	@Schema(hidden = true)
 	private List<Tag> tags = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user")
 	@JsonManagedReference(value = "user-transaction-reference")
+	@Schema(hidden = true)
 	private List<FinancialTransaction> transactions = new ArrayList<>();
 
 	@Column(name = "TOKEN")
+	@Schema(hidden = true)
 	private String token;
 
 	@Column(name = "CREATION_DATE_TOKEN")
+	@Schema(hidden = true)
 	private LocalDateTime tokenCreationDate;
 
 	public User() {
@@ -81,6 +87,7 @@ public class User implements Serializable, UserDetails {
 		this.username = username;
 	}
 
+	@Schema(hidden = true)
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Collections.emptyList();
@@ -119,21 +126,25 @@ public class User implements Serializable, UserDetails {
 		return tags;
 	}
 
+	@Schema(hidden = true)
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
+	@Schema(hidden = true)
 	@Override
 	public boolean isAccountNonLocked() {
 		return true;
 	}
 
+	@Schema(hidden = true)
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
 	}
 
+	@Schema(hidden = true)
 	@Override
 	public boolean isEnabled() {
 		return true;
