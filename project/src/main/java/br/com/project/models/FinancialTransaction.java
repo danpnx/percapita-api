@@ -3,7 +3,6 @@ package br.com.project.models;
 import br.com.project.enums.TransactionCategory;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.Type;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -23,7 +22,6 @@ public class FinancialTransaction extends RepresentationModel<FinancialTransacti
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Type(type = "org.hibernate.type.UUIDCharType")
     @Column(name = "TRANSACTION_ID", columnDefinition = "CHAR(36)", unique = true)
-    @Schema(hidden = true)
     private UUID transactionId;
 
     @Column(name = "TRANSACTION_VALUE", nullable = false)
@@ -44,13 +42,11 @@ public class FinancialTransaction extends RepresentationModel<FinancialTransacti
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     @JsonBackReference(value = "user-transaction-reference")
-    @Schema(hidden = true)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "TAG_ID")
     @JsonBackReference(value = "transaction-tag-reference")
-    @Schema(hidden = true)
     private Tag tag;
 
     public FinancialTransaction() {
