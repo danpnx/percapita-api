@@ -41,7 +41,7 @@ public class EditProfileController {
 					))
 			}
 	)
-	@PutMapping("/edit-profilePassword")
+	@PutMapping("/edit-password")
 	public ResponseEntity<?> editPassword(String newPassword) {
 		String username = ContextUtils.getUsername();
 		if (!InputUtils.validatePassword(newPassword)) {
@@ -61,7 +61,7 @@ public class EditProfileController {
 					))
 			}
 	)
-	@PutMapping("/edit-profileName")
+	@PutMapping("/edit-name")
 	public ResponseEntity<?> editName(String newName) {
 		String username = ContextUtils.getUsername();
 		editProfileService.editName(username, newName);
