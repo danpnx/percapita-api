@@ -5,12 +5,10 @@ import java.util.Optional;
 
 import br.com.project.exceptions.DatabaseException;
 import br.com.project.exceptions.InvalidInputException;
-import br.com.project.utils.EmailValidation;
 import br.com.project.utils.TokenUtils;
 import br.com.project.utils.InputUtils;
 import javax.transaction.Transactional;
 
-import com.mailgun.model.verification.AddressValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
@@ -45,13 +43,6 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public HttpStatus register(User user) {
-
-		// Validando email
-		//		AddressValidationResponse mailResponse = EmailValidation.validEmail(user.getUsername());
-//
-//		if(!mailResponse.getReason().contains("deliverable")) {
-//			throw new InvalidInputException("Digite um email válido");
-//		}
 
 		if(existsByUsername(user.getUsername())) {
 			return HttpStatus.CONFLICT;
@@ -150,8 +141,7 @@ public class UserService implements UserDetailsService {
 		mail.setTo(username);
 		mail.setSubject("Criação de conta percapita");
 		mail.setText(" Ficamos felizes em receber seu cadastro em nosso aplicativo de gestão financeira, Percapita! \n\n"
-				+ " Para realizar o seu login, basta acessar nossa página de login: http://localhost:8080/login \n\n"
-				+ " Obrigado por nos deixar organizar suas transações ;D" );
+				+ " Para realizar o seu login, basta acessar nossa página de login: http://localhost:8080/login \n");
 		mailSender.send(mail);
 	}
 }

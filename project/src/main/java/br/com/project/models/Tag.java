@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -31,6 +32,7 @@ public class Tag extends RepresentationModel<Tag> implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Type(type = "org.hibernate.type.UUIDCharType")
 	@Column(name = "TAG_ID", columnDefinition = "CHAR(36)")
+	@Schema(hidden = true)
 	private UUID tagId;
 
 	@Column(name = "TAG_NAME", nullable = false, length = 25)
@@ -39,10 +41,12 @@ public class Tag extends RepresentationModel<Tag> implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
 	@JsonBackReference(value = "user-tag-reference")
+	@Schema(hidden = true)
 	private User user;
 
 	@OneToMany(mappedBy = "tag")
 	@JsonManagedReference(value = "transaction-tag-reference")
+	@Schema(hidden = true)
 	private List<FinancialTransaction> transactions = new ArrayList<>();
 
 	public Tag() {
