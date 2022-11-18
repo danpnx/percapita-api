@@ -35,10 +35,10 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    needs: build
     defaults:
       run:
         working-directory: ./project
-    needs: build
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
