@@ -36,23 +36,14 @@ public class OpenApiConfig {
                                         .name("PerCapita")
                                         .email("suportepercapita@outlook.com")
                                         .url("https://github.com/danpnx/projeto-integrador-dh")
-                        )
-                        .contact(
-                                new Contact()
                                         .name("Anderson Chaves")
                                         .email("anderson.c-morais@hotmail.com")
                                         .url("https://github.com/chaavez")
                                         .url("https://www.linkedin.com/in/anderson-chaves-956436248/")
-                        )
-                        .contact(
-                                new Contact()
                                         .name("Daniel Augusto")
                                         .email("danielpn23@outlook.com")
                                         .url("https://github.com/danpnx")
                                         .url("https://www.linkedin.com/in/daniel-augusto-nunes/")
-                        )
-                        .contact(
-                                new Contact()
                                         .name("Sávia Christine")
                                         .email("saviachristine@gmail.com")
                                         .url("https://github.com/savicax")
