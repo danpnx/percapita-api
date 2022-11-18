@@ -49,5 +49,5 @@ jobs:
         with:
           app-name: 'percapita'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2A35B14E0A224FC58FA9B41EA033EE2A }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1F33A1BFE09F49E4A6EA8C18FEA8F807 }}
           package: '*.jar'
