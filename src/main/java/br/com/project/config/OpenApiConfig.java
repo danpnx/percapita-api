@@ -36,18 +36,6 @@ public class OpenApiConfig {
                                         .name("PerCapita")
                                         .email("suportepercapita@outlook.com")
                                         .url("https://github.com/danpnx/projeto-integrador-dh")
-                                        .name("Anderson Chaves")
-                                        .email("anderson.c-morais@hotmail.com")
-                                        .url("https://github.com/chaavez")
-                                        .url("https://www.linkedin.com/in/anderson-chaves-956436248/")
-                                        .name("Daniel Augusto")
-                                        .email("danielpn23@outlook.com")
-                                        .url("https://github.com/danpnx")
-                                        .url("https://www.linkedin.com/in/daniel-augusto-nunes/")
-                                        .name("Sávia Christine")
-                                        .email("saviachristine@gmail.com")
-                                        .url("https://github.com/savicax")
-                                        .url("https://www.linkedin.com/in/savicax/")
                         )
                         .summary(
                                 "API RESTful criada para o Projeto Integrador da Digital House em parceria com a Empiricus."
