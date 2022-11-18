@@ -37,7 +37,7 @@ public class PasswordRecoveryController {
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam String email) {
         String token = passwordRecoveryService.forgotPassword(email);
-        String response = "http://localhost:8080/reset-password?token=" + token;
+        String response = "https://percapita.azurewebsites.net/reset-password?token=" + token;
         passwordRecoveryService.sendEmail(email, response);
         return ResponseEntity.ok("Email enviado com sucesso!");
     }

@@ -22,9 +22,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenApi() {
         return new OpenAPI().info(
                 new Info()
-                        .title("Nome-do-aplicativo API RESTful")
+                        .title("PerCapita API RESTful")
                         .version("v1")
-                        .description("API Restful funcional do aplicativo Nome-do-aplicativo")
+                        .description("API Restful funcional do aplicativo PerCapita")
                         .termsOfService("https://github.com/danpnx/projeto-integrador-dh")
                         .license(
                                 new License()
@@ -33,9 +33,30 @@ public class OpenApiConfig {
                         )
                         .contact(
                                 new Contact()
-                                        .name("Nome-do-aplicativo")
-                                        .email("anderson.c-10@hotmail.com")
+                                        .name("PerCapita")
+                                        .email("suportepercapita@outlook.com")
                                         .url("https://github.com/danpnx/projeto-integrador-dh")
+                        )
+                        .contact(
+                                new Contact()
+                                        .name("Anderson Chaves")
+                                        .email("anderson.c-morais@hotmail.com")
+                                        .url("https://github.com/chaavez")
+                                        .url("https://www.linkedin.com/in/anderson-chaves-956436248/")
+                        )
+                        .contact(
+                                new Contact()
+                                        .name("Daniel Augusto")
+                                        .email("danielpn23@outlook.com")
+                                        .url("https://github.com/danpnx")
+                                        .url("https://www.linkedin.com/in/daniel-augusto-nunes/")
+                        )
+                        .contact(
+                                new Contact()
+                                        .name("Sávia Christine")
+                                        .email("saviachristine@gmail.com")
+                                        .url("https://github.com/savicax")
+                                        .url("https://www.linkedin.com/in/savicax/")
                         )
                         .summary(
                                 "API RESTful criada para o Projeto Integrador da Digital House em parceria com a Empiricus."
