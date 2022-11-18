@@ -3,14 +3,6 @@ package br.com.project.controllers;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.project.payload.StandardMessage;
-import br.com.project.utils.ContextUtils;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +11,21 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.project.models.Tag;
+import br.com.project.payload.StandardMessage;
 import br.com.project.service.TagService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import br.com.project.utils.ContextUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @CrossOrigin("*")
@@ -52,13 +52,13 @@ public class TagController {
 			}
 	)
 	@PostMapping("/create")
-	public ResponseEntity<?> createTag(@RequestBody String tagName) {
+	public ResponseEntity<?> createTag(@RequestBody Tag tag) {
 		String username = ContextUtils.getUsername();
-		if (tagService.existsByTagNameAndUser(tagName, username)) {
+		if (tagService.existsByTagNameAndUser(tag.getTagName().toString(), username)) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe uma tag com este nome.");
 		}
-		tagService.registerTag(tagName, username);
-		return ResponseEntity.status(HttpStatus.CREATED).body("Tag " + tagName + " criada!");
+		tagService.registerTag(tag.getTagName().toString(), username);
+		return ResponseEntity.status(HttpStatus.CREATED).body("Tag " + tag.getTagName().toString() + " criada!");
 	}
 
 	@Operation(
