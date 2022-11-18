@@ -18,25 +18,25 @@ API Restful da aplicação web PerCapita, seu assistente de controle financeiro 
 
 As requisiçõs da API seguem os protocolos http:
 
-| Método | Descrição                       |
-| ------ | ------------------------------- |
-| GET    | Retorna dados a uma requisição  |
-| POST   | Insere novo registro            |
-| PUT    | Atualiza atributos de um registro |
-| DELETE | Remove um registro do sistema   |
+| Método | Descrição                          |
+| ------ | ---------------------------------- |
+| GET    | Retorna dados a uma requisição.    |
+| POST   | Insere novo registro.              |
+| PUT    | Atualiza atributos de um registro. |
+| DELETE | Remove um registro do sistema.     |
 
 ### Respostas
 
-| Código | Descrição                                                              |
-| ------ |------------------------------------------------------------------------|
-| 200    | Requisição executada com sucesso                                       |
-| 201    | Novo recurso criado com sucesso                                        |
-| 204    | Recurso excluído com sucesso                                           |
-| 400    | A requisição não será executada devido a um erro que ocorreu no client |
-| 401    | Erro de autenticação                                                   |
-| 403    | Acesso não autorizado                                                  |
-| 404    | Recurso não encontrado no banco de dados                               |
-| 409    | Conflito, recurso ja está sendo utilizado                              |
+| Código | Descrição                                            |
+| ------ | ---------------------------------------------------- |
+| 200    | Requisição executada com sucesso.                    |
+| 201    | Novo registro criado com sucesso.                    |
+| 204    | Registro excluído.                                   |
+| 400    | Erro de validação ou registro não existe no sistema. |
+| 401    | Erro de autenticação.                                |
+| 403    | Acesso ao edpoint não autorizado.                    |
+| 404    | Recurso não encontrado no banco de dados.            |
+| 409    | Conflito, recurso ja está sendo utilizado.           |
 
 
 
@@ -76,7 +76,7 @@ Retorna o perfil do usuário.
 
 
 
-### PUT [/user/edit-name]
+### PUT [/user/edit-profileName]
 
 Atualiza o nome do usuário.
 
@@ -98,7 +98,7 @@ Atualiza o nome do usuário.
 
   
 
-### PUT [/user/edit-password]
+### PUT [/user/edit-Password]
 
 Atualiza a senha do usuário.
 
@@ -128,15 +128,57 @@ Atualiza a senha do usuário.
     "status": 400,
     "error": "Campo inválido",
     "message": "A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial",
-    "path": "/user/edit-password"
+    "path": "/user/edit-Password"
 }
 ```
 
 
 
-## FinancialTransaction [/transaction]
+## FinancialRecord [/record]
 
-### GET [/transaction/by-category]
+### GET [/record/all]
+
+Retorna todos os registros financeiros por data.
+
++ Request (application/json)
+
+  + Headers
+
+    `Authorization: Bearer token`
+
+  + Parâmetro
+
+    `date: 25/10/2022 (required, String)`
+
++ Response 200 (application/json) - OK
+
+	[
+		{
+	    "transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
+	    "transactionValue": 1000.00,
+	    "transactionCategory": "RECEIPT",
+	    "transactionDate": "22/10/2022",
+	    "transactionDescription": null,
+	    "links": [...]
+		}
+	]
+
+
++ Response 404 (application/json) - Not Found.
+
+```
+{
+    "timestamp": "09/11/2022 12:04:58",
+    "status": 404,
+    "error": "Recurso não encontrado no banco de dados",
+    "message": "Você não possui nenhuma transação registrada neste mês",
+    "path": "/record/all"
+}
+```
+
+
+
+### GET [/record/by-category]
 
 Retorna todos os registros financeiros por categoria do registro.
 
@@ -150,7 +192,7 @@ Retorna todos os registros financeiros por categoria do registro.
 
     `category: PAYMENT (required, String)`
 
-    `date: 01/10/2022 (required, String)`
+    `date: 25/10/2022 (required, String)`
 
 + Response 200 (application/json) - OK
 
@@ -160,7 +202,7 @@ Retorna todos os registros financeiros por categoria do registro.
         "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
         "transactionValue": 65.00,
         "transactionCategory": "PAYMENT",
-        "transactionDate": "01/10/2022",
+        "transactionDate": "25/10/2022",
         "transactionDescription": "comida",
         "links": [
             {...}
@@ -170,7 +212,7 @@ Retorna todos os registros financeiros por categoria do registro.
         "transactionId": "7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a",
         "transactionValue": 45.00,
         "transactionCategory": "PAYMENT",
-        "transactionDate": "01/10/2022",
+        "transactionDate": "25/10/2022",
         "transactionDescription": "lanche mcdonalds",
         "links": [
             {...}
@@ -189,15 +231,15 @@ Retorna todos os registros financeiros por categoria do registro.
     "status": 404,
     "error": "Recurso não encontrado no banco de dados",
     "message": "Você não possui nenhuma transação registrada com esta categoria",
-    "path": "/transaction/by-category"
+    "path": "/record/by-category"
 }
 ```
 
 
 
-### GET [/transaction/by-id]
+### GET [/record/by-id]
 
-Retorna um registro financeiro pelo seu id.
+Retorna todos os registros financeiros por id.
 
 + Request (application/json)
 
@@ -216,7 +258,7 @@ Retorna um registro financeiro pelo seu id.
 	"transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
 	"transactionValue": 1000.00,
     "transactionCategory": "RECEIPT",
-    "transactionDate": "01/10/2022",
+    "transactionDate": "22/10/2022",
     "transactionDescription": null,
     "_links": {...}
 }
@@ -232,13 +274,13 @@ Retorna um registro financeiro pelo seu id.
     "status": 403,
     "error": "Usuário não autorizado a acessar endpoint",
     "message": "Essa transação não pertence ao usuário autenticado",
-    "path": "/transaction/by-id"
+    "path": "/record/by-id"
 }
 ```
 
 
 
-### GET [/transaction/by-tag]
+### GET [/record/by-tag]
 
 Retorna todos os registros financeiros por tag.
 
@@ -252,7 +294,7 @@ Retorna todos os registros financeiros por tag.
 
     `tagName: salario (required, String)`
 
-    `date: 01/10/2022 (required, String)`
+    `date: 22/10/2022 (required, String)`
 
 + Response 200 (application/json) - OK
 
@@ -262,7 +304,7 @@ Retorna todos os registros financeiros por tag.
 	        "transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
 	        "transactionValue": 1000.00,
 	        "transactionCategory": "RECEIPT",
-	        "transactionDate": "01/10/2022",
+	        "transactionDate": "22/10/2022",
 	        "transactionDescription": null,
 	        "links": [...]
         }
@@ -279,15 +321,15 @@ Retorna todos os registros financeiros por tag.
     "status": 400,
     "error": "Nenhum dado encontrado no banco",
     "message": "Essa tag não existe",
-    "path": "/transaction/by-tag"
+    "path": "/record/by-tag"
 }
 ```
 
 
 
-### GET [/transaction/all]
+### GET [/record/by-year-month]
 
-Retorna todos os registros financeiros do mês.
+Retorna todos os registros financeiros do mes.
 
 + Request (application/json)
 
@@ -297,7 +339,7 @@ Retorna todos os registros financeiros do mês.
 
   + Parâmetro
 
-    `date: 01/10/2022 (required, String)`
+    `date: 22/10/2022 (required, String)`
 
 + Response 200 (application/json)
 
@@ -307,7 +349,7 @@ Retorna todos os registros financeiros do mês.
         "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
         "transactionValue": 65.00,
         "transactionCategory": "PAYMENT",
-        "transactionDate": "01/10/2022",
+        "transactionDate": "25/10/2022",
         "transactionDescription": "comida",
         "links": [...]
     },
@@ -315,7 +357,7 @@ Retorna todos os registros financeiros do mês.
         "transactionId": "7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a",
         "transactionValue": 45.00,
         "transactionCategory": "PAYMENT",
-        "transactionDate": "01/10/2022",
+        "transactionDate": "25/10/2022",
         "transactionDescription": "lanche mcdonalds",
         "links": [...]
     }
@@ -328,17 +370,16 @@ Retorna todos os registros financeiros do mês.
 
 ```
 {
-    "timestamp": "09/11/2022 15:17:11",
+    "timestamp": "2022-11-09T15:17:11.423+00:00",
     "status": 404,
-    "error": "Nenhum dado encontrado no banco",
-    "message": "Você não possui nenhuma transação registrada neste mês",
-    "path": "/transaction/all"
+    "error": "Not Found",
+    "path": "/record/by-yea-month"
 }
 ```
 
 
 
-### POST [/transaction/register]
+### POST [/record/add]
 
 Cria um novo registro financeiro.
 
@@ -354,7 +395,7 @@ Cria um novo registro financeiro.
   {
       "transactionValue": 50.00,
       "transactionCategory": "RECEIPT",
-      "transactionDate": "01/10/2022",
+      "transactionDate": "22/10/2022",
       "transactionDescription": "pix"
   
   }
@@ -368,7 +409,7 @@ Cria um novo registro financeiro.
 
 
 
-### PUT [/transaction/edit/category]
+### PUT [/record/edit/category]
 
 Atualiza a categoria de um registro financeiro existente.
 
@@ -388,7 +429,7 @@ Atualiza a categoria de um registro financeiro existente.
 
 
 
-### PUT [/transaction/edit/value]
+### PUT [/record/edit/value]
 
 Atualiza o valor de um registro financeiro existente.
 
@@ -408,7 +449,7 @@ Atualiza o valor de um registro financeiro existente.
 
   
 
-### PUT [/transaction/edit/date]
+### PUT [/record/edit/date]
 
 Atualiza a data de um registro financeiro existente.
 
@@ -420,7 +461,7 @@ Atualiza a data de um registro financeiro existente.
 
   + Parâmetro
 
-    `date: 01/10/2022 (required, String)`
+    `date: 25/10/2022 (required, String)`
 
     `id: 7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a (required, String)`
 
@@ -433,13 +474,13 @@ Atualiza a data de um registro financeiro existente.
     "status": 400,
     "error": "Campo inválido",
     "message": "Não foi possível converter a data",
-    "path": "/transaction/edit/date"
+    "path": "/record/edit/date"
 }
 ```
 
 
 
-### PUT [/transaction/edit/description]
+### PUT [/record/edit/description]
 
 Atualiza a descrição de um registro financeiro existente.
 
@@ -459,7 +500,7 @@ Atualiza a descrição de um registro financeiro existente.
 
 
 
-### PUT [/transaction/edit/tag]
+### PUT [/record/edit/tag]
 
 Atualiza a tag de um registro financeiro existente.
 
@@ -484,13 +525,13 @@ Atualiza a tag de um registro financeiro existente.
     "status": 400,
     "error": "Campo inválido",
     "message": "Insira uma tag existente",
-    "path": "/transaction/edit/tag"
+    "path": "/record/edit/tag"
 }
 ```
 
 
 
-### DELETE [/transaction/delete]
+### DELETE [/record/delete]
 
 Exclui um registro financeiro.
 
@@ -532,7 +573,7 @@ Retorna todas as tags criadas pelo usuário.
                 "transactionId": "87aef2d5-d6af-445c-9b82-45aeaf4270aa",
                 "transactionValue": 1000.00,
                 "transactionCategory": "RECEIPT",
-                "transactionDate": "01/10/2022",
+                "transactionDate": "22/10/2022",
                 "transactionDescription": null,
                 "links": []
             }
@@ -565,7 +606,7 @@ Retorna todas as tags criadas pelo usuário.
                 "transactionId": "6bcd43f2-980f-4aed-85bb-232033e70ba8",
                 "transactionValue": 65.00,
                 "transactionCategory": "PAYMENT",
-                "transactionDate": "01/10/2022",
+                "transactionDate": "25/10/2022",
                 "transactionDescription": "comida",
                 "links": []
             },
@@ -573,7 +614,7 @@ Retorna todas as tags criadas pelo usuário.
                 "transactionId": "7cfe5baa-9f72-4b2b-93a3-cef5126a0a0a",
                 "transactionValue": 45.00,
                 "transactionCategory": "PAYMENT",
-                "transactionDate": "01/10/2022",
+                "transactionDate": "25/10/2022",
                 "transactionDescription": "lanche mcdonalds",
                 "links": []
             }
@@ -590,7 +631,7 @@ Retorna todas as tags criadas pelo usuário.
                 "transactionId": "5c2e9481-aa3f-4438-a26d-8e1ec50eb721",
                 "transactionValue": 400.00,
                 "transactionCategory": "PAYMENT",
-                "transactionDate": "01/11/2022",
+                "transactionDate": "05/11/2022",
                 "transactionDescription": "casa",
                 "links": []
             }
