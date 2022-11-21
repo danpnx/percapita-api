@@ -128,6 +128,7 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+		System.out.println("SEGUNDO MÉTODO: LOAD BY USERNAME");
 		Optional<User> u = userRepository.findByUsername(username);
 
 		return new org.springframework.security.core.userdetails.User(
