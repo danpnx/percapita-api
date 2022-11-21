@@ -22,6 +22,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/signup")
+@CrossOrigin("*")
 @Tag(name = "Sign up", description = "Controller para criação de conta no aplicativo")
 public class SignUpController {
 
