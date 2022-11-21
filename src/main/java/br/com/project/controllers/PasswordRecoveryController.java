@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin("*")
 @Tag(name = "Password Recovery", description = "Endpoints para recuperar a senha do usuário")
 public class PasswordRecoveryController {
 
