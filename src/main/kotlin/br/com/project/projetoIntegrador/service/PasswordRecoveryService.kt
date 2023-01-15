@@ -18,8 +18,8 @@ class PasswordRecoveryService @Autowired constructor(private var mailsender: Jav
                                                      private var userService: UserService) {
 
     fun forgotPassword(username: String) {
-        val user: User = userService.findByUsername(username)
-        return userService.setTokenAndUpdate(user)
+        val user: Optional<User> = userService.findByUsername(username)
+        return userService.setTokenAndUpdate(user.get())
     }
 
     fun resetPassword(token: String, passaword: String): String {
@@ -39,10 +39,10 @@ class PasswordRecoveryService @Autowired constructor(private var mailsender: Jav
     }
 
     fun sendEmail(username: String, response: String) {
-        val user: User = userService.findByUsername(username)
+        val user: Optional<User> = userService.findByUsername(username)
         val mail: SimpleMailMessage = SimpleMailMessage()
         val subject: String = "Solicitação de recuperação de senha:"
-        val text: String = "Olá, ${user.name}. Aqui está o link para resetar a senha: $response\n"
+        val text: String = "Olá, ${user.get().name}. Aqui está o link para resetar a senha: $response\n"
         "Caso não tenha solicitado, por favor, ignore este email"
         val emailPercapita: String = "suportepercapita@outlook.com"
 

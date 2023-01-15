@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/user")
-class EditProfileController @Autowired private constructor(val editProfileService: EditProfileService) {
+class EditProfileController @Autowired constructor(private val editProfileService: EditProfileService) {
 
     @PutMapping("/edit-password")
     fun editPassword(@RequestBody newPassword: UserLogin): ResponseEntity<Any> {

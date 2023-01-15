@@ -11,7 +11,7 @@ data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    val id: Long?,
+    val id: Long,
 
     @Column(name = "USERNAME",  unique = true, length = 100)
     var username: String?,

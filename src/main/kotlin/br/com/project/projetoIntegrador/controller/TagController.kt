@@ -17,15 +17,12 @@ class TagController @Autowired constructor(private val tagService: TagService) {
     @PostMapping("/create")
     fun createTag(@RequestBody tag: Tag): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        if(tagService.existsByTagNameAndUser(tag.tagName.toString(), username)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Já existe uma tag com este nome.")
-        }
         tagService.registerTag(tag.tagName.toString(), username)
         return ResponseEntity.status(HttpStatus.CREATED).body("Tag "+ tag.tagName.toString() + " criada!")
     }
 
     @PutMapping("/edit/{id}")
-    fun editTag(@PathVariable id: String,@RequestParam newName: String?): ResponseEntity<Any> {
+    fun editTag(@PathVariable id: String,@RequestParam newName: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         tagService.editTag(UUID.fromString(id), newName, username)
         return ResponseEntity.status(HttpStatus.CREATED).body("Nome da tag atualizada.")

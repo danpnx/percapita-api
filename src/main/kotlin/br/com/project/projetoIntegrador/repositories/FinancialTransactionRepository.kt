@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface FinancialTransactionRepository : JpaRepository<FinancialTransaction, Long > {
+interface FinancialTransactionRepository : JpaRepository<FinancialTransaction, UUID> {
 
     fun findAllByTransactionDateAndUser(date: Date, user: User): List<FinancialTransaction>
     fun findAllByTransactionCategoryAndTransactionDateAndUser(category: TransactionCategory, date: Date, user: User): List<FinancialTransaction>
