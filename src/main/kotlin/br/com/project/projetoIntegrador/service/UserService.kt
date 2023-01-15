@@ -23,7 +23,7 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
     ) {
 
 
-    fun findByUsername(username: String): User {
+    fun findByUsername(username: String): Optional<User> {
         return userRepository.findByUsername(username)
     }
 
@@ -63,9 +63,8 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
             throw InvalidInputException("A sua senha não deve exceder 20 caracteres")
         }
 
-        user.password = password//encoder.encode(password)
+        user.password = encoder.encode(password)
         userRepository.save(user)
-
     }
 
     fun findByToken(token: String): Optional<User> {
