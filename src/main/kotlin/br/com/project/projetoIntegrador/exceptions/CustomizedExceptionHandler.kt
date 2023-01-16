@@ -4,6 +4,7 @@ import br.com.project.projetoIntegrador.payload.StandardMessage
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import java.time.Instant
 
@@ -94,6 +95,19 @@ class CustomizedExceptionHandler {
             "Erro de validação de token de expiração",
             e.message,
             request.requestURI)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message)
+    }
+
+    @ExceptionHandler(BadCredentialsException::class)
+    fun badCredentials(e: BadCredentialsException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
+        val message: StandardMessage = StandardMessage(
+            Instant.now(),
+            HttpStatus.UNAUTHORIZED.value(),
+            "Falha ao efetuar login",
+            e.message,
+            request.requestURI
+        )
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message)
     }
 }
