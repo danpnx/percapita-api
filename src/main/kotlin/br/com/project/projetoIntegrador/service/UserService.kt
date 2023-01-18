@@ -6,12 +6,10 @@ import br.com.project.projetoIntegrador.repositories.UserRepository
 import br.com.project.projetoIntegrador.utils.InputUtils
 import br.com.project.projetoIntegrador.utils.TokenUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.annotation.CreatedBy
 import org.springframework.http.HttpStatus
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.crypto.password.PasswordEncoder
-//import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
