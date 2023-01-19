@@ -4,6 +4,9 @@ import br.com.project.projetoIntegrador.enums.TransactionCategory
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
+import org.springframework.hateoas.RepresentationModel
 import java.math.BigDecimal
 import java.util.*
 
@@ -13,7 +16,7 @@ data class FinancialTransaction(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "TRANSACTION_ID", columnDefinition = "CHAR(36)", unique = true)
-    val transactionId: UUID,
+    open var transactionId: UUID,
 
     @Column(name = "TRANSACTION_VALUE", nullable = false)
     var transactionValue: BigDecimal,
@@ -38,6 +41,4 @@ data class FinancialTransaction(
     @ManyToOne
     @JoinColumn(name = "TAG_ID")
     @JsonBackReference(value = "transaction-tag-reference")
-    var tag: Tag)  {
-
-}
+    var tag: Tag) : RepresentationModel<FinancialTransaction>()

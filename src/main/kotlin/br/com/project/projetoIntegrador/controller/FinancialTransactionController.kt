@@ -6,6 +6,7 @@ import br.com.project.projetoIntegrador.models.FinancialTransaction
 import br.com.project.projetoIntegrador.service.FinancialTransactionService
 import br.com.project.projetoIntegrador.utils.ContextUtils
 import jakarta.validation.Valid
+import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @RestController
@@ -37,8 +40,8 @@ class FinancialTransactionController @Autowired constructor(private val financia
     fun getAllByCategory(@RequestParam category: String, @RequestParam date: String?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         try {
-            val date: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
-            return ResponseEntity.ok(financialTransactionService.findAllByCategory(TransactionCategory.valueOf(category), date, username))
+            val dateFormatted = DateUtils.parseDate(date, "dd/MM/yyyy")
+            return ResponseEntity.ok(financialTransactionService.findAllByCategory(TransactionCategory.valueOf(category), dateFormatted, username))
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
@@ -55,7 +58,7 @@ class FinancialTransactionController @Autowired constructor(private val financia
     fun getAllTransaction(@RequestParam date: String): ResponseEntity<List<FinancialTransaction>> {
         val username: String = ContextUtils.getUsername()
         try {
-            val date: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+            val date = DateUtils.parseDate(date, "dd/MM/yyyy")
             return ResponseEntity.ok(financialTransactionService.getAllTransactions(username, date))
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
@@ -80,7 +83,7 @@ class FinancialTransactionController @Autowired constructor(private val financia
     fun editDate(@RequestParam date: String?, @RequestParam id: String?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         try {
-            val date: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+            val date = DateUtils.parseDate(date, "dd/MM/yyyy")
             financialTransactionService.editDate(date, UUID.fromString(id), username)
             return ResponseEntity.ok().build()
         } catch (e: ParseException) {
@@ -111,10 +114,17 @@ class FinancialTransactionController @Autowired constructor(private val financia
     fun findByTag(@RequestParam tagName: String, date: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         try {
-            val date: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+            val date = DateUtils.parseDate(date, "dd/MM/yyyy")
             return ResponseEntity.ok(financialTransactionService.findByTag(tagName, username, date))
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
+    }
+
+    fun editTag(@RequestParam transactionId: String?, @RequestParam tagName: String): ResponseEntity<Any> {
+        val username = ContextUtils.getUsername()
+
+        financialTransactionService.changeTag(UUID.fromString(transactionId), tagName, username)
+        return ResponseEntity.ok().build()
     }
 }
