@@ -85,4 +85,15 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
 
     }
 
+    fun getTagByTagNameAndUser(tagName: String, user: User): Tag {
+        return tagRepository.findByTagNameAndUser(tagName, user)
+    }
+
+    fun registerTagInFinancialTransaction(tagName: String, user: User): Tag {
+        lateinit var tag: Tag
+        tag.tagName = tagName
+        tag.user = user
+        tagRepository.save(tag)
+        return tag
+    }
 }
