@@ -9,7 +9,7 @@ import java.util.*
 @Repository
 interface TagRepository : JpaRepository<Tag, UUID> {
 
-    fun existsByTagNameContainingIgnoreCaseAndUser(tagName: String, user: Optional<User>): Boolean
+    fun existsByTagNameContainingIgnoreCaseAndUser(tagName: String, user: User): Boolean
     fun findAllByUser(findById: Optional<User>): List<Tag>
-    fun findByTagNameAndUser(tagName: String, user: User): Tag
+    fun findByTagNameAndUser(tagName: String?, user: User): Tag
 }
