@@ -110,4 +110,18 @@ class CustomizedExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message)
     }
+
+    @ExceptionHandler(MessagingException::class)
+    fun messagingException(e: MessagingException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
+        val message: StandardMessage = StandardMessage(
+            Instant.now(),
+            HttpStatus.BAD_REQUEST.value(),
+            error = "Falha ao enviar o e-mail",
+            e.message,
+            request.requestURI
+        )
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message)
+    }
+
 }
