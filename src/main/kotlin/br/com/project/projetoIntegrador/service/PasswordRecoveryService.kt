@@ -26,12 +26,12 @@ class PasswordRecoveryService @Autowired constructor(private var mailsender: Jav
         val userOptional: Optional<User> = userService.findByToken(token)
 
         if (userOptional.isEmpty) {
-            throw InvalidTokenException("Token inválido");
+            throw InvalidTokenException("Token inválido")
         }
         val tokenCreationDate: LocalDateTime = userOptional.get().tokenCreateTime
 
         if (TokenUtils.isTokenExpired(tokenCreationDate)) {
-            throw RecoverPasswordTokenExpiredException("O Token para a recuperação de senha foi expirado");
+            throw RecoverPasswordTokenExpiredException("O Token para a recuperação de senha foi expirado")
         }
         userService.updatePassword(passaword, userOptional.get())
         userService.setTokenAndUpdate(userOptional.get(), null, null)
