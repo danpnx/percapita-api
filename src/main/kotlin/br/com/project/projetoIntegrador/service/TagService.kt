@@ -1,62 +1,103 @@
 package br.com.project.projetoIntegrador.service
 
+import br.com.project.projetoIntegrador.exceptions.AuthorizationException
 import br.com.project.projetoIntegrador.exceptions.DataNotAvailableException
 import br.com.project.projetoIntegrador.exceptions.DatabaseException
-import br.com.project.projetoIntegrador.exceptions.InvalidInputException
 import br.com.project.projetoIntegrador.exceptions.ResourceNotFoundException
+import br.com.project.projetoIntegrador.models.FinancialTransaction
 import br.com.project.projetoIntegrador.models.Tag
 import br.com.project.projetoIntegrador.models.User
 import br.com.project.projetoIntegrador.repositories.FinancialTransactionRepository
 import br.com.project.projetoIntegrador.repositories.TagRepository
 import br.com.project.projetoIntegrador.repositories.UserRepository
+import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
+@Transactional
 class TagService @Autowired constructor(private val userRepository: UserRepository,
                                         private val tagRepository: TagRepository,
                                         private val transactionRepository: FinancialTransactionRepository) {
 
     fun existsByTagNameAndUser(tagName: String, username: String): Boolean {
-        return tagRepository.existsByTagNameContainingIgnoreCaseAndUser(tagName, userRepository.findByUsername(username))
+        return tagRepository.existsByTagNameContainingIgnoreCaseAndUser(tagName, userRepository.findByUsername(username).get())
     }
 
     fun registerTag(tagName: String, username: String) {
         val userOptional: Optional<User> = userRepository.findByUsername(username)
         lateinit var tag: Tag
 
-        if(existsByTagNameAndUser(tagName, username)) {
-            throw  DataNotAvailableException("Você já possui uma tag com esse nome")
-        }
+        try {
+            if(existsByTagNameAndUser(tagName, username)) {
+                throw  DataNotAvailableException("Você já possui uma tag com esse nome")
+            }
 
-        if(userOptional.isPresent) {
-            val user: User = userOptional.get()
-            tag.tagName = tagName
-            tag.user = user
-            tagRepository.save(tag)
+            if(userOptional.isPresent) {
+                val user: User = userOptional.get()
+                tag.tagName = tagName
+                tag.user = user
+                tagRepository.save(tag)
+            }
+
+        } catch (e: DataNotAvailableException) {
+            e.message
         }
     }
 
     fun editTag(tagId: UUID, newName: String, username: String) {
         val tagOptional: Optional<Tag> = tagRepository.findById(tagId)
 
-        if(existsByTagNameAndUser(newName, username)) {
-            throw DataNotAvailableException("Você já possui uma tag com esse nome");
-        }
+        try {
+            if(existsByTagNameAndUser(newName, username)) {
+                throw DataNotAvailableException("Você já possui uma tag com esse nome")
+            }
 
-        if(tagOptional.isEmpty) {
-            throw ResourceNotFoundException("Essa tag não existe")
-        }
+            if(tagOptional.isEmpty) {
+                throw ResourceNotFoundException("Essa tag não existe")
+            }
 
-        val tag: Tag = tagOptional.get();
-        tag.tagName = newName
-        tagRepository.save(tag);
+            val tag: Tag = tagOptional.get()
+            tag.tagName = newName
+            tagRepository.save(tag)
+
+        } catch (e: DataNotAvailableException) {
+            e.message
+        }
 }
 
     fun deleteTag(tagId: UUID, username: String) {
-        val userOptional: Optional<User> = userRepository.findByUsername(username)
-        if(userOptional.isPresent) {
+        try {
+            if(!tagRepository.existsById(tagId)) {
+                throw ResourceNotFoundException("Essa tag não existe")
+            }
+
+            val tagOptional: Optional<Tag> = tagRepository.findById(tagId)
+
+            if(tagOptional.get().tagName.equals("Unknown")) {
+                throw DatabaseException("Impossível deletar esta tag")
+            }
+
+            val user: User = userRepository.findByUsername(username).get()
+            val tag: Tag = tagRepository.findByTagNameAndUser(tagOptional.get().tagName, user)
+
+            if(!tagRepository.existsByTagNameContainingIgnoreCaseAndUser("Unknown", user)) {
+                lateinit var tagTemp: Tag
+                tagTemp.tagName = "Unknown"
+                tagTemp.user = user
+                tagRepository.save(tagTemp)
+            }
+
+            for(transaction: FinancialTransaction in tag.transaction) {
+                transaction.tag = tagRepository.findByTagNameAndUser("Unknown", user)
+                transactionRepository.save(transaction)
+            }
+
+            tagRepository.deleteById(tagId)
+
+        } catch(e: DatabaseException) {
+            e.message
         }
     }
 
@@ -81,8 +122,15 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
     }
 
     fun getTagById(tagId: UUID, username: String): Tag {
-        val tag: Optional<Tag> = tagRepository.findById(tagId)
+        val tag: Tag = getTagById(tagId, username)
 
+        if(!tag.user.username.equals(username)) {
+            throw  AuthorizationException("Essa tag não pertence ao usuário autenticado")
+        }
+
+        if(tag.tagName.equals("Unknown")) {
+        }
+        tagRepository.save(tag)
+        return tag
     }
-
 }
