@@ -1,5 +1,6 @@
 package br.com.project.projetoIntegrador.service
 
+import br.com.project.projetoIntegrador.controller.TagController
 import br.com.project.projetoIntegrador.exceptions.AuthorizationException
 import br.com.project.projetoIntegrador.exceptions.DataNotAvailableException
 import br.com.project.projetoIntegrador.exceptions.DatabaseException
@@ -11,6 +12,8 @@ import br.com.project.projetoIntegrador.repositories.FinancialTransactionReposit
 import br.com.project.projetoIntegrador.repositories.TagRepository
 import br.com.project.projetoIntegrador.repositories.UserRepository
 import jakarta.transaction.Transactional
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -21,7 +24,7 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
                                         private val tagRepository: TagRepository,
                                         private val transactionRepository: FinancialTransactionRepository) {
 
-    fun existsByTagNameAndUser(tagName: String, username: String): Boolean {
+    fun existsByTagNameAndUser(tagName: String?, username: String): Boolean {
         return tagRepository.existsByTagNameContainingIgnoreCaseAndUser(tagName, userRepository.findByUsername(username).get())
     }
 
@@ -46,7 +49,7 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
         }
     }
 
-    fun editTag(tagId: UUID, newName: String, username: String) {
+    fun editTag(tagId: UUID, newName: String?, username: String) {
         val tagOptional: Optional<Tag> = tagRepository.findById(tagId)
 
         try {
@@ -116,7 +119,17 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
 
         for(tag in list) {
             if(tag.tagName == "Unknown") {
+                tag.add(linkTo(methodOn(TagController::class.java).getTagById(tag.id.toString())).withSelfRel())
+                tag.add(linkTo(methodOn(TagController::class.java).createTag(null)).withSelfRel())
+                continue
             }
+            tag.add(linkTo(methodOn(TagController::class.java).getTagById(tag.id.toString())
+                ).withSelfRel())
+            tag.add(linkTo(methodOn(TagController::class.java).editTag(tag.id.toString(), null)
+                ).withSelfRel())
+            tag.add(linkTo(methodOn(TagController::class.java).deleteTag(tag.id.toString())
+                ).withSelfRel())
+            tag.add(linkTo(methodOn(TagController::class.java).createTag(null)).withSelfRel())
         }
         return list
     }
@@ -129,7 +142,15 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
         }
 
         if(tag.tagName.equals("Unknown")) {
+            tag.add(linkTo(methodOn(TagController::class.java).getAll()).withSelfRel())
+            return tag
+
         }
+        tag.add(linkTo(methodOn(TagController::class.java).getAll()).withSelfRel())
+        tag.add(linkTo(methodOn(TagController::class.java).deleteTag(tag.id.toString())).withSelfRel())
+        tag.add(linkTo(methodOn(TagController::class.java).editTag(tag.id.toString(), null)).withSelfRel())
+        tagRepository.save(tag)
+        return tag
     }
 
     fun getTagByTagNameAndUser(tagName: String, user: User): Tag {
