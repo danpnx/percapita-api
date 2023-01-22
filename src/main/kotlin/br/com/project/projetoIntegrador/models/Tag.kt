@@ -3,6 +3,7 @@ package br.com.project.projetoIntegrador.models
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
+import org.springframework.hateoas.RepresentationModel
 import java.util.UUID
 
 @Entity
@@ -24,6 +25,6 @@ data class Tag(
     @OneToMany(mappedBy = "tag")
     @JsonManagedReference(value = "transaction-tag-reference")
     var transaction: ArrayList<FinancialTransaction>
-) {
+) : RepresentationModel<Tag>() {
 
 }

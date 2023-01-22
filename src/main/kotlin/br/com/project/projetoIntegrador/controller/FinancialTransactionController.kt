@@ -13,9 +13,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @RestController
@@ -121,7 +118,7 @@ class FinancialTransactionController @Autowired constructor(private val financia
         }
     }
 
-    fun editTag(@RequestParam transactionId: String?, @RequestParam tagName: String): ResponseEntity<Any> {
+    fun editTag(@RequestParam transactionId: String?, @RequestParam tagName: String?): ResponseEntity<Any> {
         val username = ContextUtils.getUsername()
 
         financialTransactionService.changeTag(UUID.fromString(transactionId), tagName, username)
