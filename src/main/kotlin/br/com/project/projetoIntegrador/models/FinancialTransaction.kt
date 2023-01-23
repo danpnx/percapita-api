@@ -12,18 +12,18 @@ import java.util.*
 
 @Entity
 @Table(name = "TB_FINANCIAL_TRANSACTION")
-data class FinancialTransaction(
+class FinancialTransaction(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TRANSACTION_ID", columnDefinition = "CHAR(36)", unique = true)
-    open var transactionId: UUID,
+    @Column(name = "TRANSACTION_ID", columnDefinition = "CHAR(36)", unique = true, nullable = false)
+    open var transactionId: UUID? = null,
 
     @Column(name = "TRANSACTION_VALUE", nullable = false)
     var transactionValue: BigDecimal,
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "TRANSACTION_CATEGORY", nullable = false)
-    var transactionCategory: TransactionCategory,
+    var transactionCategory: TransactionCategory? = null,
 
     @Temporal(value = TemporalType.DATE)
     @Column(name = "TRANSACTION_DATE", nullable = false)
@@ -31,14 +31,14 @@ data class FinancialTransaction(
     var transactionDate: Date,
 
     @Column(name = "TRANSACTION_DESCRIPTION", length = 75)
-    var transactionDescription: String,
+    var transactionDescription: String? = null,
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "USER_ID", nullable = false)
     @JsonBackReference(value = "user-transaction-reference")
     var user: User,
 
     @ManyToOne
-    @JoinColumn(name = "TAG_ID")
+    @JoinColumn(name = "TAG_ID", nullable = false)
     @JsonBackReference(value = "transaction-tag-reference")
     var tag: Tag) : RepresentationModel<FinancialTransaction>()
