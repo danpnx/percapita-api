@@ -1,12 +1,10 @@
 package br.com.project.projetoIntegrador.models
 
 import jakarta.validation.Valid
+import java.beans.ConstructorProperties
 
-class UserLogin(
-    @Valid
-    var username: String?,
-    @Valid
-    var password: String?,
-    @Valid
-    var name: String?) {
+data class UserLogin
+@ConstructorProperties( "email" , "password" )
+constructor(val email: String, val password: String) {
+
 }
