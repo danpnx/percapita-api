@@ -28,7 +28,7 @@ class PasswordRecoveryService @Autowired constructor(private var mailsender: Jav
         if (userOptional.isEmpty) {
             throw InvalidTokenException("Token inválido")
         }
-        val tokenCreationDate: LocalDateTime = userOptional.get().tokenCreateTime
+        val tokenCreationDate: LocalDateTime? = userOptional.get().tokenCreateTime
 
         if (TokenUtils.isTokenExpired(tokenCreationDate)) {
             throw RecoverPasswordTokenExpiredException("O Token para a recuperação de senha foi expirado")
@@ -42,8 +42,8 @@ class PasswordRecoveryService @Autowired constructor(private var mailsender: Jav
         val user: Optional<User> = userService.findByUsername(username)
         val mail: SimpleMailMessage = SimpleMailMessage()
         val subject: String = "Solicitação de recuperação de senha:"
-        val text: String = "Olá, ${user.get().name}. Aqui está o link para resetar a senha: $response\n"
-        "Caso não tenha solicitado, por favor, ignore este email"
+        val text: String = "Olá, ${user.get().name}. Aqui está o link para resetar a senha: $response\n" +
+                "Caso não tenha solicitado, por favor, ignore este email"
         val emailPercapita: String = "suportepercapita@outlook.com"
 
         try {

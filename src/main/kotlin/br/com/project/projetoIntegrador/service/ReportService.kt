@@ -72,7 +72,7 @@ class ReportService(
                 .map { t -> t.transactionValue }
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
 
-            map += Pair(tag.tagName, total)
+            //map += Pair(tag.tagName, total)
         }
 
         return ReportResponse(map)

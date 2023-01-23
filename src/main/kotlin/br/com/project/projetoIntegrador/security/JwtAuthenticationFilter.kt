@@ -1,5 +1,6 @@
 package br.com.project.projetoIntegrador.security
 
+import br.com.project.projetoIntegrador.models.User
 import br.com.project.projetoIntegrador.models.UserLogin
 import br.com.project.projetoIntegrador.security.SecurityConstants.EXPIRATION
 import br.com.project.projetoIntegrador.security.SecurityConstants.SECRET
@@ -15,48 +16,47 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.util.*
 
-class JwtAuthenticationFilter(
-    @Autowired val authManager: AuthenticationManager
+class JwtAuthenticationFilter(val authManager: AuthenticationManager
     ): UsernamePasswordAuthenticationFilter() {
 
     override fun attemptAuthentication(
-        request: HttpServletRequest?,
-        response: HttpServletResponse?
+        request: HttpServletRequest,
+        response: HttpServletResponse
     ): Authentication {
-        val credentials = ObjectMapper().readValue(request?.inputStream, UserLogin::class.java)
-
+        val credentials = ObjectMapper().readValue(request.inputStream, UserLogin::class.java)
         val authResult = UsernamePasswordAuthenticationToken(
-            credentials.username, credentials.password)
+            credentials.email, credentials.password, Collections.singleton(SimpleGrantedAuthority("user")))
 
         return authManager.authenticate(authResult)
     }
 
     override fun successfulAuthentication(
         request: HttpServletRequest?,
-        response: HttpServletResponse?,
+        response: HttpServletResponse,
         chain: FilterChain?,
-        authResult: Authentication?
+        authResult: Authentication
     ) {
-        val username = authResult?.principal.toString()
+        val username = authResult.principal.toString()
 
-        val jwtToken = JWT.create()
+        val jwtToken: String = JWT.create()
             .withSubject(username)
             .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION))
             .sign(Algorithm.HMAC512(SECRET.encodeToByteArray()))
 
         val headerBody = "$username $jwtToken"
 
-        response?.setHeader("Authorization", headerBody)
-        response?.addHeader("Access-Control-Expose-Headers", "Authorization")
+        response.addHeader("Authorization", headerBody)
+        response.addHeader("Access-Control-Expose-Headers", "Authorization")
     }
 
     override fun unsuccessfulAuthentication(
-        request: HttpServletRequest?,
-        response: HttpServletResponse?,
-        failed: AuthenticationException?
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        failed: AuthenticationException
     ) {
         throw BadCredentialsException("Email e/ou senha inválidos!")
     }
