@@ -21,18 +21,14 @@ import org.springframework.web.bind.annotation.RestController
 class SignUpController @Autowired private constructor(val userService: UserService) {
 
     @PostMapping
-    fun signUp(@RequestBody @Valid body: UserLogin): ResponseEntity<HttpStatus> {
-        lateinit var user: User
-        user.name = body.name
-        user.username = body.username
-        user.password = body.password
-        return ResponseEntity.ok(userService.register(user))
-//        if(status == HttpStatus.BAD_REQUEST) {
-//            throw InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial")
-//        }
-//        if(status == HttpStatus.CONFLICT) {
-//            throw DataNotAvailableException("Email já está em uso");
-//        }
-//        return ResponseEntity.status(HttpStatus.CREATED).body("Conta criada com sucesso!")
+    fun signUp(@RequestBody @Valid user: User): ResponseEntity<Any> {
+        val status: HttpStatus = userService.register(user)
+       if(status == HttpStatus.BAD_REQUEST) {
+            throw InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial")
+        }
+        if(status == HttpStatus.CONFLICT) {
+            throw DataNotAvailableException("Email já está em uso");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("Conta criada com sucesso!")
     }
 }
