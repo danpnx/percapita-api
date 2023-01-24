@@ -2,15 +2,16 @@ package br.com.project.projetoIntegrador.security
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.util.*
 
 class UserSecurity(
     val id: Long?,
     private val email: String?,
     private val uPassword: String?,
-    private val uAuthorities: MutableCollection<GrantedAuthority>
 ) : UserDetails {
-
-    override fun getAuthorities() = uAuthorities
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        return Collections.emptyList()
+    }
     override fun getPassword() = uPassword
     override fun getUsername() = email
     override fun isAccountNonExpired() = true

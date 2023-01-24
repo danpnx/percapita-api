@@ -29,7 +29,10 @@ class JwtAuthenticationFilter(val authManager: AuthenticationManager
     ): Authentication {
         val credentials = ObjectMapper().readValue(request.inputStream, UserLogin::class.java)
         val authResult = UsernamePasswordAuthenticationToken(
-            credentials.email, credentials.password, Collections.singleton(SimpleGrantedAuthority("user")))
+            credentials.username,
+            credentials.password,
+            Collections.emptyList()
+        )
 
         return authManager.authenticate(authResult)
     }
@@ -40,7 +43,7 @@ class JwtAuthenticationFilter(val authManager: AuthenticationManager
         chain: FilterChain?,
         authResult: Authentication
     ) {
-        val username = authResult.principal.toString()
+        val username = (authResult.principal as UserSecurity).username
 
         val jwtToken: String = JWT.create()
             .withSubject(username)
@@ -50,7 +53,6 @@ class JwtAuthenticationFilter(val authManager: AuthenticationManager
         val headerBody = "$username $jwtToken"
 
         response.addHeader("Authorization", headerBody)
-        response.addHeader("Access-Control-Expose-Headers", "Authorization")
     }
 
     override fun unsuccessfulAuthentication(

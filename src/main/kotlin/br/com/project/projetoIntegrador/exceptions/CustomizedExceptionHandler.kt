@@ -2,20 +2,20 @@ package br.com.project.projetoIntegrador.exceptions
 
 import br.com.project.projetoIntegrador.payload.StandardMessage
 import jakarta.servlet.http.HttpServletRequest
+import kotlinx.datetime.Clock
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import java.time.Instant
 
 @ControllerAdvice
 class CustomizedExceptionHandler {
 
     @ExceptionHandler(AuthorizationException::class)
     fun authorizationException(e: AuthorizationException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.FORBIDDEN.value(),
             "Usuário não autorizado a acessar endpoint",
             e.message,
@@ -25,8 +25,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException::class)
     fun resourceNotFound(e: ResourceNotFoundException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.NOT_FOUND.value(),
             "Recurso não encontrado no banco de dados",
             e.message,
@@ -36,8 +36,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(InvalidInputException::class)
     fun invalidInput(e: InvalidInputException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.BAD_REQUEST.value(),
             "Campo inválido",
             e.message,
@@ -47,8 +47,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(DataNotAvailableException::class)
     fun dataNotAvailable(e: DataNotAvailableException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.CONFLICT.value(),
             "Não foi possível finalizar a ação",
             e.message,
@@ -58,8 +58,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(RecoverPasswordTokenExpiredException::class)
     fun recoverPasswordTokenExpired(e: RecoverPasswordTokenExpiredException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.BAD_REQUEST.value(),
             "Token expirado",
             e.message,
@@ -69,8 +69,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(FailToLoginException::class)
     fun failToLogin(e: FailToLoginException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.UNAUTHORIZED.value(),
             "Falha ao autenticar usuário",
             e.message,
@@ -80,8 +80,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(DatabaseException::class)
     fun databaseException(e: DatabaseException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.BAD_REQUEST.value(),
             "Nenhum dado encontrado no banco",
             e.message,
@@ -91,8 +91,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(InvalidTokenException::class)
     fun invalidToken(e: InvalidTokenException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.UNAUTHORIZED.value(),
             "Erro de validação de token de expiração",
             e.message,
@@ -102,8 +102,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException::class)
     fun badCredentials(e: BadCredentialsException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.UNAUTHORIZED.value(),
             "Falha ao efetuar login",
             e.message,
@@ -115,8 +115,8 @@ class CustomizedExceptionHandler {
 
     @ExceptionHandler(MessagingException::class)
     fun messagingException(e: MessagingException, request: HttpServletRequest): ResponseEntity<StandardMessage> {
-        val message: StandardMessage = StandardMessage(
-            Instant.now(),
+        val message = StandardMessage(
+            Clock.System.now(),
             HttpStatus.BAD_REQUEST.value(),
             error = "Falha ao enviar o e-mail",
             e.message,

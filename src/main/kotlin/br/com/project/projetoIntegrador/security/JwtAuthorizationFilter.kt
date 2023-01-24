@@ -44,8 +44,7 @@ class JwtAuthorizationFilter(authManager: AuthenticationManager,
             .build()
             .verify(token.replace(TOKEN_PREFIX, ""))
             .subject
-        val user = service.loadUserByUsername(email)
 
-        return UsernamePasswordAuthenticationToken(email, null, user.authorities)
+        return UsernamePasswordAuthenticationToken(email, null, Collections.emptyList())
     }
 }

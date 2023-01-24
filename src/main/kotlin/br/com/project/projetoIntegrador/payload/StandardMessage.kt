@@ -1,12 +1,12 @@
 package br.com.project.projetoIntegrador.payload
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import java.time.Instant
+import kotlinx.serialization.Serializable
 
-
+@Serializable
 class StandardMessage(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss", timezone = "GMT-3")
-    private var timestamp: Instant,
+    private var timestamp: kotlinx.datetime.Instant,
 
     private var status: Int,
 
@@ -14,5 +14,5 @@ class StandardMessage(
 
     private var message: String?,
 
-    private var path: String) {
-}
+    private var path: String
+    )
