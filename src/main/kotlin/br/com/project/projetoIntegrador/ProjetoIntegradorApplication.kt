@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 import org.springframework.boot.runApplication
 
-@SpringBootApplication(exclude = [SecurityAutoConfiguration::class])
+@SpringBootApplication
 class ProjetoIntegradorApplication
 
 fun main(args: Array<String>) {

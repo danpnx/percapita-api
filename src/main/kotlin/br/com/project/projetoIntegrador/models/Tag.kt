@@ -8,17 +8,17 @@ import java.util.UUID
 
 @Entity
 @Table(name = "TB_TABLE")
-data class Tag(
+class Tag(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TAG_ID", columnDefinition = "CHAR(36)")
-    val id: UUID,
+    @Column(name = "TAG_ID", columnDefinition = "CHAR(36)", nullable = false)
+    val id: UUID? = null,
 
-    @Column(name = "TAG_NAME", length = 25)
+    @Column(name = "TAG_NAME", length = 25, nullable = false)
     var tagName: String?,
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "USER_ID", nullable = false)
     @JsonBackReference(value = "user-tag-reference")
     var user: User,
 

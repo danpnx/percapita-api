@@ -19,11 +19,9 @@ class InputUtils {
         }
 
         fun validatePassword(password: String): Boolean {
-            val regex: String = ("(?=.*[A-Z])(?=.*[!@#$%^&*()\\-_=+{}|?>.<,:;~`'\"]).{8,20}\$")
-                //("^(?=.*[a-z])(?=.*[A-Z])")
-            //("(?=.*[@#$%^&+=])")
-            //("(?=\\S+$).{8,20}$")
-            return password.contains(regex)
+            val validation = ("(?=.*[A-Z])(?=.*[!@#$%^&*()\\-_=+{}|?>.<,:;~`'\"]).{8,20}\$")
+            val regex = Regex(validation)
+            return regex.matches(password)
         }
     }
 }

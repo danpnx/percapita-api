@@ -14,7 +14,7 @@ class TokenUtils {
             return token.append(UUID.randomUUID()).append(UUID.randomUUID()).toString()
         }
 
-        fun isTokenExpired(tokenCreationDate: LocalDateTime): Boolean {
+        fun isTokenExpired(tokenCreationDate: LocalDateTime?): Boolean {
             val now: LocalDateTime = LocalDateTime.now()
             val diff: Duration = Duration.between(tokenCreationDate, now)
             return diff.toMinutes() >= EXPIRE_TOKEN_AFTER_MINUTES

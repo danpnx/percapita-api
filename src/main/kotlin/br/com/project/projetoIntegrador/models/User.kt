@@ -4,16 +4,15 @@ import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
-
 @Entity
 @Table(name = "TB_USER")
-data class User(
+class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
-    val id: Long,
+    @Column(name = "USER_ID", nullable = false)
+    val id: Long? = null,
 
-    @Column(name = "USERNAME",  unique = true, length = 100)
+    @Column(name = "USERNAME",  unique = true, length = 100, nullable = false)
     var username: String?,
 
     @Column(name = "PASSWORD",  length = 200)
@@ -24,16 +23,15 @@ data class User(
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference(value = "user-tag-reference")
-    var tags: ArrayList<Tag>,
+    var tags: MutableSet<Tag> = mutableSetOf(),
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference(value = "user-transaction-reference")
-    var transaction: ArrayList<FinancialTransaction>,
+    var transaction: MutableSet<FinancialTransaction> = mutableSetOf(),
 
     @Column(name = "TOKEN")
-    var token: String,
+    var token: String? = null,
 
     @Column(name = "CREATION_DATE_TOKEN")
-    var tokenCreateTime: LocalDateTime) {
-
-}
+    var tokenCreateTime: LocalDateTime? = null
+)
