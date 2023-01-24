@@ -4,7 +4,7 @@ import jakarta.validation.Valid
 import java.beans.ConstructorProperties
 
 data class UserLogin
-@ConstructorProperties( "email" , "password" )
-constructor(val email: String, val password: String) {
+@ConstructorProperties("username" , "password")
+constructor(val username: String, val password: String) {
 
 }

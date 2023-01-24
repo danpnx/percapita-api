@@ -117,7 +117,7 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
             val password: String = encoder.encode(user.password)
             user.password = password
             userRepository.save(user)
-            sendEmail(user.username.toString())
+//            sendEmail(user.username.toString())
             return HttpStatus.CREATED
     }
 }
