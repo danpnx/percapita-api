@@ -29,24 +29,35 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
     }
 
     fun registerTag(tagName: String, username: String) {
-        val userOptional: Optional<User> = userRepository.findByUsername(username)
-        lateinit var tag: Tag
+        val user = userRepository.findByUsername(username)
+        println(user.toString())
 
-        try {
-            if(existsByTagNameAndUser(tagName, username)) {
-                throw  DataNotAvailableException("Você já possui uma tag com esse nome")
-            }
-
-            if(userOptional.isPresent) {
-                val user: User = userOptional.get()
-                tag.tagName = tagName
-                tag.user = user
-                tagRepository.save(tag)
-            }
-
-        } catch (e: DataNotAvailableException) {
-            e.message
+        if(existsByTagNameAndUser(tagName, username)) {
+            throw  DataNotAvailableException("Você já possui uma tag com esse nome")
         }
+
+//        val tag = Tag(id = null, tagName = tagName, user = user.get())
+        val tag = Tag(tagName = tagName, user = user.get())
+        tagRepository.save(tag)
+
+//        val userOptional: Optional<User> = userRepository.findByUsername(username)
+//        lateinit var tag: Tag
+//
+//        try {
+//            if(existsByTagNameAndUser(tagName, username)) {
+//                throw  DataNotAvailableException("Você já possui uma tag com esse nome")
+//            }
+//
+//            if(userOptional.isPresent) {
+//                val user: User = userOptional.get()
+//                tag.tagName = tagName
+//                tag.user = user
+//                tagRepository.save(tag)
+//            }
+//
+//        } catch (e: DataNotAvailableException) {
+//            e.message
+//        }
     }
 
     fun editTag(tagId: UUID, newName: String?, username: String) {
@@ -62,7 +73,7 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
             }
 
             val tag: Tag = tagOptional.get()
-            tag.tagName = newName
+//            tag.tagName = newName
             tagRepository.save(tag)
 
         } catch (e: DataNotAvailableException) {
@@ -137,9 +148,15 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
     fun getTagById(tagId: UUID, username: String): Tag {
         val tag: Tag = getTagById(tagId, username)
 
-        if(!tag.user.username.equals(username)) {
-            throw  AuthorizationException("Essa tag não pertence ao usuário autenticado")
+        tag.user.let {
+            if(it?.username == username) {
+                throw  AuthorizationException("Essa tag não pertence ao usuário autenticado")
+            }
         }
+
+//        if(!tag.user!!.username.equals(username)) {
+//            throw  AuthorizationException("Essa tag não pertence ao usuário autenticado")
+//        }
 
         if(tag.tagName.equals("Unknown")) {
             tag.add(linkTo(methodOn(TagController::class.java).getAll()).withSelfRel())

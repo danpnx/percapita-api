@@ -6,6 +6,7 @@ plugins {
 	kotlin("jvm") version "1.7.22"
 	kotlin("plugin.spring") version "1.7.22"
 	kotlin("plugin.jpa") version "1.7.22"
+	kotlin("plugin.serialization") version "1.7.20"
 }
 
 group = "br.com.project"
@@ -28,9 +29,12 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.auth0:java-jwt:4.2.2")
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+	implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
+
 }
 
 tasks.withType<KotlinCompile> {
