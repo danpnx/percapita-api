@@ -6,7 +6,7 @@ import br.com.project.projetoIntegrador.payload.ReportResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
+import java.util.*
 
 @Service
 class ReportService(
@@ -14,7 +14,7 @@ class ReportService(
     @Autowired private val financialTransactionService: FinancialTransactionService
 ) {
 
-    fun totalPayment(date: SimpleDateFormat, username: String): ReportResponse<BigDecimal> {
+    fun totalPayment(date: Date, username: String): ReportResponse<BigDecimal> {
         val user = userService.findByUsername(username)
         val list = financialTransactionService.findByDateAndUser(date, user.get())
 
@@ -27,7 +27,7 @@ class ReportService(
         )
     }
 
-    fun totalReceipt(date: SimpleDateFormat, username: String): ReportResponse<BigDecimal> {
+    fun totalReceipt(date: Date, username: String): ReportResponse<BigDecimal> {
         val user = userService.findByUsername(username)
         val list = financialTransactionService.findByDateAndUser(date, user.get())
 
@@ -40,14 +40,14 @@ class ReportService(
         )
     }
 
-    fun accountBalance(date: SimpleDateFormat, username: String): ReportResponse<BigDecimal> {
+    fun accountBalance(date: Date, username: String): ReportResponse<BigDecimal> {
         val totalPayment = totalPayment(date, username)
         val totalReceipt = totalReceipt(date, username)
         val balance = totalReceipt.responseValue.subtract(totalPayment.responseValue)
         return ReportResponse(balance)
     }
 
-    fun reportChart(date: SimpleDateFormat, username: String)
+    fun reportChart(date: Date, username: String)
     : ReportResponse<Map<String, BigDecimal>> {
         val user = userService.findByUsername(username)
         val tags = user.get().tags
@@ -72,7 +72,7 @@ class ReportService(
                 .map { t -> t.transactionValue }
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
 
-            map[tag.tagName!!] = total
+            map[tag.tagName] = total
         }
 
         return ReportResponse(map)

@@ -142,8 +142,8 @@ class FinancialTransactionService(
         return list
     }
 
-    fun findByDateAndUser(date: SimpleDateFormat, user: User): List<FinancialTransaction> {
-        return findByDateAndUser(date, user)
+    fun findByDateAndUser(date: Date, user: User): List<FinancialTransaction> {
+        return transactionRepository.findAllByTransactionDateAndUser(date, user)
     }
 
     fun getTransaction(id: UUID, username: String): FinancialTransaction {
