@@ -55,8 +55,8 @@ class FinancialTransactionController @Autowired constructor(private val financia
     fun getAllTransaction(@RequestParam date: String): ResponseEntity<List<FinancialTransaction>> {
         val username: String = ContextUtils.getUsername()
         try {
-            val date = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(financialTransactionService.getAllTransactions(username, date))
+            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
+            return ResponseEntity.ok(financialTransactionService.getAllTransactions(username, parsedDate))
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
@@ -80,8 +80,8 @@ class FinancialTransactionController @Autowired constructor(private val financia
     fun editDate(@RequestParam date: String?, @RequestParam id: String?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         try {
-            val date = DateUtils.parseDate(date, "dd/MM/yyyy")
-            financialTransactionService.editDate(date, UUID.fromString(id), username)
+            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
+            financialTransactionService.editDate(parsedDate, UUID.fromString(id), username)
             return ResponseEntity.ok().build()
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
@@ -91,7 +91,7 @@ class FinancialTransactionController @Autowired constructor(private val financia
     @PutMapping("/edit/description")
     fun editDescription(@RequestParam description: String?, @RequestParam id: String?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        if(description == null || description.equals("")){
+        if(description == null || description == ""){
             financialTransactionService.editDescription(description, UUID.fromString(id), username)
             return ResponseEntity.ok().build()
         }
@@ -111,8 +111,8 @@ class FinancialTransactionController @Autowired constructor(private val financia
     fun findByTag(@RequestParam tagName: String, date: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         try {
-            val date = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(financialTransactionService.findByTag(tagName, username, date))
+            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
+            return ResponseEntity.ok(financialTransactionService.findByTag(tagName, username, parsedDate))
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }

@@ -150,7 +150,7 @@ class FinancialTransactionService(
         val transaction = transactionRepository.findById(id)
             .orElseThrow{ ResourceNotFoundException("O recurso buscado não existe") }
 
-        if(transaction.user.username != username) {
+        if(transaction.user?.username != username) {
             throw AuthorizationException("Essa transação não pertence ao usuário autenticado")
         }
 
