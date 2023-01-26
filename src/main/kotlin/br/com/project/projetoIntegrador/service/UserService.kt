@@ -17,8 +17,7 @@ import java.util.*
 @Service
 class UserService @Autowired constructor(private var userRepository: UserRepository,
                                          private var mailSender: JavaMailSender,
-                                         private var encoder: PasswordEncoder
-    ) {
+                                         private var encoder: PasswordEncoder) {
 
 
     fun findByUsername(username: String): Optional<User> {
@@ -43,8 +42,8 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
         val message: SimpleMailMessage = SimpleMailMessage()
         val from: String = "suportepercapita@outlook.com"
         val subject: String = "Criação de conta percapita"
-        val text: String = " Ficamos felizes em receber seu cadastro em nosso aplicativo de gestão financeira, Percapita! \n\n"
-        " Para realizar o seu login, basta acessar nossa página de login: https://percapita.azurewebsites.net/login \n"
+        val text: String = " Ficamos felizes em receber seu cadastro em nosso aplicativo de gestão financeira, Percapita! \n\n" +
+                " Para realizar o seu login, basta acessar nossa página de login: https://percapita.azurewebsites.net/login \n"
 
             message.from = from
             message.setTo(username)
@@ -67,10 +66,6 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
 
     fun findByToken(token: String): Optional<User> {
         return userRepository.findByToken(token)
-    }
-
-    fun save(user: User): User {
-        return userRepository.save(user)
     }
 
     fun setTokenAndUpdate(user: User) {
