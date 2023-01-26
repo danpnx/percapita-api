@@ -43,9 +43,9 @@ class TagController @Autowired constructor(private val tagService: TagService) {
         return ResponseEntity.ok(tagService.getAllTags(username))
     }
 
-    @GetMapping("/by-id")
-    fun getTagById(@RequestParam tagId: String?): ResponseEntity<Any> {
+    @GetMapping("/{id}")
+    fun getTagById(@PathVariable id: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        return ResponseEntity.ok(tagService.getTagById(UUID.fromString(tagId), username))
+        return ResponseEntity.ok(tagService.getTagById(UUID.fromString(id), username))
     }
 }

@@ -5,7 +5,6 @@ import br.com.project.projetoIntegrador.security.UserSecurity
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class UserDetailsService(
