@@ -20,35 +20,51 @@ import java.util.*
 class FinancialTransactionController @Autowired constructor(private val financialTransactionService: FinancialTransactionService) {
 
     @PostMapping("/register")
-    fun registerTransaction(@RequestBody @Valid transaction: FinancialTransaction, @RequestParam tagName: String): ResponseEntity<Any> {
+    fun registerTransaction(
+        @RequestBody @Valid transaction: FinancialTransaction,
+        @RequestParam tagName: String
+    ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         financialTransactionService.registerTransaction(transaction, username, tagName)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
-    @DeleteMapping("/delete")
-    fun deleteTransaction(@RequestParam transactionId: String?): ResponseEntity<Any> {
+    @DeleteMapping("/delete/{transactionId}")
+    fun deleteTransaction(
+        @PathVariable("transactionId") transactionId: String?
+    ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         financialTransactionService.deleteTransaction(UUID.fromString(transactionId), username)
         return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/by-category")
-    fun getAllByCategory(@RequestParam category: String, @RequestParam date: String?): ResponseEntity<Any> {
+    fun getAllByCategory(
+        @RequestParam category: String,
+        @RequestParam date: String
+    ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         try {
             val dateFormatted = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(financialTransactionService.findAllByCategory(TransactionCategory.valueOf(category), dateFormatted, username))
+            return ResponseEntity.ok(financialTransactionService
+                .findAllByCategory(
+                    TransactionCategory.valueOf(category),
+                    dateFormatted,
+                    username
+                )
+            )
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
 
     }
 
-    @GetMapping("/by-id")
-    fun getTransactionById(@RequestParam transactionId: String?): ResponseEntity<Any> {
+    @GetMapping("/{transactionId}")
+    fun getTransactionById(@PathVariable("transactionId") transactionId: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        return ResponseEntity.ok(financialTransactionService.getTransactionById(UUID.fromString(transactionId), username))
+        return ResponseEntity.ok(financialTransactionService
+            .getTransactionById(UUID.fromString(transactionId), username)
+        )
     }
 
     @GetMapping("/all")
@@ -56,52 +72,76 @@ class FinancialTransactionController @Autowired constructor(private val financia
         val username: String = ContextUtils.getUsername()
         try {
             val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(financialTransactionService.getAllTransactions(username, parsedDate))
+            return ResponseEntity.ok(
+                financialTransactionService.getAllTransactions(username, parsedDate)
+            )
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
     }
 
-    @PutMapping("/edit/value")
-    fun editValue(@RequestParam value: BigDecimal, @RequestParam id: String): ResponseEntity<Any> {
+    @PutMapping("/edit/{transactionId}/value")
+    fun editValue(
+        @PathVariable("transactionId") transactionId: String,
+        @RequestParam value: BigDecimal
+    ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        financialTransactionService.editValue(value, UUID.fromString(id), username)
+        financialTransactionService.editValue(value, UUID.fromString(transactionId), username)
         return ResponseEntity.ok().build()
     }
 
-    @PutMapping("/edit/category")
-    fun editCategory(@RequestParam id: String?, @RequestParam category: String): ResponseEntity<Any> {
+    @PutMapping("/edit/{transactionId}/category")
+    fun editCategory(
+        @PathVariable("transactionId") transactionId: String,
+        @RequestParam category: String
+    ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        financialTransactionService.editCategory(TransactionCategory.valueOf(category), UUID.fromString(id), username)
+        financialTransactionService.editCategory(
+            TransactionCategory.valueOf(category),
+            UUID.fromString(transactionId),
+            username
+        )
         return ResponseEntity.ok().build()
     }
 
-    @PutMapping("/edit/date")
-    fun editDate(@RequestParam date: String?, @RequestParam id: String?): ResponseEntity<Any> {
+    @PutMapping("/edit/{transactionId}/date")
+    fun editDate(
+        @PathVariable("transactionId") transactionId: String,
+        @RequestParam date: String
+    ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         try {
             val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
-            financialTransactionService.editDate(parsedDate, UUID.fromString(id), username)
+            financialTransactionService.editDate(
+                parsedDate,
+                UUID.fromString(transactionId),
+                username
+            )
             return ResponseEntity.ok().build()
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
     }
 
-    @PutMapping("/edit/description")
-    fun editDescription(@RequestParam description: String?, @RequestParam id: String?): ResponseEntity<Any> {
+    @PutMapping("/edit/{transactionId}/description")
+    fun editDescription(
+        @PathVariable("transactionId") transactionId: String,
+        @RequestParam description: String
+    ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        if(description == null || description == ""){
-            financialTransactionService.editDescription(description, UUID.fromString(id), username)
-            return ResponseEntity.ok().build()
-        }
-
-        financialTransactionService.editDescription(description, UUID.fromString(id), username)
+        financialTransactionService.editDescription(
+            description,
+            UUID.fromString(transactionId),
+            username
+        )
         return ResponseEntity.ok().build()
     }
 
-    @PutMapping("/edit/tag")
-    fun changeTag(@RequestParam tagName: String?, @RequestParam transactionId: String?): ResponseEntity<Any> {
+    @PutMapping("/edit/{transactionId}/tag")
+    fun editTag(
+        @PathVariable("transactionId") transactionId: String,
+        @RequestParam tagName: String
+    ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         financialTransactionService.changeTag(UUID.fromString(transactionId), tagName, username)
         return ResponseEntity.ok().build()
@@ -112,16 +152,11 @@ class FinancialTransactionController @Autowired constructor(private val financia
         val username: String = ContextUtils.getUsername()
         try {
             val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(financialTransactionService.findByTag(tagName, username, parsedDate))
+            return ResponseEntity.ok(
+                financialTransactionService.findByTag(tagName, username, parsedDate)
+            )
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
-    }
-
-    fun editTag(@RequestParam transactionId: String?, @RequestParam tagName: String?): ResponseEntity<Any> {
-        val username = ContextUtils.getUsername()
-
-        financialTransactionService.changeTag(UUID.fromString(transactionId), tagName, username)
-        return ResponseEntity.ok().build()
     }
 }

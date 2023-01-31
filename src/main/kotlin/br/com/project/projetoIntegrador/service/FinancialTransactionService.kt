@@ -176,35 +176,35 @@ class FinancialTransactionService(
             transaction.add(
                 linkTo(
                     methodOn(FinancialTransactionController::class.java)
-                        .editValue(BigDecimal.ZERO, transaction.transactionId.toString())
+                        .editValue(transaction.transactionId.toString(), BigDecimal.ZERO)
                 ).withSelfRel()
             )
 
             transaction.add(
                 linkTo(
                     methodOn(FinancialTransactionController::class.java)
-                        .editCategory(null, transaction.transactionId.toString())
+                        .editCategory(transaction.transactionId.toString(), "")
                 ).withSelfRel()
             )
 
             transaction.add(
                 linkTo(
                     methodOn(FinancialTransactionController::class.java)
-                        .editDate(null, transaction.transactionId.toString())
+                        .editDate(transaction.transactionId.toString(), "")
                 ).withSelfRel()
             )
 
             transaction.add(
                 linkTo(
                     methodOn(FinancialTransactionController::class.java)
-                        .editDescription(null, transaction.transactionId.toString())
+                        .editDescription(transaction.transactionId.toString(), "")
                 ).withSelfRel()
             )
 
             transaction.add(
                 linkTo(
                     methodOn(FinancialTransactionController::class.java)
-                        .editTag(transaction.transactionId.toString(), null)
+                        .editTag(transaction.transactionId.toString(), "")
                 ).withSelfRel()
             )
 
