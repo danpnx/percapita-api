@@ -57,7 +57,7 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
 
         val tagOptional: Optional<Tag> = tagRepository.findById(tagId)
 
-        if(tagOptional.get().transaction.isNotEmpty()) throw DatabaseException("Impossível deletar esta tag, pois existem trasações vinculadas à ela")
+        if(tagOptional.get().transactions.isNotEmpty()) throw DatabaseException("Impossível deletar esta tag, pois existem trasações vinculadas à ela")
 
         tagRepository.deleteById(tagId)
     }

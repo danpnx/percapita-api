@@ -1,6 +1,7 @@
 package br.com.project.projetoIntegrador.models
 
 import com.fasterxml.jackson.annotation.JsonManagedReference
+import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -10,6 +11,7 @@ class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID", nullable = false)
+    @Schema(hidden = true)
     val id: Long? = null,
 
     @Column(name = "USERNAME",  unique = true, length = 100, nullable = false)
@@ -23,15 +25,19 @@ class User(
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference(value = "user-tag-reference")
+    @Schema(hidden = true)
     var tags: MutableSet<Tag> = mutableSetOf(),
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference(value = "user-transaction-reference")
-    var transaction: MutableSet<FinancialTransaction> = mutableSetOf(),
+    @Schema(hidden = true)
+    var transactions: MutableSet<FinancialTransaction> = mutableSetOf(),
 
     @Column(name = "TOKEN")
+    @Schema(hidden = true)
     var token: String? = null,
 
     @Column(name = "CREATION_DATE_TOKEN")
+    @Schema(hidden = true)
     var tokenCreateTime: LocalDateTime? = null
 )

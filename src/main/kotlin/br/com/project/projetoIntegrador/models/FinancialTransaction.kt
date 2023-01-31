@@ -3,9 +3,9 @@ package br.com.project.projetoIntegrador.models
 import br.com.project.projetoIntegrador.enums.TransactionCategory
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonFormat
+import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.persistence.*
-import org.hibernate.annotations.JdbcTypeCode
-import org.hibernate.type.SqlTypes
+import org.springframework.hateoas.Link
 import org.springframework.hateoas.RepresentationModel
 import java.math.BigDecimal
 import java.util.*
@@ -15,7 +15,13 @@ import java.util.*
 class FinancialTransaction(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TRANSACTION_ID", columnDefinition = "VARBINARY(36)", unique = true, nullable = false)
+    @Column(
+        name = "TRANSACTION_ID",
+        columnDefinition = "VARBINARY(36)",
+        unique = true,
+        nullable = false
+    )
+    @Schema(hidden = true)
     val transactionId: UUID? = null,
 
     @Column(name = "TRANSACTION_VALUE", nullable = false)
@@ -36,10 +42,12 @@ class FinancialTransaction(
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     @JsonBackReference(value = "user-transaction-reference")
+    @Schema(hidden = true)
     var user: User? = null,
 
     @ManyToOne
     @JoinColumn(name = "TAG_ID", nullable = false)
     @JsonBackReference(value = "transaction-tag-reference")
+    @Schema(hidden = true)
     var tag: Tag? = null
     ) : RepresentationModel<FinancialTransaction>()

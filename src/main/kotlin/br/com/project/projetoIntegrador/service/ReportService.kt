@@ -58,7 +58,7 @@ class ReportService(
 
         for(tag in tags) {
             if (
-                tag.transaction.stream()
+                tag.transactions.stream()
                     .filter{ transaction -> transaction.transactionDate == date }
                     .filter{ transaction ->
                         transaction.transactionCategory == TransactionCategory.PAYMENT
@@ -66,7 +66,7 @@ class ReportService(
                     .toList().isEmpty()
             ) continue
 
-            val total = tag.transaction.stream()
+            val total = tag.transactions.stream()
                 .filter { t -> t.transactionDate == date }
                 .filter { t -> t.transactionCategory == TransactionCategory.PAYMENT }
                 .map { t -> t.transactionValue }
