@@ -6,7 +6,7 @@ import br.com.project.projetoIntegrador.payload.ReportResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.util.*
+import java.time.LocalDate
 
 @Service
 class ReportService(
@@ -14,7 +14,7 @@ class ReportService(
     @Autowired private val financialTransactionService: FinancialTransactionService
 ) {
 
-    fun totalPayment(date: Date, username: String): ReportResponse<BigDecimal> {
+    fun totalPayment(date: LocalDate, username: String): ReportResponse<BigDecimal> {
         val user = userService.findByUsername(username)
         val list = financialTransactionService.findByDateAndUser(date, user.get())
 
@@ -27,7 +27,7 @@ class ReportService(
         )
     }
 
-    fun totalReceipt(date: Date, username: String): ReportResponse<BigDecimal> {
+    fun totalReceipt(date: LocalDate, username: String): ReportResponse<BigDecimal> {
         val user = userService.findByUsername(username)
         val list = financialTransactionService.findByDateAndUser(date, user.get())
 
@@ -40,14 +40,14 @@ class ReportService(
         )
     }
 
-    fun accountBalance(date: Date, username: String): ReportResponse<BigDecimal> {
+    fun accountBalance(date: LocalDate, username: String): ReportResponse<BigDecimal> {
         val totalPayment = totalPayment(date, username)
         val totalReceipt = totalReceipt(date, username)
         val balance = totalReceipt.responseValue.subtract(totalPayment.responseValue)
         return ReportResponse(balance)
     }
 
-    fun reportChart(date: Date, username: String)
+    fun reportChart(date: LocalDate, username: String)
     : ReportResponse<Map<String, BigDecimal>> {
         val user = userService.findByUsername(username)
         val tags = user.get().tags
@@ -59,7 +59,9 @@ class ReportService(
         for(tag in tags) {
             if (
                 tag.transactions.stream()
-                    .filter{ transaction -> transaction.transactionDate == date }
+                    .filter{ transaction -> transaction.transactionDate.year == date.year &&
+                                transaction.transactionDate.month == date.month
+                    }
                     .filter{ transaction ->
                         transaction.transactionCategory == TransactionCategory.PAYMENT
                     }
@@ -67,7 +69,9 @@ class ReportService(
             ) continue
 
             val total = tag.transactions.stream()
-                .filter { t -> t.transactionDate == date }
+                .filter { transaction -> transaction.transactionDate.year == date.year &&
+                        transaction.transactionDate.month == date.month
+                }
                 .filter { t -> t.transactionCategory == TransactionCategory.PAYMENT }
                 .map { t -> t.transactionValue }
                 .reduce(BigDecimal.ZERO, BigDecimal::add)

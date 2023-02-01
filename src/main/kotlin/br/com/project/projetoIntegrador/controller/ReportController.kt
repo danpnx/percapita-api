@@ -5,13 +5,13 @@ import br.com.project.projetoIntegrador.payload.ReportResponse
 import br.com.project.projetoIntegrador.payload.StandardMessage
 import br.com.project.projetoIntegrador.service.ReportService
 import br.com.project.projetoIntegrador.utils.ContextUtils
+import br.com.project.projetoIntegrador.utils.getLocalDate
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -55,11 +55,11 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping("/payment")
-    fun totalPayment(@RequestParam date: String?): ResponseEntity<Any> {
+    fun totalPayment(@RequestParam date: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
+        val dateFormatted = getLocalDate(date)
         try {
-            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(reportService.totalPayment(parsedDate, username))
+            return ResponseEntity.ok(reportService.totalPayment(dateFormatted, username))
         } catch(e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
@@ -93,11 +93,11 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping("/receipt")
-    fun totalReceipt(@RequestParam date: String?): ResponseEntity<Any> {
+    fun totalReceipt(@RequestParam date: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
+        val dateFormatted = getLocalDate(date)
         try {
-            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(reportService.totalReceipt(parsedDate, username))
+            return ResponseEntity.ok(reportService.totalReceipt(dateFormatted, username))
         } catch(e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
@@ -131,11 +131,11 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping("/balance")
-    fun totalBalance(@RequestParam date: String?): ResponseEntity<Any> {
+    fun totalBalance(@RequestParam date: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
+        val dateFormatted = getLocalDate(date)
         try {
-            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(reportService.accountBalance(parsedDate, username))
+            return ResponseEntity.ok(reportService.accountBalance(dateFormatted, username))
         } catch(e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
@@ -179,11 +179,11 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping("/chart")
-    fun reportChart(@RequestParam date: String?): ResponseEntity<Any> {
+    fun reportChart(@RequestParam date: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
+        val dateFormatted = getLocalDate(date)
         try {
-            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
-            return ResponseEntity.ok(reportService.reportChart(parsedDate, username))
+            return ResponseEntity.ok(reportService.reportChart(dateFormatted, username))
         } catch(e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }

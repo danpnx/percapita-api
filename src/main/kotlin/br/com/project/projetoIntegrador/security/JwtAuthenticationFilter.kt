@@ -50,7 +50,7 @@ class JwtAuthenticationFilter(val authManager: AuthenticationManager
             .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION))
             .sign(Algorithm.HMAC512(SECRET.encodeToByteArray()))
 
-        val headerBody = "$username $jwtToken"
+        val headerBody = "Bearer $jwtToken"
 
         response.addHeader("Authorization", headerBody)
     }

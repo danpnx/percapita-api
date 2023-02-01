@@ -6,6 +6,7 @@ import br.com.project.projetoIntegrador.models.FinancialTransaction
 import br.com.project.projetoIntegrador.payload.StandardMessage
 import br.com.project.projetoIntegrador.service.FinancialTransactionService
 import br.com.project.projetoIntegrador.utils.ContextUtils
+import br.com.project.projetoIntegrador.utils.getLocalDate
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
@@ -14,13 +15,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 import java.text.ParseException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @RestController
@@ -28,7 +30,6 @@ import java.util.*
 @Tag(name = "Financial Transaction", description = "Endpoints para manipulação de transações financeiras")
 @SecurityRequirement(name = "Bearer Authentication")
 class FinancialTransactionController @Autowired constructor(private val financialTransactionService: FinancialTransactionService) {
-
 
     @Operation(
         summary = "Cadastrar transação",
@@ -149,8 +150,8 @@ class FinancialTransactionController @Autowired constructor(private val financia
         @RequestParam date: String
     ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
+        val dateFormatted = getLocalDate(date)
         try {
-            val dateFormatted = DateUtils.parseDate(date, "dd/MM/yyyy")
             return ResponseEntity.ok(financialTransactionService
                 .findAllByCategory(
                     TransactionCategory.valueOf(category),
@@ -251,10 +252,10 @@ class FinancialTransactionController @Autowired constructor(private val financia
     @GetMapping("/all")
     fun getAllTransaction(@RequestParam date: String): ResponseEntity<List<FinancialTransaction>> {
         val username: String = ContextUtils.getUsername()
+        val dateFormatted = getLocalDate(date)
         try {
-            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
             return ResponseEntity.ok(
-                financialTransactionService.getAllTransactions(username, parsedDate)
+                financialTransactionService.getAllTransactions(username, dateFormatted)
             )
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
@@ -408,9 +409,8 @@ class FinancialTransactionController @Autowired constructor(private val financia
     ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         try {
-            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
             financialTransactionService.editDate(
-                parsedDate,
+                LocalDateTime.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
                 UUID.fromString(transactionId),
                 username
             )
@@ -560,10 +560,10 @@ class FinancialTransactionController @Autowired constructor(private val financia
     @GetMapping("/by-tag")
     fun findByTag(@RequestParam tagName: String, date: String): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
+        val dateFormatted = getLocalDate(date)
         try {
-            val parsedDate = DateUtils.parseDate(date, "dd/MM/yyyy")
             return ResponseEntity.ok(
-                financialTransactionService.findByTag(tagName, username, parsedDate)
+                financialTransactionService.findByTag(tagName, username, dateFormatted)
             )
         } catch (e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")

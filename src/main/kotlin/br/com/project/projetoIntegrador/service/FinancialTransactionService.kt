@@ -15,7 +15,8 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -48,11 +49,11 @@ class FinancialTransactionService(
         transactionRepository.delete(transaction)
     }
 
-    fun findAllByCategory(category: TransactionCategory, date: Date, username: String)
+    fun findAllByCategory(category: TransactionCategory, date: LocalDate, username: String)
     : List<FinancialTransaction> {
         val user = userService.findByUsername(username)
         val list = transactionRepository
-            .findAllByTransactionCategoryAndTransactionDateAndUser(category, date, user.get())
+            .findAllByUserAndTransactionCategoryAndTransactionDate(user.get(), category, date.monthValue, date.year)
 
         if(list.isEmpty()) {
             throw ResourceNotFoundException("Você não possui nenhuma transação registrada com esta categoria")
@@ -64,19 +65,20 @@ class FinancialTransactionService(
 
     fun getTransactionById(transactionId: UUID, username: String): FinancialTransaction {
         val transaction = getTransaction(transactionId, username)
-        val date = SimpleDateFormat("dd/MM/yyyy").format(transaction.transactionDate)
+        val date = transaction.transactionDate
+        val dateFormatted = LocalDate.of(date.year, date.monthValue, date.dayOfMonth)
         transaction.add(
             linkTo(
-                methodOn(FinancialTransactionController::class.java).getAllTransaction(date)
+                methodOn(FinancialTransactionController::class.java).getAllTransaction(dateFormatted.toString())
             ).withRel("Transações financeiras")
         )
         transactionRepository.save(transaction)
         return transaction
     }
 
-    fun getAllTransactions(username: String, date: Date): List<FinancialTransaction> {
+    fun getAllTransactions(username: String, date: LocalDate): List<FinancialTransaction> {
         val user = userService.findByUsername(username)
-        val list = transactionRepository.findAllByTransactionDateAndUser(date, user.get())
+        val list = transactionRepository.findAllByUserAndTransactionDate(user.get(), date.monthValue, date.year)
 
         if(list.isEmpty()) {
             throw ResourceNotFoundException("Você não possui nenhuma transação registrada neste mês")
@@ -102,7 +104,7 @@ class FinancialTransactionService(
         transactionRepository.save(transaction)
     }
 
-    fun editDate(date: Date, transactionId: UUID, username: String) {
+    fun editDate(date: LocalDateTime, transactionId: UUID, username: String) {
         val transaction = getTransaction(transactionId, username)
         transaction.transactionDate = date
         transactionRepository.save(transaction)
@@ -125,14 +127,14 @@ class FinancialTransactionService(
         transactionRepository.save(transaction)
     }
 
-    fun findByTag(tagName: String, username: String, date: Date): List<FinancialTransaction> {
+    fun findByTag(tagName: String, username: String, date: LocalDate): List<FinancialTransaction> {
         if(!tagService.existsByTagNameAndUser(tagName, username)) {
             throw DatabaseException("Essa tag não existe")
         }
 
         val user = userService.findByUsername(username)
         val tag = tagService.getTagByTagNameAndUser(tagName, user.get())
-        val list = transactionRepository.findAllByTagAndTransactionDateAndUser(tag, date, user.get())
+        val list = transactionRepository.findAllByTagAndUserAndTransactionDate(tag, user.get(), date.monthValue, date.year)
 
         if(list.isEmpty()) {
             throw ResourceNotFoundException("Você não possui nenhuma transação registrada com esta tag")
@@ -142,8 +144,8 @@ class FinancialTransactionService(
         return list
     }
 
-    fun findByDateAndUser(date: Date, user: User): List<FinancialTransaction> {
-        return transactionRepository.findAllByTransactionDateAndUser(date, user)
+    fun findByDateAndUser(date: LocalDate, user: User): List<FinancialTransaction> {
+        return transactionRepository.findAllByUserAndTransactionDate(user, date.monthValue, date.year)
     }
 
     fun getTransaction(id: UUID, username: String): FinancialTransaction {

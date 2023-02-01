@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.persistence.*
-import org.springframework.hateoas.Link
 import org.springframework.hateoas.RepresentationModel
 import java.math.BigDecimal
+import java.time.LocalDateTime
 import java.util.*
 
 @Entity
@@ -31,10 +31,10 @@ class FinancialTransaction(
     @Column(name = "TRANSACTION_CATEGORY", nullable = false)
     var transactionCategory: TransactionCategory? = null,
 
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     @Column(name = "TRANSACTION_DATE", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", timezone = "GMT-3")
-    var transactionDate: Date,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss", timezone = "GMT-3")
+    var transactionDate: LocalDateTime,
 
     @Column(name = "TRANSACTION_DESCRIPTION", length = 75)
     var transactionDescription: String = "",
