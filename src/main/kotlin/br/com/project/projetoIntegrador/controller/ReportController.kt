@@ -1,8 +1,16 @@
 package br.com.project.projetoIntegrador.controller
 
 import br.com.project.projetoIntegrador.exceptions.InvalidInputException
+import br.com.project.projetoIntegrador.payload.ReportResponse
+import br.com.project.projetoIntegrador.payload.StandardMessage
 import br.com.project.projetoIntegrador.service.ReportService
 import br.com.project.projetoIntegrador.utils.ContextUtils
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -15,8 +23,37 @@ import java.util.*
 
 @RestController
 @RequestMapping("/report")
+@Tag(name = "Report", description = "Endpoints para obter dados de relatório")
+@SecurityRequirement(name = "Bearer Authentication")
 class ReportController @Autowired constructor(private val reportService: ReportService) {
 
+    @Operation(
+        summary = "Total de pagamentos",
+        description = "Endpoint para obter o total de pagamentos no mês",
+        tags = ["Report"],
+        responses = [
+            ApiResponse(
+                description = "OK",
+                responseCode = "200",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ReportResponse::class)
+                    )
+                ]
+            ),
+            ApiResponse(
+                description = "BAD REQUEST",
+                responseCode = "400",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = StandardMessage::class)
+                    )
+                ]
+            )
+        ]
+    )
     @GetMapping("/payment")
     fun totalPayment(@RequestParam date: String?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
@@ -28,6 +65,33 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         }
     }
 
+    @Operation(
+        summary = "Total de recebimentos",
+        description = "Endpoint para obter o total de recebimentos no mês",
+        tags = ["Report"],
+        responses = [
+            ApiResponse(
+                description = "OK",
+                responseCode = "200",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ReportResponse::class)
+                    )
+                ]
+            ),
+            ApiResponse(
+                description = "BAD REQUEST",
+                responseCode = "400",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = StandardMessage::class)
+                    )
+                ]
+            )
+        ]
+    )
     @GetMapping("/receipt")
     fun totalReceipt(@RequestParam date: String?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
@@ -39,6 +103,33 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         }
     }
 
+    @Operation(
+        summary = "Saldo do usuário",
+        description = "Endpoint para obter o saldo do usuário no mês",
+        tags = ["Report"],
+        responses = [
+            ApiResponse(
+                description = "OK",
+                responseCode = "200",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ReportResponse::class)
+                    )
+                ]
+            ),
+            ApiResponse(
+                description = "BAD REQUEST",
+                responseCode = "400",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = StandardMessage::class)
+                    )
+                ]
+            )
+        ]
+    )
     @GetMapping("/balance")
     fun totalBalance(@RequestParam date: String?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
@@ -50,6 +141,43 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         }
     }
 
+    @Operation(
+        summary = "Despesas por tag",
+        description = "Endpoint para obter as despesas por tag no mês",
+        tags = ["Report"],
+        responses = [
+            ApiResponse(
+                description = "OK",
+                responseCode = "200",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ReportResponse::class)
+                    )
+                ]
+            ),
+            ApiResponse(
+                description = "BAD REQUEST",
+                responseCode = "400",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = StandardMessage::class)
+                    )
+                ]
+            ),
+            ApiResponse(
+                description = "BNOT FOUND",
+                responseCode = "404",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = StandardMessage::class)
+                    )
+                ]
+            )
+        ]
+    )
     @GetMapping("/chart")
     fun reportChart(@RequestParam date: String?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
