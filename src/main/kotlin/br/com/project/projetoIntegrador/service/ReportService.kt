@@ -2,7 +2,6 @@ package br.com.project.projetoIntegrador.service
 
 import br.com.project.projetoIntegrador.enums.TransactionCategory
 import br.com.project.projetoIntegrador.exceptions.ResourceNotFoundException
-import br.com.project.projetoIntegrador.payload.ReportResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -14,41 +13,42 @@ class ReportService(
     @Autowired private val financialTransactionService: FinancialTransactionService
 ) {
 
-    fun totalPayment(date: LocalDate, username: String): ReportResponse<BigDecimal> {
+    fun totalPayment(date: LocalDate, username: String): Map<String, BigDecimal> {
         val user = userService.findByUsername(username)
         val list = financialTransactionService.findByDateAndUser(date, user.get())
 
-        if(list.isEmpty()) return ReportResponse(BigDecimal.ZERO)
+        if(list.isEmpty()) return mapOf("Pagamentos" to BigDecimal.ZERO)
 
-        return ReportResponse(
-            list.stream().filter { t -> t.transactionCategory == TransactionCategory.PAYMENT }
-                .map { t -> t.transactionValue }
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-        )
+        val total = list.stream().filter { t -> t.transactionCategory == TransactionCategory.PAYMENT }
+            .map { t -> t.transactionValue }
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+
+        return mapOf("Pagamentos" to total)
     }
 
-    fun totalReceipt(date: LocalDate, username: String): ReportResponse<BigDecimal> {
+    fun totalReceipt(date: LocalDate, username: String): Map<String, BigDecimal> {
         val user = userService.findByUsername(username)
         val list = financialTransactionService.findByDateAndUser(date, user.get())
 
-        if(list.isEmpty()) return ReportResponse(BigDecimal.ZERO)
+        if(list.isEmpty()) return mapOf("Recebimentos" to BigDecimal.ZERO)
 
-        return ReportResponse(
-            list.stream().filter { t -> t.transactionCategory == TransactionCategory.RECEIPT }
-                .map { t -> t.transactionValue }
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-        )
+        val total = list.stream().filter { t -> t.transactionCategory == TransactionCategory.RECEIPT }
+            .map { t -> t.transactionValue }
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+
+        return mapOf("Recebimentos" to total)
     }
 
-    fun accountBalance(date: LocalDate, username: String): ReportResponse<BigDecimal> {
+    fun accountBalance(date: LocalDate, username: String): Map<String, BigDecimal> {
         val totalPayment = totalPayment(date, username)
         val totalReceipt = totalReceipt(date, username)
-        val balance = totalReceipt.responseValue.subtract(totalPayment.responseValue)
-        return ReportResponse(balance)
+        val balance = (totalReceipt["Recebimentos"] ?: BigDecimal.ZERO)
+            .subtract(totalPayment["Pagamentos"])
+        return mapOf("Saldo" to balance)
     }
 
     fun reportChart(date: LocalDate, username: String)
-    : ReportResponse<Map<String, BigDecimal>> {
+    : Map<String, BigDecimal> {
         val user = userService.findByUsername(username)
         val tags = user.get().tags
 
@@ -79,6 +79,6 @@ class ReportService(
             map[tag.tagName] = total
         }
 
-        return ReportResponse(map)
+        return map
     }
 }

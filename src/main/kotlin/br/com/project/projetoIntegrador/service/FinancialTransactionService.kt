@@ -1,6 +1,7 @@
 package br.com.project.projetoIntegrador.service
 
 import br.com.project.projetoIntegrador.controller.FinancialTransactionController
+import br.com.project.projetoIntegrador.dto.RegisterTransactionDTO
 import br.com.project.projetoIntegrador.enums.TransactionCategory
 import br.com.project.projetoIntegrador.exceptions.AuthorizationException
 import br.com.project.projetoIntegrador.exceptions.DatabaseException
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 
 @Service
@@ -27,21 +29,20 @@ class FinancialTransactionService(
     @Autowired private val tagService: TagService
 ) {
 
-    fun registerTransaction(transaction: FinancialTransaction, username: String, tagName: String) {
+    fun registerTransaction(transaction: RegisterTransactionDTO, username: String, tagName: String) {
         if(transaction.transactionValue <= BigDecimal.ZERO) {
             throw InvalidInputException("Digite um valor maior que zero")
         }
 
         val user = userService.findByUsername(username)
-
-        if(tagService.existsByTagNameAndUser(tagName, username)) {
-            transaction.tag = tagService.getTagByTagNameAndUser(tagName, user.get())
+        val tag = if(tagService.existsByTagNameAndUser(tagName, username)) {
+            tagService.getTagByTagNameAndUser(tagName, user.get())
         } else {
-            transaction.tag = tagService.registerTagInFinancialTransaction(tagName, user.get())
+            tagService.registerTagInFinancialTransaction(tagName, user.get())
         }
 
-        transaction.user = user.get()
-        transactionRepository.save(transaction)
+        val financialTransaction = transaction.convertToFinancialTransaction(user.get(), tag)
+        transactionRepository.save(financialTransaction)
     }
 
     fun deleteTransaction(transactionId: UUID, username: String) {
@@ -104,9 +105,18 @@ class FinancialTransactionService(
         transactionRepository.save(transaction)
     }
 
-    fun editDate(date: LocalDateTime, transactionId: UUID, username: String) {
+    fun editDate(date: LocalDate, transactionId: UUID, username: String) {
         val transaction = getTransaction(transactionId, username)
-        transaction.transactionDate = date
+        val newDate = LocalDateTime.of(
+            date, LocalTime.of(
+                transaction.transactionDate.hour,
+                transaction.transactionDate.minute,
+                transaction.transactionDate.second,
+                transaction.transactionDate.nano
+            )
+        )
+
+        transaction.transactionDate = newDate
         transactionRepository.save(transaction)
     }
 

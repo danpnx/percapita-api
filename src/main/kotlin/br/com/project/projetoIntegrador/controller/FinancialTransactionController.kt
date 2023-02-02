@@ -1,5 +1,6 @@
 package br.com.project.projetoIntegrador.controller
 
+import br.com.project.projetoIntegrador.dto.RegisterTransactionDTO
 import br.com.project.projetoIntegrador.enums.TransactionCategory
 import br.com.project.projetoIntegrador.exceptions.InvalidInputException
 import br.com.project.projetoIntegrador.models.FinancialTransaction
@@ -21,8 +22,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 import java.text.ParseException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 @RestController
@@ -55,7 +54,7 @@ class FinancialTransactionController @Autowired constructor(private val financia
     )
     @PostMapping("/register")
     fun registerTransaction(
-        @RequestBody @Valid transaction: FinancialTransaction,
+        @RequestBody @Valid transaction: RegisterTransactionDTO,
         @RequestParam tagName: String
     ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
@@ -408,9 +407,10 @@ class FinancialTransactionController @Autowired constructor(private val financia
         @RequestParam date: String
     ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
+        val dateFormatted = getLocalDate(date)
         try {
             financialTransactionService.editDate(
-                LocalDateTime.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+                dateFormatted,
                 UUID.fromString(transactionId),
                 username
             )

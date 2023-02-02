@@ -1,7 +1,6 @@
 package br.com.project.projetoIntegrador.controller
 
 import br.com.project.projetoIntegrador.exceptions.InvalidInputException
-import br.com.project.projetoIntegrador.payload.ReportResponse
 import br.com.project.projetoIntegrador.payload.StandardMessage
 import br.com.project.projetoIntegrador.service.ReportService
 import br.com.project.projetoIntegrador.utils.ContextUtils
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.math.BigDecimal
 import java.text.ParseException
 import java.util.*
 
@@ -38,7 +38,7 @@ class ReportController @Autowired constructor(private val reportService: ReportS
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = ReportResponse::class)
+                        schema = Schema(implementation = Map::class)
                     )
                 ]
             ),
@@ -55,7 +55,7 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping("/payment")
-    fun totalPayment(@RequestParam date: String): ResponseEntity<Any> {
+    fun totalPayment(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
         val username: String = ContextUtils.getUsername()
         val dateFormatted = getLocalDate(date)
         try {
@@ -76,7 +76,7 @@ class ReportController @Autowired constructor(private val reportService: ReportS
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = ReportResponse::class)
+                        schema = Schema(implementation = Map::class)
                     )
                 ]
             ),
@@ -93,7 +93,7 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping("/receipt")
-    fun totalReceipt(@RequestParam date: String): ResponseEntity<Any> {
+    fun totalReceipt(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
         val username: String = ContextUtils.getUsername()
         val dateFormatted = getLocalDate(date)
         try {
@@ -114,7 +114,7 @@ class ReportController @Autowired constructor(private val reportService: ReportS
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = ReportResponse::class)
+                        schema = Schema(implementation = Map::class)
                     )
                 ]
             ),
@@ -131,7 +131,7 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping("/balance")
-    fun totalBalance(@RequestParam date: String): ResponseEntity<Any> {
+    fun totalBalance(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
         val username: String = ContextUtils.getUsername()
         val dateFormatted = getLocalDate(date)
         try {
@@ -152,7 +152,7 @@ class ReportController @Autowired constructor(private val reportService: ReportS
                 content = [
                     Content(
                         mediaType = "application/json",
-                        schema = Schema(implementation = ReportResponse::class)
+                        schema = Schema(implementation = Map::class)
                     )
                 ]
             ),
@@ -179,7 +179,7 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping("/chart")
-    fun reportChart(@RequestParam date: String): ResponseEntity<Any> {
+    fun reportChart(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
         val username: String = ContextUtils.getUsername()
         val dateFormatted = getLocalDate(date)
         try {

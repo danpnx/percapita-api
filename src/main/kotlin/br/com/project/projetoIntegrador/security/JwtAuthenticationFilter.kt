@@ -1,6 +1,5 @@
 package br.com.project.projetoIntegrador.security
 
-import br.com.project.projetoIntegrador.models.User
 import br.com.project.projetoIntegrador.models.UserLogin
 import br.com.project.projetoIntegrador.security.SecurityConstants.EXPIRATION
 import br.com.project.projetoIntegrador.security.SecurityConstants.SECRET
@@ -10,17 +9,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.util.*
 
-class JwtAuthenticationFilter(val authManager: AuthenticationManager
+class JwtAuthenticationFilter(
+    private val authManager: AuthenticationManager
     ): UsernamePasswordAuthenticationFilter() {
 
     override fun attemptAuthentication(
