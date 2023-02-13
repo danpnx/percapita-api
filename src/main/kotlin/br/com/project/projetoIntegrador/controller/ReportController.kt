@@ -1,6 +1,7 @@
 package br.com.project.projetoIntegrador.controller
 
 import br.com.project.projetoIntegrador.exceptions.InvalidInputException
+import br.com.project.projetoIntegrador.payload.ReportPayload
 import br.com.project.projetoIntegrador.payload.StandardMessage
 import br.com.project.projetoIntegrador.service.ReportService
 import br.com.project.projetoIntegrador.utils.ContextUtils
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.math.BigDecimal
 import java.text.ParseException
 import java.util.*
 
@@ -28,8 +28,8 @@ import java.util.*
 class ReportController @Autowired constructor(private val reportService: ReportService) {
 
     @Operation(
-        summary = "Total de pagamentos",
-        description = "Endpoint para obter o total de pagamentos no mês",
+        summary = "Relatório",
+        description = "Endpoint para obter os dados de relatório",
         tags = ["Report"],
         responses = [
             ApiResponse(
@@ -54,138 +54,149 @@ class ReportController @Autowired constructor(private val reportService: ReportS
             )
         ]
     )
-    @GetMapping("/payment")
-    fun totalPayment(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
+    @GetMapping
+    fun getReport(@RequestParam date:String): ResponseEntity<ReportPayload> {
         val username: String = ContextUtils.getUsername()
-        val dateFormatted = getLocalDate(date)
-        try {
-            return ResponseEntity.ok(reportService.totalPayment(dateFormatted, username))
-        } catch(e: ParseException) {
-            throw InvalidInputException("Não foi possível converter a data")
-        }
-    }
 
-    @Operation(
-        summary = "Total de recebimentos",
-        description = "Endpoint para obter o total de recebimentos no mês",
-        tags = ["Report"],
-        responses = [
-            ApiResponse(
-                description = "OK",
-                responseCode = "200",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = Map::class)
-                    )
-                ]
-            ),
-            ApiResponse(
-                description = "BAD REQUEST",
-                responseCode = "400",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = StandardMessage::class)
-                    )
-                ]
-            )
-        ]
-    )
-    @GetMapping("/receipt")
-    fun totalReceipt(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
-        val username: String = ContextUtils.getUsername()
-        val dateFormatted = getLocalDate(date)
         try {
-            return ResponseEntity.ok(reportService.totalReceipt(dateFormatted, username))
+            val dateFormatted = getLocalDate(date)
+            return ResponseEntity.ok(reportService.getReport(dateFormatted, username))
         } catch(e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
     }
-
-    @Operation(
-        summary = "Saldo do usuário",
-        description = "Endpoint para obter o saldo do usuário no mês",
-        tags = ["Report"],
-        responses = [
-            ApiResponse(
-                description = "OK",
-                responseCode = "200",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = Map::class)
-                    )
-                ]
-            ),
-            ApiResponse(
-                description = "BAD REQUEST",
-                responseCode = "400",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = StandardMessage::class)
-                    )
-                ]
-            )
-        ]
-    )
-    @GetMapping("/balance")
-    fun totalBalance(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
-        val username: String = ContextUtils.getUsername()
-        val dateFormatted = getLocalDate(date)
-        try {
-            return ResponseEntity.ok(reportService.accountBalance(dateFormatted, username))
-        } catch(e: ParseException) {
-            throw InvalidInputException("Não foi possível converter a data")
-        }
-    }
-
-    @Operation(
-        summary = "Despesas por tag",
-        description = "Endpoint para obter as despesas por tag no mês",
-        tags = ["Report"],
-        responses = [
-            ApiResponse(
-                description = "OK",
-                responseCode = "200",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = Map::class)
-                    )
-                ]
-            ),
-            ApiResponse(
-                description = "BAD REQUEST",
-                responseCode = "400",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = StandardMessage::class)
-                    )
-                ]
-            ),
-            ApiResponse(
-                description = "BNOT FOUND",
-                responseCode = "404",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = StandardMessage::class)
-                    )
-                ]
-            )
-        ]
-    )
-    @GetMapping("/chart")
-    fun reportChart(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
-        val username: String = ContextUtils.getUsername()
-        val dateFormatted = getLocalDate(date)
-        try {
-            return ResponseEntity.ok(reportService.reportChart(dateFormatted, username))
-        } catch(e: ParseException) {
-            throw InvalidInputException("Não foi possível converter a data")
-        }
-    }
+//    @GetMapping("/payment")
+//    fun totalPayment(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
+//        val username: String = ContextUtils.getUsername()
+//        val dateFormatted = getLocalDate(date)
+//        try {
+//            return ResponseEntity.ok(reportService.totalPayment(dateFormatted, username))
+//        } catch(e: ParseException) {
+//            throw InvalidInputException("Não foi possível converter a data")
+//        }
+//    }
+//
+//    @Operation(
+//        summary = "Total de recebimentos",
+//        description = "Endpoint para obter o total de recebimentos no mês",
+//        tags = ["Report"],
+//        responses = [
+//            ApiResponse(
+//                description = "OK",
+//                responseCode = "200",
+//                content = [
+//                    Content(
+//                        mediaType = "application/json",
+//                        schema = Schema(implementation = Map::class)
+//                    )
+//                ]
+//            ),
+//            ApiResponse(
+//                description = "BAD REQUEST",
+//                responseCode = "400",
+//                content = [
+//                    Content(
+//                        mediaType = "application/json",
+//                        schema = Schema(implementation = StandardMessage::class)
+//                    )
+//                ]
+//            )
+//        ]
+//    )
+//    @GetMapping("/receipt")
+//    fun totalReceipt(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
+//        val username: String = ContextUtils.getUsername()
+//        val dateFormatted = getLocalDate(date)
+//        try {
+//            return ResponseEntity.ok(reportService.totalReceipt(dateFormatted, username))
+//        } catch(e: ParseException) {
+//            throw InvalidInputException("Não foi possível converter a data")
+//        }
+//    }
+//
+//    @Operation(
+//        summary = "Saldo do usuário",
+//        description = "Endpoint para obter o saldo do usuário no mês",
+//        tags = ["Report"],
+//        responses = [
+//            ApiResponse(
+//                description = "OK",
+//                responseCode = "200",
+//                content = [
+//                    Content(
+//                        mediaType = "application/json",
+//                        schema = Schema(implementation = Map::class)
+//                    )
+//                ]
+//            ),
+//            ApiResponse(
+//                description = "BAD REQUEST",
+//                responseCode = "400",
+//                content = [
+//                    Content(
+//                        mediaType = "application/json",
+//                        schema = Schema(implementation = StandardMessage::class)
+//                    )
+//                ]
+//            )
+//        ]
+//    )
+//    @GetMapping("/balance")
+//    fun totalBalance(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
+//        val username: String = ContextUtils.getUsername()
+//        val dateFormatted = getLocalDate(date)
+//        try {
+//            return ResponseEntity.ok(reportService.accountBalance(dateFormatted, username))
+//        } catch(e: ParseException) {
+//            throw InvalidInputException("Não foi possível converter a data")
+//        }
+//    }
+//
+//    @Operation(
+//        summary = "Despesas por tag",
+//        description = "Endpoint para obter as despesas por tag no mês",
+//        tags = ["Report"],
+//        responses = [
+//            ApiResponse(
+//                description = "OK",
+//                responseCode = "200",
+//                content = [
+//                    Content(
+//                        mediaType = "application/json",
+//                        schema = Schema(implementation = Map::class)
+//                    )
+//                ]
+//            ),
+//            ApiResponse(
+//                description = "BAD REQUEST",
+//                responseCode = "400",
+//                content = [
+//                    Content(
+//                        mediaType = "application/json",
+//                        schema = Schema(implementation = StandardMessage::class)
+//                    )
+//                ]
+//            ),
+//            ApiResponse(
+//                description = "BNOT FOUND",
+//                responseCode = "404",
+//                content = [
+//                    Content(
+//                        mediaType = "application/json",
+//                        schema = Schema(implementation = StandardMessage::class)
+//                    )
+//                ]
+//            )
+//        ]
+//    )
+//    @GetMapping("/chart")
+//    fun reportChart(@RequestParam date: String): ResponseEntity<Map<String, BigDecimal>> {
+//        val username: String = ContextUtils.getUsername()
+//        val dateFormatted = getLocalDate(date)
+//        try {
+//            return ResponseEntity.ok(reportService.reportChart(dateFormatted, username))
+//        } catch(e: ParseException) {
+//            throw InvalidInputException("Não foi possível converter a data")
+//        }
+//    }
 }

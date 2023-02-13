@@ -2,6 +2,8 @@ package br.com.project.projetoIntegrador.service
 
 import br.com.project.projetoIntegrador.enums.TransactionCategory
 import br.com.project.projetoIntegrador.exceptions.ResourceNotFoundException
+import br.com.project.projetoIntegrador.models.User
+import br.com.project.projetoIntegrador.payload.ReportPayload
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -13,44 +15,36 @@ class ReportService(
     @Autowired private val financialTransactionService: FinancialTransactionService
 ) {
 
-    fun totalPayment(date: LocalDate, username: String): Map<String, BigDecimal> {
-        val user = userService.findByUsername(username)
-        val list = financialTransactionService.findByDateAndUser(date, user.get())
+    fun totalPayment(date: LocalDate, user: User): BigDecimal {
+        val list = financialTransactionService.findByDateAndUser(date, user)
 
-        if(list.isEmpty()) return mapOf("Pagamentos" to BigDecimal.ZERO)
+        if (list.isEmpty()) return BigDecimal.ZERO
 
-        val total = list.stream().filter { t -> t.transactionCategory == TransactionCategory.PAYMENT }
+        return list.stream().filter { t -> t.transactionCategory == TransactionCategory.PAYMENT }
             .map { t -> t.transactionValue }
             .reduce(BigDecimal.ZERO, BigDecimal::add)
-
-        return mapOf("Pagamentos" to total)
     }
 
-    fun totalReceipt(date: LocalDate, username: String): Map<String, BigDecimal> {
-        val user = userService.findByUsername(username)
-        val list = financialTransactionService.findByDateAndUser(date, user.get())
+    fun totalReceipt(date: LocalDate, user: User): BigDecimal {
+        val list = financialTransactionService.findByDateAndUser(date, user)
 
-        if(list.isEmpty()) return mapOf("Recebimentos" to BigDecimal.ZERO)
+        if (list.isEmpty()) return BigDecimal.ZERO
 
-        val total = list.stream().filter { t -> t.transactionCategory == TransactionCategory.RECEIPT }
+        return list.stream().filter { t -> t.transactionCategory == TransactionCategory.RECEIPT }
             .map { t -> t.transactionValue }
             .reduce(BigDecimal.ZERO, BigDecimal::add)
-
-        return mapOf("Recebimentos" to total)
     }
 
-    fun accountBalance(date: LocalDate, username: String): Map<String, BigDecimal> {
-        val totalPayment = totalPayment(date, username)
-        val totalReceipt = totalReceipt(date, username)
-        val balance = (totalReceipt["Recebimentos"] ?: BigDecimal.ZERO)
-            .subtract(totalPayment["Pagamentos"])
-        return mapOf("Saldo" to balance)
-    }
+//    fun accountBalance(date: LocalDate, username: String): Map<String, BigDecimal> {
+//        val totalPayment = totalPayment(date, username)
+//        val totalReceipt = totalReceipt(date, username)
+//        val balance = (totalReceipt["Recebimentos"] ?: BigDecimal.ZERO)
+//            .subtract(totalPayment["Pagamentos"])
+//        return mapOf("Saldo" to balance)
+//    }
 
-    fun reportChart(date: LocalDate, username: String)
-    : Map<String, BigDecimal> {
-        val user = userService.findByUsername(username)
-        val tags = user.get().tags
+    fun reportChart(date: LocalDate, user: User): Map<String, BigDecimal> {
+        val tags = user.tags
 
         if (tags.isEmpty()) throw ResourceNotFoundException("Você ainda não possui nenhuma tag")
 
@@ -80,5 +74,20 @@ class ReportService(
         }
 
         return map
+    }
+
+    fun getReport(date: LocalDate, username: String): ReportPayload? {
+        val user = userService.getUser(username)
+        val totalPayment = totalPayment(date, user)
+        val totalReceipt = totalReceipt(date, user)
+        val accountBalance = totalReceipt.subtract(totalPayment)
+        val chartData = reportChart(date, user)
+        val map = mapOf<String, BigDecimal>(
+            "Saldo" to accountBalance,
+            "Receitas" to totalReceipt,
+            "Despesas" to totalPayment
+        )
+
+        return ReportPayload(map, chartData)
     }
 }

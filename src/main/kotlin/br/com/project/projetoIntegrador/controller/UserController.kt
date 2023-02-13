@@ -1,6 +1,7 @@
 package br.com.project.projetoIntegrador.controller
 
 import br.com.project.projetoIntegrador.models.User
+import br.com.project.projetoIntegrador.payload.ProfilePayload
 import br.com.project.projetoIntegrador.payload.StandardMessage
 import br.com.project.projetoIntegrador.service.UserService
 import br.com.project.projetoIntegrador.utils.ContextUtils
@@ -52,7 +53,7 @@ class UserController @Autowired constructor(private val userService: UserService
         ]
     )
     @GetMapping("/profile")
-    fun getProfile(): ResponseEntity<Any> {
+    fun getProfile(): ResponseEntity<ProfilePayload> {
         val username: String = ContextUtils.getUsername()
         return ResponseEntity.ok(userService.findByUsername(username))
     }

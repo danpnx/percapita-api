@@ -2,6 +2,7 @@ package br.com.project.projetoIntegrador.service
 
 import br.com.project.projetoIntegrador.exceptions.InvalidInputException
 import br.com.project.projetoIntegrador.models.User
+import br.com.project.projetoIntegrador.payload.ProfilePayload
 import br.com.project.projetoIntegrador.repositories.UserRepository
 import br.com.project.projetoIntegrador.utils.InputUtils
 import br.com.project.projetoIntegrador.utils.TokenUtils
@@ -20,8 +21,13 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
                                          private var encoder: PasswordEncoder) {
 
 
-    fun findByUsername(username: String): Optional<User> {
-        return userRepository.findByUsername(username)
+    fun findByUsername(username: String): ProfilePayload {
+        val user = userRepository.findByUsername(username)
+        return ProfilePayload(user.get().id!!, user.get().username!!, user.get().name!!)
+    }
+
+    fun getUser(username: String): User {
+        return userRepository.findByUsername(username).get()
     }
 
     fun setTokenAndUpdate(user: User, token: String?, time: LocalDateTime?) {

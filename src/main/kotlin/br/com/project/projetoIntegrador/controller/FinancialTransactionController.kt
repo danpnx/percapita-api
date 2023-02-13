@@ -249,17 +249,23 @@ class FinancialTransactionController @Autowired constructor(private val financia
         ]
     )
     @GetMapping("/all")
-    fun getAllTransaction(@RequestParam date: String): ResponseEntity<List<FinancialTransaction>> {
+    fun getAllTransactions(): ResponseEntity<List<FinancialTransaction>> {
         val username: String = ContextUtils.getUsername()
-        val dateFormatted = getLocalDate(date)
-        try {
-            return ResponseEntity.ok(
-                financialTransactionService.getAllTransactions(username, dateFormatted)
-            )
-        } catch (e: ParseException) {
-            throw InvalidInputException("Não foi possível converter a data")
-        }
+        return ResponseEntity.ok(financialTransactionService.getAllTransactions(username))
     }
+
+//    @GetMapping("/all")
+//    fun getAllTransaction(@RequestParam date: String): ResponseEntity<List<FinancialTransaction>> {
+//        val username: String = ContextUtils.getUsername()
+//        val dateFormatted = getLocalDate(date)
+//        try {
+//            return ResponseEntity.ok(
+//                financialTransactionService.getAllTransactions(username, dateFormatted)
+//            )
+//        } catch (e: ParseException) {
+//            throw InvalidInputException("Não foi possível converter a data")
+//        }
+//    }
 
     @Operation(
         summary = "Alterar valor",

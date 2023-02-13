@@ -12,6 +12,8 @@ import java.util.*
 @Repository
 interface FinancialTransactionRepository : JpaRepository<FinancialTransaction, UUID> {
 
+    fun findAllByUserOrderByTransactionDateDesc(user: User): List<FinancialTransaction>
+
     @Query(value = "select e from FinancialTransaction e where month(e.transactionDate)= ?2 and year(e.transactionDate)= ?3 and e.user= ?1 order by e.transactionDate desc")
     fun findAllByUserAndTransactionDate(user: User, month: Int, year: Int): List<FinancialTransaction>
 

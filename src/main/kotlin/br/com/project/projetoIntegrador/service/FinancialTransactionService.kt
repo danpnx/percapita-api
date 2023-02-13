@@ -34,14 +34,14 @@ class FinancialTransactionService(
             throw InvalidInputException("Digite um valor maior que zero")
         }
 
-        val user = userService.findByUsername(username)
+        val user = userService.getUser(username)
         val tag = if(tagService.existsByTagNameAndUser(tagName, username)) {
-            tagService.getTagByTagNameAndUser(tagName, user.get())
+            tagService.getTagByTagNameAndUser(tagName, user)
         } else {
-            tagService.registerTagInFinancialTransaction(tagName, user.get())
+            tagService.registerTagInFinancialTransaction(tagName, user)
         }
 
-        val financialTransaction = transaction.convertToFinancialTransaction(user.get(), tag)
+        val financialTransaction = transaction.convertToFinancialTransaction(user, tag)
         transactionRepository.save(financialTransaction)
     }
 
@@ -52,9 +52,9 @@ class FinancialTransactionService(
 
     fun findAllByCategory(category: TransactionCategory, date: LocalDate, username: String)
     : List<FinancialTransaction> {
-        val user = userService.findByUsername(username)
+        val user = userService.getUser(username)
         val list = transactionRepository
-            .findAllByUserAndTransactionCategoryAndTransactionDate(user.get(), category, date.monthValue, date.year)
+            .findAllByUserAndTransactionCategoryAndTransactionDate(user, category, date.monthValue, date.year)
 
         if(list.isEmpty()) {
             throw ResourceNotFoundException("Você não possui nenhuma transação registrada com esta categoria")
@@ -70,24 +70,33 @@ class FinancialTransactionService(
         val dateFormatted = LocalDate.of(date.year, date.monthValue, date.dayOfMonth)
         transaction.add(
             linkTo(
-                methodOn(FinancialTransactionController::class.java).getAllTransaction(dateFormatted.toString())
+                methodOn(FinancialTransactionController::class.java).getAllTransactions()
             ).withRel("Transações financeiras")
         )
         transactionRepository.save(transaction)
         return transaction
     }
 
-    fun getAllTransactions(username: String, date: LocalDate): List<FinancialTransaction> {
-        val user = userService.findByUsername(username)
-        val list = transactionRepository.findAllByUserAndTransactionDate(user.get(), date.monthValue, date.year)
-
+    fun getAllTransactions(username: String): List<FinancialTransaction> {
+        val user = userService.getUser(username)
+        val list = transactionRepository.findAllByUserOrderByTransactionDateDesc(user)
         if(list.isEmpty()) {
             throw ResourceNotFoundException("Você não possui nenhuma transação registrada neste mês")
         }
-
-        addLinksInList(list)
         return list
     }
+
+//    fun getAllTransactions(username: String, date: LocalDate): List<FinancialTransaction> {
+//        val user = userService.findByUsername(username)
+//        val list = transactionRepository.findAllByUserAndTransactionDate(user.get(), date.monthValue, date.year)
+//
+//        if(list.isEmpty()) {
+//            throw ResourceNotFoundException("Você não possui nenhuma transação registrada neste mês")
+//        }
+//
+//        addLinksInList(list)
+//        return list
+//    }
 
     fun editValue(value: BigDecimal, transactionId: UUID, username: String) {
         if(value <= BigDecimal.ZERO) {
@@ -128,9 +137,9 @@ class FinancialTransactionService(
 
     fun changeTag(transactionId: UUID, tagName: String?, username: String) {
         val transaction = getTransaction(transactionId, username)
-        val user = userService.findByUsername(username)
+        val user = userService.getUser(username)
 
-        transaction.tag = user.get().tags.stream()
+        transaction.tag = user.tags.stream()
             .filter { tag -> tag.tagName == tagName }
             .findFirst().orElseThrow { InvalidInputException("Insira uma tag existente") }
 
@@ -142,9 +151,9 @@ class FinancialTransactionService(
             throw DatabaseException("Essa tag não existe")
         }
 
-        val user = userService.findByUsername(username)
-        val tag = tagService.getTagByTagNameAndUser(tagName, user.get())
-        val list = transactionRepository.findAllByTagAndUserAndTransactionDate(tag, user.get(), date.monthValue, date.year)
+        val user = userService.getUser(username)
+        val tag = tagService.getTagByTagNameAndUser(tagName, user)
+        val list = transactionRepository.findAllByTagAndUserAndTransactionDate(tag, user, date.monthValue, date.year)
 
         if(list.isEmpty()) {
             throw ResourceNotFoundException("Você não possui nenhuma transação registrada com esta tag")
