@@ -76,8 +76,9 @@ class ReportService(
         return map
     }
 
-    fun getReport(date: LocalDate, username: String): ReportPayload? {
+    fun getReport(username: String): ReportPayload? {
         val user = userService.getUser(username)
+        val date = LocalDate.now()
         val totalPayment = totalPayment(date, user)
         val totalReceipt = totalReceipt(date, user)
         val accountBalance = totalReceipt.subtract(totalPayment)

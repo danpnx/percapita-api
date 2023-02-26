@@ -55,12 +55,11 @@ class ReportController @Autowired constructor(private val reportService: ReportS
         ]
     )
     @GetMapping
-    fun getReport(@RequestParam date:String): ResponseEntity<ReportPayload> {
+    fun getReport(): ResponseEntity<ReportPayload> {
         val username: String = ContextUtils.getUsername()
 
         try {
-            val dateFormatted = getLocalDate(date)
-            return ResponseEntity.ok(reportService.getReport(dateFormatted, username))
+            return ResponseEntity.ok(reportService.getReport(username))
         } catch(e: ParseException) {
             throw InvalidInputException("Não foi possível converter a data")
         }
