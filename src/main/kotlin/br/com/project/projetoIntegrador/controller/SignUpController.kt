@@ -63,13 +63,15 @@ class SignUpController @Autowired private constructor(val userService: UserServi
     )
     @PostMapping
     fun signUp(@RequestBody @Valid user: User): ResponseEntity<Any> {
-        val status: HttpStatus = userService.register(user)
-       if(status == HttpStatus.BAD_REQUEST) {
-            throw InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial")
-        }
-        if(status == HttpStatus.CONFLICT) {
-            throw DataNotAvailableException("Email já está em uso");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body("Conta criada com sucesso!")
+//        val status: HttpStatus = userService.register(user)
+//       if(status == HttpStatus.BAD_REQUEST) {
+//            throw InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial")
+//        }
+//        if(status == HttpStatus.CONFLICT) {
+//            throw DataNotAvailableException("Email já está em uso");
+//        }
+//        return ResponseEntity.status(HttpStatus.CREATED).body("Conta criada com sucesso!")
+        val newUser = userService.register(user)
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser)
     }
 }

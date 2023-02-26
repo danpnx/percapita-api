@@ -29,7 +29,7 @@ class FinancialTransactionService(
     @Autowired private val tagService: TagService
 ) {
 
-    fun registerTransaction(transaction: RegisterTransactionDTO, username: String, tagName: String) {
+    fun registerTransaction(transaction: RegisterTransactionDTO, username: String, tagName: String): FinancialTransaction { //adicionado o retorno de financialtransaction
         if(transaction.transactionValue <= BigDecimal.ZERO) {
             throw InvalidInputException("Digite um valor maior que zero")
         }
@@ -43,6 +43,7 @@ class FinancialTransactionService(
 
         val financialTransaction = transaction.convertToFinancialTransaction(user, tag)
         transactionRepository.save(financialTransaction)
+        return financialTransaction //adicionado o retorno do objeto
     }
 
     fun deleteTransaction(transactionId: UUID, username: String) {

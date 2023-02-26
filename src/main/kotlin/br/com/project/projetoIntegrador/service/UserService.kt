@@ -23,7 +23,7 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
 
     fun findByUsername(username: String): ProfilePayload {
         val user = userRepository.findByUsername(username)
-        return ProfilePayload(user.get().id!!, user.get().username!!, user.get().name!!)
+        return ProfilePayload(user.get().id!!, user.get().username!!, user.get().name!!, user.get().password!!)
     }
 
     fun getUser(username: String): User {
@@ -80,9 +80,9 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
         userRepository.save(user)
     }
 
-    fun register(user: User): HttpStatus {
+    fun register(user: User): User { //Antes o retorno era HttpStatus
         if(existsByUsername(user.username.toString())) {
-            return HttpStatus.CONFLICT
+            throw InvalidInputException("Este usuário já existe")
         }
 
         if(user.username.toString() == null || user.username.equals("")) {
@@ -108,7 +108,7 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
         }
 
         if(!InputUtils.validatePassword(user.password.toString()) || user.password?.length!! < 8) {
-            return HttpStatus.BAD_REQUEST
+            throw InvalidInputException("A senha deve ter no minimo 8 caracteres")
         }
 
         if(InputUtils.isExceedingPasswordSize(user.password.toString())) {
@@ -119,6 +119,6 @@ class UserService @Autowired constructor(private var userRepository: UserReposit
             user.password = password
             userRepository.save(user)
 //            sendEmail(user.username.toString())
-            return HttpStatus.CREATED
+            return user
     }
 }
