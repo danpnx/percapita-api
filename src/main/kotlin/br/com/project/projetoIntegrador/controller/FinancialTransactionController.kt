@@ -58,8 +58,8 @@ class FinancialTransactionController @Autowired constructor(private val financia
         @RequestParam tagName: String
     ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        financialTransactionService.registerTransaction(transaction, username, tagName)
-        return ResponseEntity.status(HttpStatus.CREATED).build()
+        val response = financialTransactionService.registerTransaction(transaction, username, tagName)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @Operation(
