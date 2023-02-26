@@ -21,9 +21,8 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
     fun existsByTagNameAndUser(tagName: String?, username: String): Boolean = tagRepository.existsByTagNameContainingIgnoreCaseAndUser(
         tagName, userRepository.findByUsername(username).get())
 
-    fun registerTag(tagName: String, username: String) {
+    fun registerTag(tagName: String, username: String): Tag {
         val user = userRepository.findByUsername(username)
-        println(user.toString())
 
         if(existsByTagNameAndUser(tagName, username)) throw  DataNotAvailableException("Você já possui uma tag com esse nome")
 
@@ -33,6 +32,7 @@ class TagService @Autowired constructor(private val userRepository: UserReposito
 
         val tag = Tag(tagName = tagName, user = user.get())
         tagRepository.save(tag)
+        return tag
     }
 
     fun editTag(tagId: UUID, newName: String?, username: String) {
