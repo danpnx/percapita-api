@@ -52,8 +52,8 @@ class TagController @Autowired constructor(private val tagService: TagService) {
     fun createTag(@RequestBody @Valid tag: Tag?): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
         println("Username: $username")
-        tagService.registerTag(tag?.tagName.toString(), username)
-        return ResponseEntity.status(HttpStatus.CREATED).body("Tag "+ tag?.tagName.toString() + " criada!")
+        val response = tagService.registerTag(tag?.tagName.toString(), username)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @Operation(
@@ -91,9 +91,9 @@ class TagController @Autowired constructor(private val tagService: TagService) {
         ]
     )
     @PutMapping("/edit/{id}")
-    fun editTag(@PathVariable id: String, @RequestParam newName: String?): ResponseEntity<Any> {
+    fun editTag(@PathVariable id: String, @RequestBody newName: Tag?): ResponseEntity<Any> { //tirado o @RequestParam para @RequestBody
         val username: String = ContextUtils.getUsername()
-        tagService.editTag(UUID.fromString(id), newName, username)
+        tagService.editTag(UUID.fromString(id), newName?.tagName, username)
         return ResponseEntity.status(HttpStatus.CREATED).body("Nome da tag atualizada.")
     }
 
@@ -176,7 +176,8 @@ class TagController @Autowired constructor(private val tagService: TagService) {
     @GetMapping("/all")
     fun getAll(): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
-        return ResponseEntity.ok(tagService.getAllTags(username))
+        val getAll = tagService.getAllTags(username)
+        return ResponseEntity.status(HttpStatus.OK).body(getAll)
     }
 
     @Operation(
