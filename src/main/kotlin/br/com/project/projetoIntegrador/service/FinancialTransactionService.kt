@@ -10,6 +10,7 @@ import br.com.project.projetoIntegrador.exceptions.ResourceNotFoundException
 import br.com.project.projetoIntegrador.models.FinancialTransaction
 import br.com.project.projetoIntegrador.models.User
 import br.com.project.projetoIntegrador.repositories.FinancialTransactionRepository
+import br.com.project.projetoIntegrador.utils.getLocalDateTime
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
@@ -44,6 +45,17 @@ class FinancialTransactionService(
         val financialTransaction = transaction.convertToFinancialTransaction(user, tag)
         transactionRepository.save(financialTransaction)
         return financialTransaction //adicionado o retorno do objeto
+    }
+
+    fun editTransaction(transactionId: UUID, edit: RegisterTransactionDTO, username: String): FinancialTransaction {
+        val transactinOptional: Optional<FinancialTransaction> = transactionRepository.findById(transactionId)
+        val transaction: FinancialTransaction = transactinOptional.get()
+        transaction.transactionValue = edit.transactionValue
+        transaction.transactionDate = getLocalDateTime(edit.transactionDate)
+        transaction.transactionCategory = TransactionCategory.valueOf(edit.transactionCategory)
+        transaction.transactionDescription = edit.transactionDescription
+        transactionRepository.save(transaction)
+        return transaction
     }
 
     fun deleteTransaction(transactionId: UUID, username: String) {

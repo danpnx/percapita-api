@@ -5,6 +5,7 @@ import br.com.project.projetoIntegrador.enums.TransactionCategory
 import br.com.project.projetoIntegrador.exceptions.InvalidInputException
 import br.com.project.projetoIntegrador.models.FinancialTransaction
 import br.com.project.projetoIntegrador.payload.StandardMessage
+import br.com.project.projetoIntegrador.repositories.TagRepository
 import br.com.project.projetoIntegrador.service.FinancialTransactionService
 import br.com.project.projetoIntegrador.utils.ContextUtils
 import br.com.project.projetoIntegrador.utils.getLocalDate
@@ -29,6 +30,8 @@ import java.util.*
 @Tag(name = "Financial Transaction", description = "Endpoints para manipulação de transações financeiras")
 @SecurityRequirement(name = "Bearer Authentication")
 class FinancialTransactionController @Autowired constructor(private val financialTransactionService: FinancialTransactionService) {
+
+    lateinit var tagRepository: TagRepository
 
     @Operation(
         summary = "Cadastrar transação",
@@ -55,9 +58,10 @@ class FinancialTransactionController @Autowired constructor(private val financia
     @PostMapping("/register")
     fun registerTransaction(
         @RequestBody @Valid transaction: RegisterTransactionDTO,
-        @RequestParam tagName: String
+        //@RequestParam tagName: String
     ): ResponseEntity<Any> {
         val username: String = ContextUtils.getUsername()
+        val tagName = "Tag"
         val response = financialTransactionService.registerTransaction(transaction, username, tagName)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
@@ -101,6 +105,15 @@ class FinancialTransactionController @Autowired constructor(private val financia
         val username: String = ContextUtils.getUsername()
         financialTransactionService.deleteTransaction(UUID.fromString(transactionId), username)
         return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/edit/{transactionId}")
+    fun editTransaction(
+        @PathVariable("transactionId") transactionId: String, @RequestBody registerTransactionDTO: RegisterTransactionDTO
+    ): ResponseEntity<Any> {
+        val username: String = ContextUtils.getUsername()
+        val response = financialTransactionService.editTransaction(UUID.fromString(transactionId), registerTransactionDTO, username)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
 
@@ -253,19 +266,6 @@ class FinancialTransactionController @Autowired constructor(private val financia
         val username: String = ContextUtils.getUsername()
         return ResponseEntity.ok(financialTransactionService.getAllTransactions(username))
     }
-
-//    @GetMapping("/all")
-//    fun getAllTransaction(@RequestParam date: String): ResponseEntity<List<FinancialTransaction>> {
-//        val username: String = ContextUtils.getUsername()
-//        val dateFormatted = getLocalDate(date)
-//        try {
-//            return ResponseEntity.ok(
-//                financialTransactionService.getAllTransactions(username, dateFormatted)
-//            )
-//        } catch (e: ParseException) {
-//            throw InvalidInputException("Não foi possível converter a data")
-//        }
-//    }
 
     @Operation(
         summary = "Alterar valor",
