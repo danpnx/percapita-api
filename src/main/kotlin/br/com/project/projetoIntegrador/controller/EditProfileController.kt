@@ -68,4 +68,11 @@ class EditProfileController @Autowired constructor(private val editProfileServic
         editProfileService.editName(username, newName)
         return status(HttpStatus.CREATED).body("Nome alterado com sucesso!")
     }
+
+    @PutMapping("/edit-user")
+    fun editUser(@RequestBody editUser: EditPasswordDTO): ResponseEntity<Any> {
+        val username: String = ContextUtils.getUsername()
+        val response = editProfileService.editUser(username, editUser)
+        return status(HttpStatus.OK).body(response)
+    }
 }

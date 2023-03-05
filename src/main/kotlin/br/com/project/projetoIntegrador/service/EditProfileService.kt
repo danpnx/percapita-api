@@ -2,6 +2,7 @@ package br.com.project.projetoIntegrador.service
 
 import br.com.project.projetoIntegrador.dto.EditPasswordDTO
 import br.com.project.projetoIntegrador.exceptions.InvalidInputException
+import br.com.project.projetoIntegrador.models.User
 import br.com.project.projetoIntegrador.repositories.UserRepository
 import br.com.project.projetoIntegrador.utils.InputUtils
 import jakarta.transaction.Transactional
@@ -31,5 +32,20 @@ class EditProfileService @Autowired constructor(
                 userRepository.save(user)
             } else throw InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial")
         } else throw InvalidInputException("Senha atual inválida!")
+    }
+
+    fun editUser(username: String, editPasswordDTO: EditPasswordDTO): User {
+        val user = userRepository.findByUsername(username).get()
+        val oldPassword = editPasswordDTO.actualPassword
+        val passwordCheck = passwordEncoder.matches(oldPassword, user.password)
+
+        if(passwordCheck) {
+            if(InputUtils.validatePassword(editPasswordDTO.newPassword)) {
+                user.password = passwordEncoder.encode(editPasswordDTO.newPassword)
+            }  else throw InvalidInputException("A senha deve conter de 8 a 20 caracteres, pelo menos um caractere em maiúsculo e um caractere especial")
+        } else throw InvalidInputException("Senha atual inválida!")
+        user.name = editPasswordDTO.newName
+        userRepository.save(user)
+        return user
     }
 }
