@@ -1,2 +1,2 @@
 # projeto-integrador-dh
-Projeto Integrador da Digital House e Empiricus
+Projeto Integrador da Digital House
